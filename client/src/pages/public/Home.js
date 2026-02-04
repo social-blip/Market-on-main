@@ -117,7 +117,7 @@ const Home = () => {
             </div>
           </div>
           <div className="brutal-card">
-            <img src="/images/market/beaded-jewelry.jpg" alt="Handmade crafts" />
+            <img src="/images/market/makers-card.jpg" alt="Handmade crafts" />
             <div className="brutal-card-content">
               <h3 className="brutal-card-title">The Makers</h3>
               <p className="brutal-card-text">
@@ -126,7 +126,7 @@ const Home = () => {
             </div>
           </div>
           <div className="brutal-card">
-            <img src="/images/market/cotton-candy-truck.jpg" alt="Food trucks and sweet treats" />
+            <img src="/images/market/eats-card.jpg" alt="Food trucks and sweet treats" />
             <div className="brutal-card-content">
               <h3 className="brutal-card-title">The Eats</h3>
               <p className="brutal-card-text">
@@ -172,7 +172,7 @@ const Home = () => {
             </div>
           </div>
           <div className="brutal-card">
-            <img src="/images/market/live-band.jpg" alt="Community" />
+            <img src="/images/market/community-card.jpg" alt="Community" />
             <div className="brutal-card-content">
               <h3 className="brutal-card-title">Community</h3>
               <p className="brutal-card-text">
