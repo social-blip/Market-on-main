@@ -58,6 +58,13 @@ const VendorApplication = () => {
     }
   }, [step]);
 
+  // Scroll to top when submitted
+  useEffect(() => {
+    if (submitted) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+  }, [submitted]);
+
   // Calculate pricing
   const calculateTotal = () => {
     if (!formData.booth_size || !formData.markets_requested) return null;
