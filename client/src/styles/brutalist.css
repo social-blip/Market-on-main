@@ -123,10 +123,12 @@ body {
   text-align: center;
 }
 
-.brutal-btn:hover {
-  transform: translate(-3px, -3px);
-  box-shadow: 5px 5px 0px var(--brutal-black);
-  text-decoration: none;
+@media (hover: hover) {
+  .brutal-btn:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 5px 5px 0px var(--brutal-black);
+    text-decoration: none;
+  }
 }
 
 .brutal-btn-blue {
@@ -152,9 +154,11 @@ body {
   transition: transform 0.1s, box-shadow 0.1s;
 }
 
-.brutal-card:hover {
-  transform: translate(-3px, -3px);
-  box-shadow: 6px 6px 0px var(--brutal-black);
+@media (hover: hover) {
+  .brutal-card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 6px 6px 0px var(--brutal-black);
+  }
 }
 
 .brutal-card img {
@@ -248,10 +252,16 @@ body {
   transition: all 0.1s;
 }
 
-.brutal-nav a:hover,
 .brutal-nav a.active {
   border: 3px solid var(--brutal-white);
   background: rgba(255,255,255,0.1);
+}
+
+@media (hover: hover) {
+  .brutal-nav a:hover {
+    border: 3px solid var(--brutal-white);
+    background: rgba(255,255,255,0.1);
+  }
 }
 
 /* ===== HERO SECTION ===== */
@@ -400,8 +410,10 @@ body {
   line-height: 1.8;
 }
 
-.brutal-footer a:hover {
-  text-decoration: underline;
+@media (hover: hover) {
+  .brutal-footer a:hover {
+    text-decoration: underline;
+  }
 }
 
 .brutal-footer ul {
@@ -533,9 +545,11 @@ body {
   transition: transform 0.1s, box-shadow 0.1s;
 }
 
-.brutal-sponsors-grid a:hover {
-  transform: translate(-3px, -3px);
-  box-shadow: 5px 5px 0px var(--brutal-black);
+@media (hover: hover) {
+  .brutal-sponsors-grid a:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 5px 5px 0px var(--brutal-black);
+  }
 }
 
 .brutal-sponsors-grid img {
@@ -553,5 +567,104 @@ body {
 
   .brutal-sponsors-grid img {
     max-height: 50px;
+  }
+}
+
+/* ===== CATEGORY FILTERS (Vendors Page) ===== */
+.category-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+}
+
+.category-btn {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-weight: 700;
+  font-size: clamp(12px, 1.5vw, 16px);
+  padding: 12px 24px;
+  background: #fff;
+  color: #000;
+  border: 4px solid #000;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.1s;
+  margin-left: -4px;
+}
+
+.category-btn:first-child {
+  margin-left: 0;
+}
+
+.category-btn.active {
+  background: #000;
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  .category-filters {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    width: 100%;
+  }
+
+  .category-btn {
+    margin-left: 0;
+    margin-top: -4px;
+    padding: 12px 8px;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+  }
+
+  .category-btn:nth-child(1),
+  .category-btn:nth-child(2),
+  .category-btn:nth-child(3) {
+    margin-top: 0;
+  }
+
+  .category-btn:nth-child(2),
+  .category-btn:nth-child(3) {
+    margin-left: -4px;
+  }
+
+  /* Eats spans 1.5 columns equivalent - use grid-column */
+  .category-btn:nth-child(4) {
+    grid-column: 1 / 2;
+  }
+
+  /* Vintage & Finds spans remaining */
+  .category-btn:nth-child(5) {
+    grid-column: 2 / 4;
+    margin-left: -4px;
+  }
+}
+
+/* ===== MOBILE NAVIGATION ===== */
+@media (max-width: 768px) {
+  .brutal-header-logo {
+    font-size: 24px !important;
+  }
+
+  .desktop-nav {
+    display: none !important;
+  }
+
+  .hamburger-btn {
+    display: flex !important;
+  }
+
+  .brutal-nav {
+    display: none;
+  }
+}
+
+@media (min-width: 769px) {
+  .hamburger-btn {
+    display: none !important;
+  }
+
+  .mobile-menu-overlay {
+    display: none !important;
   }
 }

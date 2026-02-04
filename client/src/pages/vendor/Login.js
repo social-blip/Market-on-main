@@ -160,7 +160,7 @@ const VendorLogin = () => {
               opacity: loading ? 0.7 : 1
             }}
             onMouseEnter={(e) => {
-              if (!loading) {
+              if (!loading && window.matchMedia('(hover: hover)').matches) {
                 e.currentTarget.style.transform = 'translate(-3px, -3px)';
                 e.currentTarget.style.boxShadow = '5px 5px 0px #000';
               }

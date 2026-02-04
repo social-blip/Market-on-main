@@ -667,8 +667,10 @@ const VendorDetail = () => {
                   transition: 'transform 0.1s, box-shadow 0.1s'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translate(-3px, -3px)';
-                  e.currentTarget.style.boxShadow = '5px 5px 0px #000';
+                  if (window.matchMedia('(hover: hover)').matches) {
+                    e.currentTarget.style.transform = 'translate(-3px, -3px)';
+                    e.currentTarget.style.boxShadow = '5px 5px 0px #000';
+                  }
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'none';

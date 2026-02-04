@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, Link, NavLink, useLocation } from 'react-router-dom';
 
 const PublicLayout = () => {
   const location = useLocation();
   const path = location.pathname;
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [path]);
 
   // Determine header color based on current page's first section
   const getHeaderStyle = () => {
@@ -60,11 +66,58 @@ const PublicLayout = () => {
 
       {/* BRUTAL HEADER */}
       <header className="brutal-header" style={getHeaderStyle()}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px' }}>
-          <Link to="/" style={{ textDecoration: 'none' }}>
-            <h1 className="brutal-header-logo" style={{ color: textColor }}>MARKET ON MAIN</h1>
-          </Link>
-          <nav className="brutal-nav" style={{ '--nav-color': textColor }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px', position: 'relative' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Link to="/" style={{ textDecoration: 'none' }}>
+              <h1 className="brutal-header-logo" style={{ color: textColor }}>MARKET ON MAIN</h1>
+            </Link>
+            {/* Hamburger Button - Mobile Only */}
+            <button
+              className="hamburger-btn"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle menu"
+              style={{
+                display: 'none',
+                background: 'transparent',
+                border: `3px solid ${textColor}`,
+                padding: '8px',
+                cursor: 'pointer',
+                flexDirection: 'column',
+                gap: '5px',
+                width: '44px',
+                height: '44px',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}
+            >
+              <span style={{
+                display: 'block',
+                width: '24px',
+                height: '3px',
+                background: textColor,
+                transition: 'transform 0.3s, opacity 0.3s',
+                transform: mobileMenuOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none'
+              }} />
+              <span style={{
+                display: 'block',
+                width: '24px',
+                height: '3px',
+                background: textColor,
+                transition: 'opacity 0.3s',
+                opacity: mobileMenuOpen ? 0 : 1
+              }} />
+              <span style={{
+                display: 'block',
+                width: '24px',
+                height: '3px',
+                background: textColor,
+                transition: 'transform 0.3s',
+                transform: mobileMenuOpen ? 'rotate(-45deg) translate(5px, -5px)' : 'none'
+              }} />
+            </button>
+          </div>
+          {/* Desktop Nav */}
+          <nav className="brutal-nav desktop-nav" style={{ '--nav-color': textColor }}>
             <NavLink to="/" end style={{ color: textColor }}>Home</NavLink>
             <NavLink to="/vendors" style={{ color: textColor }}>Vendors & Calendar</NavLink>
             <NavLink to="/live-music" style={{ color: textColor }}>Live Music</NavLink>
@@ -86,6 +139,158 @@ const PublicLayout = () => {
           </nav>
         </div>
       </header>
+
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <div
+          className="mobile-menu-overlay"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: '#000',
+            zIndex: 999,
+            display: 'flex',
+            flexDirection: 'column',
+            padding: '20px'
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
+            <Link to="/" style={{ textDecoration: 'none' }} onClick={() => setMobileMenuOpen(false)}>
+              <h1 style={{
+                fontFamily: "'Bricolage Grotesque', sans-serif",
+                fontWeight: 800,
+                fontSize: '28px',
+                color: '#fff',
+                margin: 0
+              }}>MARKET ON MAIN</h1>
+            </Link>
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              aria-label="Close menu"
+              style={{
+                background: 'transparent',
+                border: '3px solid #fff',
+                color: '#fff',
+                width: '44px',
+                height: '44px',
+                fontSize: '24px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontFamily: 'sans-serif'
+              }}
+            >
+              ✕
+            </button>
+          </div>
+          <nav style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+            <NavLink
+              to="/"
+              end
+              onClick={() => setMobileMenuOpen(false)}
+              style={{
+                fontFamily: "'Bricolage Grotesque', sans-serif",
+                fontWeight: 800,
+                fontSize: '32px',
+                color: '#fff',
+                textDecoration: 'none',
+                padding: '16px 0',
+                borderBottom: '2px solid rgba(255,255,255,0.2)',
+                textTransform: 'uppercase'
+              }}
+            >
+              Home
+            </NavLink>
+            <NavLink
+              to="/vendors"
+              onClick={() => setMobileMenuOpen(false)}
+              style={{
+                fontFamily: "'Bricolage Grotesque', sans-serif",
+                fontWeight: 800,
+                fontSize: '32px',
+                color: '#fff',
+                textDecoration: 'none',
+                padding: '16px 0',
+                borderBottom: '2px solid rgba(255,255,255,0.2)',
+                textTransform: 'uppercase'
+              }}
+            >
+              Vendors & Calendar
+            </NavLink>
+            <NavLink
+              to="/live-music"
+              onClick={() => setMobileMenuOpen(false)}
+              style={{
+                fontFamily: "'Bricolage Grotesque', sans-serif",
+                fontWeight: 800,
+                fontSize: '32px',
+                color: '#fff',
+                textDecoration: 'none',
+                padding: '16px 0',
+                borderBottom: '2px solid rgba(255,255,255,0.2)',
+                textTransform: 'uppercase'
+              }}
+            >
+              Live Music
+            </NavLink>
+            <NavLink
+              to="/find-us"
+              onClick={() => setMobileMenuOpen(false)}
+              style={{
+                fontFamily: "'Bricolage Grotesque', sans-serif",
+                fontWeight: 800,
+                fontSize: '32px',
+                color: '#fff',
+                textDecoration: 'none',
+                padding: '16px 0',
+                borderBottom: '2px solid rgba(255,255,255,0.2)',
+                textTransform: 'uppercase'
+              }}
+            >
+              Find Us
+            </NavLink>
+            <NavLink
+              to="/become-vendor"
+              onClick={() => setMobileMenuOpen(false)}
+              style={{
+                fontFamily: "'Bricolage Grotesque', sans-serif",
+                fontWeight: 800,
+                fontSize: '32px',
+                color: '#fff',
+                textDecoration: 'none',
+                padding: '16px 0',
+                borderBottom: '2px solid rgba(255,255,255,0.2)',
+                textTransform: 'uppercase'
+              }}
+            >
+              Become a Vendor
+            </NavLink>
+            <NavLink
+              to="/vendor/login"
+              onClick={() => setMobileMenuOpen(false)}
+              style={{
+                fontFamily: "'Bricolage Grotesque', sans-serif",
+                fontWeight: 800,
+                fontSize: '24px',
+                color: '#000',
+                textDecoration: 'none',
+                padding: '16px 24px',
+                marginTop: '24px',
+                background: '#FFD700',
+                border: '3px solid #FFD700',
+                textTransform: 'uppercase',
+                textAlign: 'center'
+              }}
+            >
+              Vendor Login
+            </NavLink>
+          </nav>
+        </div>
+      )}
 
       <main>
         <Outlet />

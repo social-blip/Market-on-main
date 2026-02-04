@@ -120,25 +120,12 @@ const Vendors = () => {
           margin: '0 auto'
         }}>
           {/* Category Filters */}
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0' }}>
+          <div className="category-filters">
             {Object.entries(CATEGORIES).map(([key, { label }]) => (
               <button
                 key={key}
                 onClick={() => setFilter(key)}
-                style={{
-                  fontFamily: "'Bricolage Grotesque', sans-serif",
-                  fontWeight: 700,
-                  fontSize: 'clamp(12px, 1.5vw, 16px)',
-                  padding: '12px 24px',
-                  background: filter === key ? '#000' : '#fff',
-                  color: filter === key ? '#fff' : '#000',
-                  border: '4px solid #000',
-                  cursor: 'pointer',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px',
-                  transition: 'all 0.1s',
-                  marginLeft: '-4px'
-                }}
+                className={`category-btn ${filter === key ? 'active' : ''}`}
               >
                 {label}
               </button>
@@ -236,8 +223,10 @@ const Vendors = () => {
                   flexDirection: 'column'
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translate(-4px, -4px)';
-                  e.currentTarget.style.boxShadow = '6px 6px 0px #000';
+                  if (window.matchMedia('(hover: hover)').matches) {
+                    e.currentTarget.style.transform = 'translate(-4px, -4px)';
+                    e.currentTarget.style.boxShadow = '6px 6px 0px #000';
+                  }
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.transform = 'none';
