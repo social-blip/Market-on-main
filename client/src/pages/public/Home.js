@@ -150,7 +150,7 @@ const Home = () => {
       {/* ===== GET INVOLVED (Red) ===== */}
       <section className="brutal-section brutal-section-red">
         <h2 className="brutal-section-heading brutal-section-heading-white" style={{ fontSize: 'clamp(48px, 10vw, 120px)', letterSpacing: '0.08em' }}>
-          Let's be serious friends
+          Let's be friends
         </h2>
         <div className="brutal-grid-3">
           <div className="brutal-card">
