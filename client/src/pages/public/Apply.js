@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import api from '../../api/client';
 
 // 2026 Market Dates
@@ -27,6 +27,7 @@ const VendorApplication = () => {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState(null);
+  const formRef = useRef(null);
 
   const [formData, setFormData] = useState({
     contact_name: '',
@@ -50,11 +51,11 @@ const VendorApplication = () => {
     }
   });
 
-  // Scroll to top when step changes
+  // Scroll to form when step changes
   useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
+    if (formRef.current) {
+      formRef.current.scrollIntoView({ behavior: 'instant', block: 'start' });
+    }
   }, [step]);
 
   // Calculate pricing
@@ -193,7 +194,7 @@ const VendorApplication = () => {
       <div className="brutal-line"></div>
 
       {/* Progress Steps */}
-      <div style={{ background: '#fff', padding: '20px', borderBottom: '4px solid #000' }}>
+      <div ref={formRef} style={{ background: '#fff', padding: '20px', borderBottom: '4px solid #000' }}>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '40px', maxWidth: '400px', margin: '0 auto' }}>
           {[1, 2, 3].map(s => (
             <div key={s} style={{ textAlign: 'center' }}>
