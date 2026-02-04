@@ -203,7 +203,7 @@ const VendorDetail = () => {
             }}
           >
             <img
-              src={`${API_URL}${images[lightboxIndex]}`}
+              src={images[lightboxIndex]}
               alt={`${vendor.business_name} ${lightboxIndex + 1}`}
               style={{
                 maxWidth: '100%',
@@ -267,7 +267,7 @@ const VendorDetail = () => {
           {/* Hero Image */}
           {images.length > 0 ? (
             <img
-              src={`${API_URL}${images[0]}`}
+              src={images[0]}
               alt={vendor.business_name}
               onClick={() => openLightbox(0)}
               style={{
@@ -678,7 +678,7 @@ const VendorDetail = () => {
                 }}
               >
                 <img
-                  src={`${API_URL}${img}`}
+                  src={img}
                   alt={`${vendor.business_name} ${idx + 1}`}
                   style={{
                     width: '100%',

@@ -246,7 +246,7 @@ const Vendors = () => {
                 }}>
                   {vendor.image_url ? (
                     <img
-                      src={`${API_URL}${vendor.image_url}`}
+                      src={vendor.image_url}
                       alt={vendor.business_name}
                       style={{
                         width: '100%',

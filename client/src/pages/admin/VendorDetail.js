@@ -290,9 +290,9 @@ const AdminVendorDetail = () => {
               <strong>Uploaded Images</strong>
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '8px' }}>
                 {vendor.images.map((img, idx) => (
-                  <a key={idx} href={`${process.env.REACT_APP_API_URL || 'http://localhost:5001'}${img}`} target="_blank" rel="noopener noreferrer">
+                  <a key={idx} href={img} target="_blank" rel="noopener noreferrer">
                     <img
-                      src={`${process.env.REACT_APP_API_URL || 'http://localhost:5001'}${img}`}
+                      src={img}
                       alt={`Upload ${idx + 1}`}
                       style={{ width: '80px', height: '80px', objectFit: 'cover', border: '1px solid #ddd', borderRadius: '4px' }}
                     />
