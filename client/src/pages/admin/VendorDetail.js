@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../../api/client';
 
 const CATEGORIES = [
@@ -11,6 +11,7 @@ const CATEGORIES = [
 
 const AdminVendorDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ type: '', text: '' });
@@ -58,6 +59,19 @@ const AdminVendorDetail = () => {
     }
   };
 
+  const deleteVendor = async () => {
+    if (!window.confirm(`Are you sure you want to delete "${data.vendor.business_name}"? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      await api.delete(`/admin/vendors/${id}`);
+      navigate('/admin/vendors');
+    } catch (err) {
+      setMessage({ type: 'error', text: 'Failed to delete vendor.' });
+    }
+  };
+
   const formatDate = (dateStr) => {
     return new Date(dateStr).toLocaleDateString('en-US', {
       weekday: 'short',
@@ -96,6 +110,9 @@ const AdminVendorDetail = () => {
         <div className="flex gap-2">
           <button onClick={toggleActive} className={`btn ${vendor.is_active ? 'btn-danger' : 'btn-primary'}`}>
             {vendor.is_active ? 'Deactivate' : 'Approve'}
+          </button>
+          <button onClick={deleteVendor} className="btn" style={{ background: '#dc3545', color: '#fff' }}>
+            Delete Vendor
           </button>
         </div>
       </div>
