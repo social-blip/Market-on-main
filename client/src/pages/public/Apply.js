@@ -71,9 +71,11 @@ const VendorApplication = () => {
 
     const baseAmount = PRICING[formData.booth_size]?.[parseInt(formData.markets_requested)] || 0;
     const powerFee = formData.needs_power ? POWER_FEE : 0;
-    const totalAmount = baseAmount + powerFee;
+    const subtotal = baseAmount + powerFee;
+    const ccFee = Math.round(subtotal * 0.03 * 100) / 100; // 3% CC processing fee
+    const totalAmount = subtotal + ccFee;
 
-    return { baseAmount, powerFee, totalAmount };
+    return { baseAmount, powerFee, subtotal, ccFee, totalAmount };
   };
 
   const pricing = calculateTotal();
@@ -558,6 +560,10 @@ const VendorApplication = () => {
                           <span>${pricing.powerFee.toFixed(2)}</span>
                         </div>
                       )}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontStyle: 'italic', color: '#666' }}>
+                        <span>CC Processing Fee (3%)</span>
+                        <span>${pricing.ccFee.toFixed(2)}</span>
+                      </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '2px solid #000', paddingTop: '8px', marginTop: '8px' }}>
                         <strong style={{ fontSize: '18px' }}>Total</strong>
                         <strong style={{ fontSize: '24px', color: '#E30613' }}>${pricing.totalAmount.toFixed(2)}</strong>
@@ -631,6 +637,9 @@ const VendorApplication = () => {
                       <div style={{ fontFamily: "'Sora', sans-serif", fontSize: '14px' }}>
                         {formData.booth_size === 'single' ? 'Single' : 'Double'} Booth • {formData.markets_requested} Markets
                         {formData.needs_power && ' • Power Included'}
+                      </div>
+                      <div style={{ fontFamily: "'Sora', sans-serif", fontSize: '12px', fontStyle: 'italic', marginTop: '4px' }}>
+                        Includes ${pricing.ccFee.toFixed(2)} CC processing fee (3%)
                       </div>
                     </div>
                     <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 800, fontSize: '32px' }}>
