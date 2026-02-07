@@ -1,0 +1,227 @@
+/* Vendors Page Styles */
+
+.vendors-page {
+  background: var(--cream);
+  min-height: 100vh;
+}
+
+/* Hero Section */
+.vendors-page__hero {
+  background: var(--maroon);
+  color: var(--cream);
+  padding: 140px 40px 80px;
+  text-align: center;
+}
+
+.vendors-page__title {
+  font-family: var(--font-display);
+  font-size: clamp(48px, 10vw, 100px);
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.vendors-page__subtitle {
+  font-family: var(--font-body);
+  font-size: 1.25rem;
+  margin: 0 auto;
+  opacity: 0.9;
+  max-width: 600px;
+}
+
+/* Filter Bar */
+.vendors-page__filters {
+  background: var(--cream);
+  border-bottom: 1px solid var(--border-light);
+  padding: 20px 40px;
+}
+
+.vendors-page__filters-inner {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.vendors-page__category-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.vendors-page__date-select {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+  background: var(--white);
+  color: var(--black);
+  cursor: pointer;
+  min-width: 160px;
+}
+
+.vendors-page__date-select:focus {
+  outline: none;
+  border-color: var(--maroon);
+}
+
+/* Info Message */
+.vendors-page__info {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 24px 40px;
+}
+
+.vendors-page__info p {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--gray-dark);
+  margin: 0;
+  text-align: center;
+}
+
+.vendors-page__info a {
+  color: var(--maroon);
+  text-decoration: underline;
+}
+
+.vendors-page__info a:hover {
+  color: var(--maroon-hover);
+}
+
+/* Vendor Grid */
+.vendors-page__grid-section {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 40px 60px;
+}
+
+.vendors-page__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+/* Override homepage-vendor-card width for grid layout */
+.vendors-page__grid .homepage-vendor-card {
+  width: 100%;
+  height: auto;
+  min-height: 420px;
+}
+
+.vendors-page__empty {
+  text-align: center;
+  padding: 80px 20px;
+}
+
+.vendors-page__empty p {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  color: var(--gray-dark);
+}
+
+/* CTA Section */
+.vendors-page__cta {
+  background: var(--dark-bg);
+  color: var(--cream);
+  padding: 80px 40px;
+  text-align: center;
+}
+
+.vendors-page__cta h2 {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  text-transform: uppercase;
+}
+
+.vendors-page__cta p {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  margin: 0 0 32px 0;
+  opacity: 0.9;
+}
+
+.btn-pill {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  padding: 14px 32px;
+  border-radius: 30px;
+  background: var(--cta-yellow);
+  color: var(--black);
+  text-decoration: none;
+  font-weight: 600;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Loading State */
+.vendors-page__loading-grid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border-light);
+  border-top-color: var(--maroon);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .vendors-page__hero {
+    padding: 60px 20px;
+  }
+
+  .vendors-page__filters {
+    padding: 16px 20px;
+  }
+
+  .vendors-page__filters-inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .vendors-page__category-filters {
+    justify-content: center;
+  }
+
+  .vendors-page__date-select {
+    width: 100%;
+  }
+
+  .vendors-page__grid-section {
+    padding: 0 20px 40px;
+  }
+
+  .vendors-page__grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .vendors-page__cta {
+    padding: 60px 20px;
+  }
+}

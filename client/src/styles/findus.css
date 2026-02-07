@@ -1,0 +1,292 @@
+/* Find Us Page Styles */
+
+.findus-page {
+  background: var(--cream);
+  min-height: 100vh;
+}
+
+/* Hero Section */
+.findus-page__hero {
+  background: var(--maroon);
+  color: var(--cream);
+  padding: 140px 40px 80px;
+  text-align: center;
+}
+
+.findus-page__title {
+  font-family: var(--font-display);
+  font-size: clamp(48px, 10vw, 100px);
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.findus-page__subtitle {
+  font-family: var(--font-body);
+  font-size: 1.25rem;
+  margin: 0 auto;
+  opacity: 0.9;
+  max-width: 600px;
+}
+
+/* Info Cards Section */
+.findus-page__cards {
+  padding: 60px 40px;
+  max-width: var(--container-max);
+  margin: 0 auto;
+}
+
+.findus-page__cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+/* Info Card */
+.info-card {
+  background: var(--white);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+}
+
+.info-card__header {
+  padding: 20px 24px;
+}
+
+.info-card__header--peach {
+  background: var(--yellow);
+}
+
+.info-card__header--maroon {
+  background: var(--maroon);
+}
+
+.info-card__header--dark {
+  background: var(--dark-bg);
+}
+
+.info-card__title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--black);
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.info-card__title--light {
+  color: var(--white);
+}
+
+.info-card__body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.info-card__address {
+  font-family: var(--font-body);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--black);
+  margin: 0 0 16px 0;
+  line-height: 1.4;
+}
+
+.info-card__text {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--gray-dark);
+  margin: 0 0 20px 0;
+  line-height: 1.6;
+}
+
+.info-card__btn {
+  display: inline-block;
+  padding: 12px 24px;
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 100px;
+  transition: background 0.2s;
+  margin-top: auto;
+  align-self: flex-start;
+}
+
+.info-card__btn:hover {
+  background: var(--black-hover);
+}
+
+.info-card__day {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--black);
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+}
+
+.info-card__time {
+  font-family: var(--font-body);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--maroon);
+  margin: 0 0 16px 0;
+}
+
+.info-card__label {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-medium);
+  margin: 0 0 4px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.info-card__email {
+  font-family: var(--font-body);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--maroon);
+  text-decoration: none;
+  display: block;
+  margin-bottom: 16px;
+}
+
+.info-card__email:hover {
+  text-decoration: underline;
+}
+
+/* Social Section */
+.findus-page__social {
+  background: var(--peach);
+  padding: 60px 40px;
+  text-align: center;
+}
+
+.findus-page__social-title {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 6vw, 56px);
+  font-weight: 700;
+  color: var(--black);
+  margin: 0 0 16px 0;
+  text-transform: uppercase;
+}
+
+.findus-page__social-text {
+  font-family: var(--font-body);
+  font-size: 18px;
+  color: var(--black);
+  margin: 0 0 32px 0;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.findus-page__social-links {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.findus-page__social-btn {
+  display: inline-block;
+  padding: 14px 32px;
+  background: var(--white);
+  color: var(--black);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 100px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.findus-page__social-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Map Section */
+.findus-page__map {
+  background: var(--gray-light);
+}
+
+.findus-page__map iframe {
+  display: block;
+}
+
+/* CTA Section */
+.findus-page__cta {
+  background: var(--dark-bg);
+  color: var(--cream);
+  padding: 80px 40px;
+  text-align: center;
+}
+
+.findus-page__cta-title {
+  font-family: var(--font-display);
+  font-size: clamp(32px, 6vw, 56px);
+  font-weight: 700;
+  margin: 0 0 16px 0;
+  text-transform: uppercase;
+}
+
+.findus-page__cta-text {
+  font-family: var(--font-body);
+  font-size: 18px;
+  margin: 0 0 32px 0;
+  opacity: 0.9;
+  line-height: 1.6;
+}
+
+.findus-page__cta-btn {
+  display: inline-block;
+  padding: 14px 32px;
+  background: var(--cta-yellow);
+  color: var(--black);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: 100px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.findus-page__cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .findus-page__hero {
+    padding: 120px 20px 60px;
+  }
+
+  .findus-page__cards {
+    padding: 40px 20px;
+  }
+
+  .findus-page__cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .findus-page__social {
+    padding: 40px 20px;
+  }
+
+  .findus-page__cta {
+    padding: 60px 20px;
+  }
+}

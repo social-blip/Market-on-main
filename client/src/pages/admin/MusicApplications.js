@@ -2,108 +2,107 @@ import React, { useState, useEffect } from 'react';
 import api from '../../api/client';
 
 const AdminMusicApplications = () => {
-  const [applications, setApplications] = useState([]);
+  const [musicians, setMusicians] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState('all');
-  const [selectedApp, setSelectedApp] = useState(null);
-  const [updating, setUpdating] = useState(false);
+  const [selectedMusician, setSelectedMusician] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [adding, setAdding] = useState(false);
+
+  // Editable fields for detail panel
+  const [editName, setEditName] = useState('');
+  const [editEmail, setEditEmail] = useState('');
+  const [editPhone, setEditPhone] = useState('');
+  const [editWebsite, setEditWebsite] = useState('');
+  const [editBio, setEditBio] = useState('');
 
   useEffect(() => {
-    fetchApplications();
+    fetchMusicians();
   }, []);
 
-  const fetchApplications = async () => {
+  useEffect(() => {
+    if (selectedMusician) {
+      setEditName(selectedMusician.name || '');
+      setEditEmail(selectedMusician.email || '');
+      setEditPhone(selectedMusician.phone || '');
+      setEditWebsite(selectedMusician.website || '');
+      setEditBio(selectedMusician.bio || '');
+    }
+  }, [selectedMusician?.id]);
+
+  const fetchMusicians = async () => {
     try {
       const response = await api.get('/music-applications');
-      setApplications(response.data);
+      setMusicians(response.data);
     } catch (err) {
-      console.error('Error fetching music applications:', err);
+      console.error('Error fetching musicians:', err);
     } finally {
       setLoading(false);
     }
   };
 
-  const updateStatus = async (id, status) => {
-    setUpdating(true);
+  const addMusician = async () => {
+    if (!newName.trim()) return;
+    setAdding(true);
     try {
-      await api.put(`/music-applications/${id}`, { status });
-      setApplications(prev =>
-        prev.map(app => app.id === id ? { ...app, status } : app)
-      );
-      if (selectedApp?.id === id) {
-        setSelectedApp(prev => ({ ...prev, status }));
-      }
+      const response = await api.post('/music-applications', { name: newName.trim() });
+      setMusicians(prev => [response.data, ...prev]);
+      setNewName('');
+      setShowAddForm(false);
     } catch (err) {
-      console.error('Error updating status:', err);
+      console.error('Error adding musician:', err);
     } finally {
-      setUpdating(false);
+      setAdding(false);
     }
   };
 
-  const deleteApplication = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this application?')) return;
+  const saveMusician = async () => {
+    if (!selectedMusician) return;
+    setSaving(true);
+    try {
+      const response = await api.put(`/music-applications/${selectedMusician.id}`, {
+        name: editName,
+        email: editEmail || null,
+        phone: editPhone || null,
+        website: editWebsite || null,
+        bio: editBio || null
+      });
+      setMusicians(prev =>
+        prev.map(m => m.id === selectedMusician.id ? response.data : m)
+      );
+      setSelectedMusician(response.data);
+    } catch (err) {
+      console.error('Error saving musician:', err);
+    } finally {
+      setSaving(false);
+    }
+  };
 
+  const deleteMusician = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this musician?')) return;
     try {
       await api.delete(`/music-applications/${id}`);
-      setApplications(prev => prev.filter(app => app.id !== id));
-      if (selectedApp?.id === id) {
-        setSelectedApp(null);
+      setMusicians(prev => prev.filter(m => m.id !== id));
+      if (selectedMusician?.id === id) {
+        setSelectedMusician(null);
       }
     } catch (err) {
-      console.error('Error deleting application:', err);
+      console.error('Error deleting musician:', err);
     }
   };
 
-  const filteredApps = applications.filter(app => {
-    if (filter === 'all') return true;
-    return app.status === filter;
-  });
-
-  const pendingCount = applications.filter(a => a.status === 'pending').length;
-  const contactedCount = applications.filter(a => a.status === 'contacted').length;
-  const bookedCount = applications.filter(a => a.status === 'booked').length;
-  const declinedCount = applications.filter(a => a.status === 'declined').length;
-
-  const parseSocialHandles = (handles) => {
-    if (!handles) return {};
-    if (typeof handles === 'string') {
-      try {
-        return JSON.parse(handles);
-      } catch {
-        return {};
-      }
-    }
-    return handles;
-  };
-
-  const formatDate = (dateStr) => {
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit'
-    });
-  };
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'pending': return { bg: '#FFD700', color: '#000', border: '#000' };
-      case 'contacted': return { bg: '#e3f2fd', color: '#1976d2', border: '#1976d2' };
-      case 'booked': return { bg: '#d4edda', color: '#28a745', border: '#28a745' };
-      case 'declined': return { bg: '#f8d7da', color: '#E30613', border: '#E30613' };
-      default: return { bg: '#eee', color: '#666', border: '#666' };
-    }
-  };
+  const hasChanges = selectedMusician && (
+    editName !== (selectedMusician.name || '') ||
+    editEmail !== (selectedMusician.email || '') ||
+    editPhone !== (selectedMusician.phone || '') ||
+    editWebsite !== (selectedMusician.website || '') ||
+    editBio !== (selectedMusician.bio || '')
+  );
 
   if (loading) {
     return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '50vh'
-      }}>
+      <div className="text-center mt-4">
         <span className="spinner"></span>
       </div>
     );
@@ -111,390 +110,171 @@ const AdminMusicApplications = () => {
 
   return (
     <div>
-      {/* Header */}
-      <div style={{ marginBottom: '32px' }}>
-        <h1 style={{
-          fontFamily: "'Bricolage Grotesque', sans-serif",
-          fontWeight: 800,
-          fontSize: 'clamp(32px, 5vw, 48px)',
-          color: '#000',
-          margin: '0 0 8px 0',
-          textTransform: 'uppercase'
-        }}>
-          Music Applications
-        </h1>
-        <p style={{
-          fontFamily: "'Sora', sans-serif",
-          fontSize: '18px',
-          color: '#666',
-          margin: 0
-        }}>
-          {applications.length} total applications
-        </p>
+      <div className="flex-between mb-1">
+        <h1 style={{ margin: 0 }}>Musicians</h1>
+        <button onClick={() => setShowAddForm(true)} className="btn btn-primary" style={{ fontSize: '13px' }}>
+          + Add Musician
+        </button>
       </div>
+      <p style={{ color: 'var(--gray-dark)', marginBottom: '24px' }}>{musicians.length} musicians</p>
 
-      {/* Filters */}
-      <div style={{
-        background: '#fff',
-        border: '4px solid #000',
-        padding: '20px',
-        marginBottom: '24px'
-      }}>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          {[
-            { key: 'all', label: 'All', count: applications.length },
-            { key: 'pending', label: 'Pending', count: pendingCount },
-            { key: 'contacted', label: 'Contacted', count: contactedCount },
-            { key: 'booked', label: 'Booked', count: bookedCount },
-            { key: 'declined', label: 'Declined', count: declinedCount }
-          ].map(({ key, label, count }) => (
-            <button
-              key={key}
-              onClick={() => setFilter(key)}
+      {/* Add Musician Form */}
+      {showAddForm && (
+        <div className="card mb-3">
+          <h4 style={{ marginBottom: '12px' }}>Add Musician</h4>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <input
+              type="text"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              placeholder="Musician / band name"
+              onKeyDown={(e) => e.key === 'Enter' && addMusician()}
               style={{
-                fontFamily: "'Bricolage Grotesque', sans-serif",
-                fontWeight: 700,
-                fontSize: '13px',
-                padding: '10px 16px',
-                background: filter === key ? '#FFD700' : '#fff',
-                color: '#000',
-                border: filter === key ? '3px solid #000' : '2px solid #000',
-                cursor: 'pointer',
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px'
+                flex: 1,
+                padding: '8px 12px',
+                border: '1px solid var(--border)',
+                borderRadius: '6px',
+                fontSize: '14px'
               }}
-            >
-              {label} ({count})
+              autoFocus
+            />
+            <button onClick={addMusician} disabled={adding || !newName.trim()} className="btn btn-primary" style={{ fontSize: '13px' }}>
+              {adding ? 'Adding...' : 'Add'}
             </button>
-          ))}
+            <button onClick={() => { setShowAddForm(false); setNewName(''); }} className="btn btn-secondary" style={{ fontSize: '13px' }}>
+              Cancel
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       <div style={{ display: 'flex', gap: '24px' }}>
-        {/* Applications List */}
-        <div style={{ flex: selectedApp ? '0 0 400px' : '1' }}>
-          <div style={{
-            background: '#fff',
-            border: '4px solid #000'
-          }}>
-            {filteredApps.length === 0 ? (
-              <div style={{
-                padding: '40px',
-                textAlign: 'center',
-                fontFamily: "'Sora', sans-serif",
-                color: '#666'
-              }}>
-                No applications found.
+        {/* Musicians List */}
+        <div style={{ flex: selectedMusician ? '0 0 400px' : '1' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {musicians.length === 0 ? (
+              <div className="card text-center" style={{ padding: '40px', color: 'var(--gray)' }}>
+                No musicians yet. Click "Add Musician" to get started.
               </div>
             ) : (
-              filteredApps.map((app, index) => {
-                const statusStyle = getStatusColor(app.status);
-                return (
-                  <div
-                    key={app.id}
-                    onClick={() => setSelectedApp(app)}
-                    style={{
-                      padding: '16px 20px',
-                      borderBottom: index < filteredApps.length - 1 ? '2px solid #eee' : 'none',
-                      cursor: 'pointer',
-                      background: selectedApp?.id === app.id ? '#f5f5f5' : app.status === 'pending' ? '#fff9e6' : '#fff'
-                    }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <div>
-                        <div style={{
-                          fontFamily: "'Bricolage Grotesque', sans-serif",
-                          fontWeight: 700,
-                          fontSize: '16px',
-                          color: '#000'
-                        }}>
-                          {app.name}
-                        </div>
-                        <div style={{
-                          fontFamily: "'Sora', sans-serif",
-                          fontSize: '13px',
-                          color: '#666'
-                        }}>
-                          {app.email}
-                        </div>
-                        <div style={{
-                          fontFamily: "'Sora', sans-serif",
-                          fontSize: '12px',
-                          color: '#999',
-                          marginTop: '4px'
-                        }}>
-                          {formatDate(app.created_at)}
-                        </div>
-                      </div>
-                      <span style={{
-                        fontFamily: "'Sora', sans-serif",
-                        fontWeight: 700,
-                        fontSize: '10px',
-                        padding: '4px 8px',
-                        background: statusStyle.bg,
-                        color: statusStyle.color,
-                        border: `2px solid ${statusStyle.border}`,
-                        textTransform: 'uppercase'
-                      }}>
-                        {app.status}
-                      </span>
+              musicians.map(m => (
+                <div
+                  key={m.id}
+                  onClick={() => setSelectedMusician(m)}
+                  className="card"
+                  style={{
+                    cursor: 'pointer',
+                    borderColor: selectedMusician?.id === m.id ? 'var(--maroon)' : undefined,
+                    background: '#fff'
+                  }}
+                >
+                  <div className="flex-between">
+                    <div>
+                      <div style={{ fontWeight: 600 }}>{m.name}</div>
+                      {m.email && <div style={{ fontSize: '12px', color: 'var(--gray)' }}>{m.email}</div>}
                     </div>
                   </div>
-                );
-              })
+                </div>
+              ))
             )}
           </div>
         </div>
 
         {/* Detail Panel */}
-        {selectedApp && (
+        {selectedMusician && (
           <div style={{ flex: 1 }}>
-            <div style={{
-              background: '#fff',
-              border: '4px solid #000',
-              padding: '24px'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
-                <div>
-                  <h2 style={{
-                    fontFamily: "'Bricolage Grotesque', sans-serif",
-                    fontWeight: 800,
-                    fontSize: '24px',
-                    margin: '0 0 4px 0'
-                  }}>
-                    {selectedApp.name}
-                  </h2>
-                  <div style={{
-                    fontFamily: "'Sora', sans-serif",
-                    fontSize: '14px',
-                    color: '#666'
-                  }}>
-                    Applied {formatDate(selectedApp.created_at)}
-                  </div>
-                </div>
-                <button
-                  onClick={() => setSelectedApp(null)}
+            <div className="card">
+              <div className="flex-between mb-3">
+                <h2 style={{ margin: 0 }}>{selectedMusician.name}</h2>
+                <button onClick={() => setSelectedMusician(null)} className="btn btn-secondary" style={{ padding: '4px 12px' }}>×</button>
+              </div>
+
+              {/* Name */}
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--gray-dark)', marginBottom: '4px' }}>Name</label>
+                <input
+                  type="text"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  style={{ width: '100%', padding: '8px 10px', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '14px' }}
+                />
+              </div>
+
+              {/* Email */}
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--gray-dark)', marginBottom: '4px' }}>Email</label>
+                <input
+                  type="email"
+                  value={editEmail}
+                  onChange={(e) => setEditEmail(e.target.value)}
+                  placeholder="Optional"
+                  style={{ width: '100%', padding: '8px 10px', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '14px' }}
+                />
+              </div>
+
+              {/* Phone */}
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--gray-dark)', marginBottom: '4px' }}>Phone</label>
+                <input
+                  type="tel"
+                  value={editPhone}
+                  onChange={(e) => setEditPhone(e.target.value)}
+                  placeholder="Optional"
+                  style={{ width: '100%', padding: '8px 10px', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '14px' }}
+                />
+              </div>
+
+              {/* Website */}
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--gray-dark)', marginBottom: '4px' }}>Website</label>
+                <input
+                  type="url"
+                  value={editWebsite}
+                  onChange={(e) => setEditWebsite(e.target.value)}
+                  placeholder="https://..."
+                  style={{ width: '100%', padding: '8px 10px', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '14px' }}
+                />
+              </div>
+
+              {/* Bio */}
+              <div style={{ marginBottom: '20px' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--gray-dark)', marginBottom: '4px' }}>Bio</label>
+                <textarea
+                  value={editBio}
+                  onChange={(e) => setEditBio(e.target.value)}
+                  placeholder="Write a short bio for this musician..."
                   style={{
-                    background: 'none',
-                    border: 'none',
-                    fontSize: '24px',
-                    cursor: 'pointer',
-                    color: '#666'
+                    width: '100%',
+                    minHeight: '100px',
+                    padding: '10px',
+                    border: '1px solid var(--border)',
+                    borderRadius: '6px',
+                    fontFamily: 'inherit',
+                    fontSize: '14px',
+                    resize: 'vertical'
                   }}
+                />
+              </div>
+
+              {/* Save */}
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+                <button
+                  onClick={saveMusician}
+                  disabled={saving || !hasChanges}
+                  className="btn btn-primary"
+                  style={{ fontSize: '13px', opacity: saving || !hasChanges ? 0.5 : 1 }}
                 >
-                  ×
+                  {saving ? 'Saving...' : 'Save Changes'}
                 </button>
-              </div>
-
-              {/* Contact Info */}
-              <div style={{ marginBottom: '24px' }}>
-                <h3 style={{
-                  fontFamily: "'Bricolage Grotesque', sans-serif",
-                  fontWeight: 700,
-                  fontSize: '14px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px',
-                  margin: '0 0 12px 0',
-                  color: '#666'
-                }}>
-                  Contact Info
-                </h3>
-                <div style={{ display: 'grid', gap: '8px' }}>
-                  <div style={{ fontFamily: "'Sora', sans-serif", fontSize: '14px' }}>
-                    <strong>Email:</strong>{' '}
-                    <a href={`mailto:${selectedApp.email}`} style={{ color: '#0056b3' }}>
-                      {selectedApp.email}
-                    </a>
-                  </div>
-                  <div style={{ fontFamily: "'Sora', sans-serif", fontSize: '14px' }}>
-                    <strong>Phone:</strong>{' '}
-                    <a href={`tel:${selectedApp.phone}`} style={{ color: '#0056b3' }}>
-                      {selectedApp.phone}
-                    </a>
-                  </div>
-                </div>
-              </div>
-
-              {/* Social Links */}
-              {(() => {
-                const socials = parseSocialHandles(selectedApp.social_handles);
-                const hasSocials = socials.facebook || socials.instagram || socials.x || socials.youtube;
-                if (!hasSocials) return null;
-
-                return (
-                  <div style={{ marginBottom: '24px' }}>
-                    <h3 style={{
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
-                      fontWeight: 700,
-                      fontSize: '14px',
-                      textTransform: 'uppercase',
-                      letterSpacing: '1px',
-                      margin: '0 0 12px 0',
-                      color: '#666'
-                    }}>
-                      Social Links
-                    </h3>
-                    <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
-                      {socials.facebook && (
-                        <a
-                          href={socials.facebook.startsWith('http') ? socials.facebook : `https://facebook.com/${socials.facebook.replace('@', '')}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            fontFamily: "'Sora', sans-serif",
-                            fontSize: '13px',
-                            padding: '6px 12px',
-                            background: '#f5f5f5',
-                            border: '2px solid #000',
-                            color: '#000',
-                            textDecoration: 'none'
-                          }}
-                        >
-                          Facebook
-                        </a>
-                      )}
-                      {socials.instagram && (
-                        <a
-                          href={`https://instagram.com/${socials.instagram.replace('@', '')}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            fontFamily: "'Sora', sans-serif",
-                            fontSize: '13px',
-                            padding: '6px 12px',
-                            background: '#f5f5f5',
-                            border: '2px solid #000',
-                            color: '#000',
-                            textDecoration: 'none'
-                          }}
-                        >
-                          Instagram
-                        </a>
-                      )}
-                      {socials.x && (
-                        <a
-                          href={`https://x.com/${socials.x.replace('@', '')}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            fontFamily: "'Sora', sans-serif",
-                            fontSize: '13px',
-                            padding: '6px 12px',
-                            background: '#f5f5f5',
-                            border: '2px solid #000',
-                            color: '#000',
-                            textDecoration: 'none'
-                          }}
-                        >
-                          X/Twitter
-                        </a>
-                      )}
-                      {socials.youtube && (
-                        <a
-                          href={socials.youtube.startsWith('http') ? socials.youtube : `https://youtube.com/${socials.youtube}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            fontFamily: "'Sora', sans-serif",
-                            fontSize: '13px',
-                            padding: '6px 12px',
-                            background: '#f5f5f5',
-                            border: '2px solid #000',
-                            color: '#000',
-                            textDecoration: 'none'
-                          }}
-                        >
-                          YouTube
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                );
-              })()}
-
-              {/* Message */}
-              {selectedApp.message && (
-                <div style={{ marginBottom: '24px' }}>
-                  <h3 style={{
-                    fontFamily: "'Bricolage Grotesque', sans-serif",
-                    fontWeight: 700,
-                    fontSize: '14px',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px',
-                    margin: '0 0 12px 0',
-                    color: '#666'
-                  }}>
-                    Message
-                  </h3>
-                  <div style={{
-                    fontFamily: "'Sora', sans-serif",
-                    fontSize: '14px',
-                    background: '#f5f5f5',
-                    padding: '16px',
-                    border: '2px solid #ddd',
-                    whiteSpace: 'pre-wrap'
-                  }}>
-                    {selectedApp.message}
-                  </div>
-                </div>
-              )}
-
-              {/* Status Actions */}
-              <div style={{ marginBottom: '24px' }}>
-                <h3 style={{
-                  fontFamily: "'Bricolage Grotesque', sans-serif",
-                  fontWeight: 700,
-                  fontSize: '14px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px',
-                  margin: '0 0 12px 0',
-                  color: '#666'
-                }}>
-                  Update Status
-                </h3>
-                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                  {['pending', 'contacted', 'booked', 'declined'].map(status => {
-                    const style = getStatusColor(status);
-                    const isActive = selectedApp.status === status;
-                    return (
-                      <button
-                        key={status}
-                        onClick={() => updateStatus(selectedApp.id, status)}
-                        disabled={updating || isActive}
-                        style={{
-                          fontFamily: "'Sora', sans-serif",
-                          fontWeight: 700,
-                          fontSize: '12px',
-                          padding: '8px 16px',
-                          background: isActive ? style.bg : '#fff',
-                          color: isActive ? style.color : '#000',
-                          border: `2px solid ${isActive ? style.border : '#000'}`,
-                          cursor: isActive ? 'default' : 'pointer',
-                          textTransform: 'uppercase',
-                          opacity: updating ? 0.5 : 1
-                        }}
-                      >
-                        {status}
-                      </button>
-                    );
-                  })}
-                </div>
               </div>
 
               {/* Delete */}
               <button
-                onClick={() => deleteApplication(selectedApp.id)}
-                style={{
-                  fontFamily: "'Sora', sans-serif",
-                  fontSize: '13px',
-                  padding: '8px 16px',
-                  background: '#fff',
-                  color: '#E30613',
-                  border: '2px solid #E30613',
-                  cursor: 'pointer'
-                }}
+                onClick={() => deleteMusician(selectedMusician.id)}
+                className="btn btn-danger"
+                style={{ fontSize: '12px', padding: '6px 12px' }}
               >
-                Delete Application
+                Delete Musician
               </button>
             </div>
           </div>

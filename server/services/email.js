@@ -108,6 +108,7 @@ const sendApplicationConfirmation = async (vendor) => {
     const result = await resend.emails.send({
       from: EMAIL_FROM,
       to: vendor.email,
+      cc: 'info@tfmarketonmain.com',
       subject: 'Application Received - Market on Main 2026',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -117,7 +118,7 @@ const sendApplicationConfirmation = async (vendor) => {
 
           <p>Thank you for applying to be a vendor at Market on Main 2026! We've received your application for <strong>${vendor.business_name}</strong>.</p>
 
-          <div style="background-color: #FFF3CD; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #FFD700;">
+          <div style="background-color: #FFF3CD; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <h3 style="margin-top: 0; color: #856404;">What's Next?</h3>
             <p style="margin-bottom: 0;">Our team will review your application and get back to you by <strong>April 2026</strong> with your approved schedule and vendor portal access.</p>
           </div>
@@ -355,7 +356,7 @@ const sendMusicApplicationConfirmation = async (application) => {
 
           <p>Thank you for your interest in performing at Market on Main 2026! We've received your application and are excited to review it.</p>
 
-          <div style="background-color: #FFF3CD; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #FFD700;">
+          <div style="background-color: #FFF3CD; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <h3 style="margin-top: 0; color: #856404;">What's Next?</h3>
             <p style="margin-bottom: 0;">Our team will review your application and reach out if we'd like to book you for one of our market dates. We typically finalize our music lineup by <strong>May 2026</strong>.</p>
           </div>
@@ -390,11 +391,60 @@ const sendMusicApplicationConfirmation = async (application) => {
   }
 };
 
+// Send contact form acknowledgment to user with CC to admin
+const sendContactFormNotification = async (data) => {
+  if (!isEmailConfigured()) {
+    console.log('[DEV] Would send contact form notification for:', data.email);
+    return true;
+  }
+
+  try {
+    await resend.emails.send({
+      from: EMAIL_FROM,
+      to: data.email,
+      cc: 'info@tfmarketonmain.com',
+      subject: `We Got Your Message - Market on Main`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h1 style="color: #333;">Thanks for Reaching Out!</h1>
+
+          <p>Hi ${data.name},</p>
+
+          <p>We've received your message and will get back to you as soon as possible.</p>
+
+          <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="margin-top: 0;">Your Message</h3>
+            <p><strong>Topic:</strong> ${data.reason}</p>
+            <p><strong>Phone:</strong> ${data.phone}</p>
+            <p style="white-space: pre-wrap;"><strong>Question:</strong><br>${data.question}</p>
+          </div>
+
+          <p>In the meantime, feel free to explore <a href="https://tfmarketonmain.com">our website</a> or stop by the market any Saturday!</p>
+
+          <p>See you soon,</p>
+          <p><strong>MoM Crew</strong></p>
+
+          <hr style="margin-top: 30px; border: none; border-top: 1px solid #eee;">
+          <p style="color: #999; font-size: 12px;">
+            Market on Main • Downtown Twin Falls • Every Saturday, June - August
+          </p>
+        </div>
+      `
+    });
+    console.log('Contact form acknowledgment sent to:', data.email);
+    return true;
+  } catch (err) {
+    console.error('Failed to send contact form notification:', err);
+    return false;
+  }
+};
+
 module.exports = {
   sendWelcomeEmail,
   sendPaymentConfirmation,
   sendAnnouncementEmail,
   sendMarketReminder,
   sendApplicationConfirmation,
-  sendMusicApplicationConfirmation
+  sendMusicApplicationConfirmation,
+  sendContactFormNotification
 };

@@ -35,12 +35,7 @@ const VendorSchedule = () => {
 
   if (loading) {
     return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '50vh'
-      }}>
+      <div className="vendor-loading">
         <span className="spinner"></span>
       </div>
     );
@@ -49,40 +44,16 @@ const VendorSchedule = () => {
   return (
     <div>
       {/* Header */}
-      <div style={{ marginBottom: '40px' }}>
-        <h1 style={{
-          fontFamily: "'Bricolage Grotesque', sans-serif",
-          fontWeight: 800,
-          fontSize: 'clamp(28px, 4vw, 40px)',
-          color: '#000',
-          margin: '0 0 8px 0',
-          textTransform: 'uppercase'
-        }}>
-          My Schedule
-        </h1>
-        <p style={{
-          fontFamily: "'Sora', sans-serif",
-          fontSize: '18px',
-          color: '#666',
-          margin: 0
-        }}>
+      <div className="vendor-page__header">
+        <h1 className="vendor-page__title">My Schedule</h1>
+        <p className="vendor-page__subtitle">
           Your confirmed market dates for 2026
         </p>
       </div>
 
       {bookings.length === 0 ? (
-        <div style={{
-          background: '#fff',
-          border: '4px solid #000',
-          padding: '40px',
-          textAlign: 'center'
-        }}>
-          <p style={{
-            fontFamily: "'Sora', sans-serif",
-            color: '#666',
-            margin: 0,
-            fontSize: '18px'
-          }}>
+        <div className="vendor-card" style={{ textAlign: 'center', padding: '40px' }}>
+          <p className="vendor-card__empty" style={{ fontSize: '18px' }}>
             No market dates scheduled yet.
           </p>
         </div>
@@ -91,75 +62,60 @@ const VendorSchedule = () => {
           {Object.entries(groupedByMonth).map(([month, monthBookings]) => (
             <div key={month}>
               {/* Month Header */}
-              <h2 style={{
-                fontFamily: "'Bricolage Grotesque', sans-serif",
-                fontWeight: 800,
-                fontSize: '24px',
-                color: '#000',
-                margin: '0 0 16px 0',
-                textTransform: 'uppercase'
-              }}>
+              <h2 className="vendor-card__title" style={{ marginBottom: '16px', fontSize: '24px' }}>
                 {month}
               </h2>
 
               {/* Date Boxes */}
               <div style={{
                 display: 'flex',
-                flexWrap: 'wrap',
-                gap: '12px'
+                gap: '10px'
               }}>
                 {monthBookings.map(booking => {
                   const date = new Date(booking.date);
                   const day = date.getDate();
                   const upcoming = isUpcoming(booking.date);
 
-                  // Determine background color based on status
-                  let bgColor = '#fff';
-                  let textColor = '#000';
+                  let statusClass = 'vendor-badge--neutral';
                   let statusLabel = booking.status;
 
                   if (booking.is_cancelled) {
-                    bgColor = '#E30613';
-                    textColor = '#fff';
+                    statusClass = 'vendor-badge--danger';
                     statusLabel = 'Cancelled';
                   } else if (booking.status === 'confirmed') {
-                    bgColor = '#FFD700';
+                    statusClass = 'vendor-badge--success';
                   } else if (booking.status === 'pending' || booking.status === 'requested') {
-                    bgColor = '#fff';
+                    statusClass = 'vendor-badge--warning';
                   }
 
                   return (
                     <div
                       key={booking.id}
                       style={{
-                        background: bgColor,
-                        border: '4px solid #000',
-                        padding: '16px 20px',
+                        padding: '10px 16px',
                         textAlign: 'center',
-                        minWidth: '80px',
-                        opacity: upcoming ? 1 : 0.5
+                        opacity: upcoming ? 1 : 0.5,
+                        flex: 1,
+                        background: 'var(--white)',
+                        borderRadius: '12px',
+                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)'
                       }}
                     >
                       <div style={{
-                        fontFamily: "'Bricolage Grotesque', sans-serif",
-                        fontWeight: 800,
-                        fontSize: '32px',
-                        color: textColor,
+                        fontFamily: 'var(--font-display)',
+                        fontWeight: 700,
+                        fontSize: '18px',
+                        color: 'var(--black)',
                         lineHeight: 1
                       }}>
                         {day}
                       </div>
-                      <div style={{
-                        fontFamily: "'Sora', sans-serif",
-                        fontWeight: 700,
-                        fontSize: '10px',
-                        color: textColor,
-                        textTransform: 'uppercase',
-                        marginTop: '8px',
-                        letterSpacing: '0.5px'
-                      }}>
+                      <span
+                        className={`vendor-badge ${statusClass}`}
+                        style={{ marginTop: '6px', display: 'inline-block', fontSize: '9px', padding: '3px 6px' }}
+                      >
                         {statusLabel}
-                      </div>
+                      </span>
                     </div>
                   );
                 })}

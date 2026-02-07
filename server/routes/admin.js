@@ -138,15 +138,22 @@ router.post('/vendors/:id/approve', verifyToken, isAdmin, async (req, res) => {
     }
     const vendor = vendorResult.rows[0];
 
+    // Set hero image to first uploaded image if available
+    let heroImage = vendor.image_url;
+    if (!heroImage && vendor.images && vendor.images.length > 0) {
+      heroImage = vendor.images[0];
+    }
+
     // Update vendor status
     await db.query(
       `UPDATE vendors
        SET is_active = true,
            is_approved = true,
            application_status = 'approved',
+           image_url = COALESCE($2, image_url),
            updated_at = CURRENT_TIMESTAMP
        WHERE id = $1`,
-      [req.params.id]
+      [req.params.id, heroImage]
     );
 
     // Create invoice for the total amount
@@ -161,12 +168,13 @@ router.post('/vendors/:id/approve', verifyToken, isAdmin, async (req, res) => {
       ]
     );
 
-    // Create bookings for requested dates
-    if (vendor.requested_dates) {
+    // Create bookings for requested dates (allow override from request body)
+    const datesToBook = req.body.requested_dates || vendor.requested_dates;
+    if (datesToBook) {
       try {
-        const requestedDates = typeof vendor.requested_dates === 'string'
-          ? JSON.parse(vendor.requested_dates)
-          : vendor.requested_dates;
+        const requestedDates = typeof datesToBook === 'string'
+          ? JSON.parse(datesToBook)
+          : datesToBook;
 
         if (Array.isArray(requestedDates)) {
           for (const dateStr of requestedDates) {
@@ -202,6 +210,17 @@ router.post('/vendors/:id/approve', verifyToken, isAdmin, async (req, res) => {
     });
   } catch (err) {
     console.error('Error approving vendor:', err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Remove all bookings for a vendor
+router.delete('/vendors/:id/bookings', verifyToken, isAdmin, async (req, res) => {
+  try {
+    await db.query('DELETE FROM vendor_bookings WHERE vendor_id = $1', [req.params.id]);
+    res.json({ message: 'All bookings removed' });
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -259,6 +278,25 @@ router.delete('/bookings/:id', verifyToken, isAdmin, async (req, res) => {
     }
 
     res.json({ message: 'Booking removed successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Delete payment/invoice
+router.delete('/payments/:id', verifyToken, isAdmin, async (req, res) => {
+  try {
+    const result = await db.query(
+      'DELETE FROM payments WHERE id = $1 RETURNING *',
+      [req.params.id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Payment not found' });
+    }
+
+    res.json({ message: 'Payment deleted successfully' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });

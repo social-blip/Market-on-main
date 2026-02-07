@@ -172,15 +172,40 @@ const VendorApplication = () => {
 
   if (submitted) {
     return (
-      <div className="brutal-section" style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#fff' }}>
-        <div style={{ textAlign: 'center', maxWidth: '600px', padding: '40px' }}>
-          <h1 className="brutal-section-heading brutal-section-heading-red" style={{ fontSize: '48px', marginBottom: '20px' }}>
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'var(--cream)',
+        padding: '40px 20px'
+      }}>
+        <div style={{ textAlign: 'center', maxWidth: '600px' }}>
+          <h1 style={{
+            fontFamily: 'var(--font-display)',
+            fontWeight: 700,
+            fontSize: 'clamp(36px, 8vw, 56px)',
+            color: 'var(--maroon)',
+            margin: '0 0 24px 0',
+            textTransform: 'uppercase'
+          }}>
             Application Submitted!
           </h1>
-          <p style={{ fontFamily: "'Sora', sans-serif", fontSize: '18px', marginBottom: '30px' }}>
+          <p style={{
+            fontFamily: 'var(--font-body)',
+            fontSize: '18px',
+            lineHeight: 1.7,
+            color: 'var(--dark)',
+            marginBottom: '24px'
+          }}>
             Thank you for applying to Market on Main! Your application is now under review.
           </p>
-          <p style={{ fontFamily: "'Sora', sans-serif", fontSize: '16px', color: '#666' }}>
+          <p style={{
+            fontFamily: 'var(--font-body)',
+            fontSize: '16px',
+            lineHeight: 1.7,
+            color: 'var(--gray-dark)'
+          }}>
             Once approved, you'll receive an email with your vendor portal login. Your invoice will be available in the portal for payment.
           </p>
         </div>
@@ -189,40 +214,72 @@ const VendorApplication = () => {
   }
 
   return (
-    <div>
-      {/* Header */}
-      <section className="brutal-section brutal-section-blue" style={{ paddingBottom: '40px' }}>
-        <h1 className="brutal-section-heading brutal-section-heading-white" style={{ fontSize: 'clamp(36px, 6vw, 72px)' }}>
-          Become a Vendor
+    <div style={{ background: 'var(--cream)', minHeight: '100vh' }}>
+      {/* Hero Section */}
+      <section style={{
+        padding: '140px 20px 60px',
+        textAlign: 'center',
+        background: 'var(--maroon)'
+      }}>
+        <h1 style={{
+          fontFamily: 'var(--font-display)',
+          fontWeight: 700,
+          fontSize: 'clamp(48px, 10vw, 100px)',
+          color: 'var(--cream)',
+          margin: '0 0 24px 0',
+          textTransform: 'uppercase',
+          lineHeight: 1
+        }}>
+          Vendor Application
         </h1>
-        <p style={{ textAlign: 'center', color: '#fff', fontFamily: "'Sora', sans-serif", fontSize: '18px', maxWidth: '600px', margin: '0 auto' }}>
+        <p style={{
+          fontFamily: 'var(--font-body)',
+          fontSize: '18px',
+          lineHeight: '1.7',
+          color: 'var(--cream)',
+          maxWidth: '600px',
+          margin: '0 auto',
+          opacity: 0.95
+        }}>
           Join Twin Falls' favorite Saturday tradition. Apply now for the 2026 season!
         </p>
       </section>
 
-      <div className="brutal-line"></div>
-
       {/* Progress Steps */}
-      <div ref={formRef} style={{ background: '#fff', padding: '20px', borderBottom: '4px solid #000' }}>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '40px', maxWidth: '400px', margin: '0 auto' }}>
+      <div
+        ref={formRef}
+        style={{
+          background: 'white',
+          padding: '24px 20px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
+        }}
+      >
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '60px', maxWidth: '400px', margin: '0 auto' }}>
           {[1, 2, 3].map(s => (
             <div key={s} style={{ textAlign: 'center' }}>
               <div style={{
-                width: '40px',
-                height: '40px',
+                width: '44px',
+                height: '44px',
                 borderRadius: '50%',
-                background: step >= s ? '#FFD700' : '#eee',
-                border: '3px solid #000',
+                background: step >= s ? 'var(--yellow)' : 'var(--gray-light)',
+                border: step >= s ? '3px solid var(--maroon)' : '3px solid var(--gray-medium)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontFamily: "'Bricolage Grotesque', sans-serif",
-                fontWeight: 800,
+                fontFamily: 'var(--font-display)',
+                fontWeight: 700,
+                fontSize: '18px',
+                color: step >= s ? 'var(--dark)' : 'var(--gray-medium)',
                 margin: '0 auto 8px'
               }}>
                 {s}
               </div>
-              <div style={{ fontFamily: "'Sora', sans-serif", fontSize: '12px', fontWeight: step === s ? 700 : 400 }}>
+              <div style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '13px',
+                fontWeight: step === s ? 700 : 500,
+                color: step === s ? 'var(--maroon)' : 'var(--gray-dark)'
+              }}>
                 {s === 1 ? 'Info' : s === 2 ? 'Booth' : 'Terms'}
               </div>
             </div>
@@ -231,17 +288,18 @@ const VendorApplication = () => {
       </div>
 
       {/* Form Container */}
-      <section className="brutal-section" style={{ background: '#f5f5f5', paddingTop: '40px', paddingBottom: '60px' }}>
-        <div style={{ maxWidth: '700px', margin: '0 auto', padding: '0 20px' }}>
+      <section style={{ padding: '40px 20px 60px' }}>
+        <div style={{ maxWidth: '700px', margin: '0 auto' }}>
 
           {error && (
             <div style={{
-              background: '#fee',
-              border: '4px solid #E30613',
-              padding: '16px',
+              background: '#fef2f2',
+              border: '1px solid #fecaca',
+              borderRadius: '12px',
+              padding: '16px 20px',
               marginBottom: '24px',
-              fontFamily: "'Sora', sans-serif",
-              color: '#E30613'
+              fontFamily: 'var(--font-body)',
+              color: '#dc2626'
             }}>
               {error}
             </div>
@@ -249,8 +307,20 @@ const VendorApplication = () => {
 
           {/* Step 1: Basic Info */}
           {step === 1 && (
-            <div style={{ background: '#fff', border: '4px solid #000', padding: '32px' }}>
-              <h2 style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 800, fontSize: '24px', marginBottom: '24px', textTransform: 'uppercase' }}>
+            <div style={{
+              background: 'white',
+              borderRadius: '16px',
+              padding: '32px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
+            }}>
+              <h2 style={{
+                fontFamily: 'var(--font-display)',
+                fontWeight: 700,
+                fontSize: '24px',
+                marginBottom: '24px',
+                textTransform: 'uppercase',
+                color: 'var(--dark)'
+              }}>
                 Your Information
               </h2>
 
@@ -301,7 +371,7 @@ const VendorApplication = () => {
                     name="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    placeholder="E.g. +1 300 400 5000"
+                    placeholder="2088675309"
                     style={inputStyle}
                     required
                   />
@@ -318,7 +388,13 @@ const VendorApplication = () => {
                     style={inputStyle}
                     required
                   />
-                  <small style={{ color: '#666', fontFamily: "'Sora', sans-serif", fontSize: '12px' }}>
+                  <small style={{
+                    color: 'var(--gray-dark)',
+                    fontFamily: 'var(--font-body)',
+                    fontSize: '13px',
+                    marginTop: '6px',
+                    display: 'block'
+                  }}>
                     If you don't have one, use www.idonthaveone.com
                   </small>
                 </div>
@@ -331,7 +407,7 @@ const VendorApplication = () => {
                       name="facebook"
                       value={formData.facebook}
                       onChange={handleChange}
-                      placeholder="@username"
+                      placeholder="facebook.com/yourpage"
                       style={inputStyle}
                     />
                   </div>
@@ -342,7 +418,7 @@ const VendorApplication = () => {
                       name="instagram"
                       value={formData.instagram}
                       onChange={handleChange}
-                      placeholder="@username"
+                      placeholder="instagram.com/yourpage"
                       style={inputStyle}
                     />
                   </div>
@@ -353,7 +429,7 @@ const VendorApplication = () => {
                       name="x_handle"
                       value={formData.x_handle}
                       onChange={handleChange}
-                      placeholder="@username"
+                      placeholder="x.com/yourpage"
                       style={inputStyle}
                     />
                   </div>
@@ -368,7 +444,13 @@ const VendorApplication = () => {
                     onChange={handleFileChange}
                     style={{ ...inputStyle, padding: '12px' }}
                   />
-                  <small style={{ color: '#666', fontFamily: "'Sora', sans-serif", fontSize: '12px' }}>
+                  <small style={{
+                    color: 'var(--gray-dark)',
+                    fontFamily: 'var(--font-body)',
+                    fontSize: '13px',
+                    marginTop: '6px',
+                    display: 'block'
+                  }}>
                     Upload up to 5 images (max 10MB each)
                   </small>
                 </div>
@@ -389,8 +471,13 @@ const VendorApplication = () => {
               <button
                 onClick={() => validateStep1() && setStep(2)}
                 disabled={!validateStep1()}
-                className="brutal-btn brutal-btn-yellow"
-                style={{ width: '100%', marginTop: '24px', opacity: validateStep1() ? 1 : 0.5 }}
+                style={{
+                  ...buttonStyle,
+                  width: '100%',
+                  marginTop: '24px',
+                  opacity: validateStep1() ? 1 : 0.5,
+                  cursor: validateStep1() ? 'pointer' : 'not-allowed'
+                }}
               >
                 Continue to Booth Selection
               </button>
@@ -399,8 +486,20 @@ const VendorApplication = () => {
 
           {/* Step 2: Booth Selection */}
           {step === 2 && (
-            <div style={{ background: '#fff', border: '4px solid #000', padding: '32px' }}>
-              <h2 style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 800, fontSize: '24px', marginBottom: '24px', textTransform: 'uppercase' }}>
+            <div style={{
+              background: 'white',
+              borderRadius: '16px',
+              padding: '32px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
+            }}>
+              <h2 style={{
+                fontFamily: 'var(--font-display)',
+                fontWeight: 700,
+                fontSize: '24px',
+                marginBottom: '24px',
+                textTransform: 'uppercase',
+                color: 'var(--dark)'
+              }}>
                 Booth Selection
               </h2>
 
@@ -420,7 +519,7 @@ const VendorApplication = () => {
                       />
                       <div>
                         <strong>Single Booth 10'x10'</strong>
-                        <div style={{ fontSize: '14px', color: '#666' }}>Best for single tent only setups</div>
+                        <div style={{ fontSize: '14px', color: 'var(--gray-dark)' }}>Best for single tent only setups</div>
                       </div>
                     </label>
                     <label style={radioCardStyle(formData.booth_size === 'double')}>
@@ -434,7 +533,7 @@ const VendorApplication = () => {
                       />
                       <div>
                         <strong>Double Booth 20'x10'</strong>
-                        <div style={{ fontSize: '14px', color: '#666' }}>Best for trailers and larger setups</div>
+                        <div style={{ fontSize: '14px', color: 'var(--gray-dark)' }}>Best for trailers and larger setups</div>
                       </div>
                     </label>
                   </div>
@@ -483,7 +582,14 @@ const VendorApplication = () => {
                 {/* Date Selection */}
                 <div>
                   <label style={labelStyle}>Requested Dates *</label>
-                  <small style={{ display: 'block', color: '#666', fontFamily: "'Sora', sans-serif", fontSize: '12px', marginBottom: '12px' }}>
+                  <small style={{
+                    display: 'block',
+                    color: 'var(--gray-dark)',
+                    fontFamily: 'var(--font-body)',
+                    fontSize: '13px',
+                    marginBottom: '12px',
+                    lineHeight: 1.5
+                  }}>
                     These dates are not guaranteed. We will email you the final schedule April 2026. If you choose a date that is full, you will be added to the waitlist.
                   </small>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
@@ -491,17 +597,20 @@ const VendorApplication = () => {
                       <label key={date} style={{
                         display: 'flex',
                         alignItems: 'center',
-                        padding: '12px',
-                        border: formData.requested_dates.includes(date) ? '3px solid #000' : '2px solid #ddd',
-                        background: formData.requested_dates.includes(date) ? '#FFD700' : '#fff',
+                        padding: '12px 16px',
+                        borderRadius: '8px',
+                        border: formData.requested_dates.includes(date) ? '2px solid var(--maroon)' : '1px solid var(--gray-medium)',
+                        background: formData.requested_dates.includes(date) ? 'var(--yellow)' : 'white',
                         cursor: 'pointer',
-                        fontFamily: "'Sora', sans-serif"
+                        fontFamily: 'var(--font-body)',
+                        fontWeight: formData.requested_dates.includes(date) ? 600 : 400,
+                        transition: 'all 0.15s ease'
                       }}>
                         <input
                           type="checkbox"
                           checked={formData.requested_dates.includes(date)}
                           onChange={() => handleDateToggle(date)}
-                          style={{ marginRight: '8px' }}
+                          style={{ marginRight: '10px' }}
                         />
                         {label}
                       </label>
@@ -522,7 +631,13 @@ const VendorApplication = () => {
                       <div><strong>No</strong></div>
                     </label>
                   </div>
-                  <small style={{ display: 'block', color: '#666', fontFamily: "'Sora', sans-serif", fontSize: '12px', marginTop: '8px' }}>
+                  <small style={{
+                    display: 'block',
+                    color: 'var(--gray-dark)',
+                    fontFamily: 'var(--font-body)',
+                    fontSize: '13px',
+                    marginTop: '8px'
+                  }}>
                     The city charges for power. To help with this cost, there is a one-time charge of $15 for vendors who need power.
                   </small>
                 </div>
@@ -538,7 +653,7 @@ const VendorApplication = () => {
                     />
                     <div>
                       <strong>Nonprofit?</strong>
-                      <div style={{ fontSize: '14px', color: '#666' }}>
+                      <div style={{ fontSize: '14px', color: 'var(--gray-dark)' }}>
                         I am signing up representing a non-profit organization.
                       </div>
                     </div>
@@ -547,9 +662,21 @@ const VendorApplication = () => {
 
                 {/* Pricing Summary */}
                 {pricing && (
-                  <div style={{ background: '#f5f5f5', border: '3px solid #000', padding: '20px' }}>
-                    <h3 style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 800, marginBottom: '16px' }}>Estimated Total</h3>
-                    <div style={{ fontFamily: "'Sora', sans-serif", fontSize: '14px' }}>
+                  <div style={{
+                    background: 'var(--cream)',
+                    borderRadius: '12px',
+                    padding: '20px',
+                    border: '1px solid var(--gray-medium)'
+                  }}>
+                    <h3 style={{
+                      fontFamily: 'var(--font-display)',
+                      fontWeight: 700,
+                      marginBottom: '16px',
+                      color: 'var(--dark)'
+                    }}>
+                      Estimated Total
+                    </h3>
+                    <div style={{ fontFamily: 'var(--font-body)', fontSize: '14px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                         <span>Base Amount ({formData.markets_requested} markets)</span>
                         <span>${pricing.baseAmount.toFixed(2)}</span>
@@ -560,13 +687,19 @@ const VendorApplication = () => {
                           <span>${pricing.powerFee.toFixed(2)}</span>
                         </div>
                       )}
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontStyle: 'italic', color: '#666' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontStyle: 'italic', color: 'var(--gray-dark)' }}>
                         <span>CC Processing Fee (3%)</span>
                         <span>${pricing.ccFee.toFixed(2)}</span>
                       </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '2px solid #000', paddingTop: '8px', marginTop: '8px' }}>
+                      <div style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        borderTop: '1px solid var(--gray-medium)',
+                        paddingTop: '12px',
+                        marginTop: '12px'
+                      }}>
                         <strong style={{ fontSize: '18px' }}>Total</strong>
-                        <strong style={{ fontSize: '24px', color: '#E30613' }}>${pricing.totalAmount.toFixed(2)}</strong>
+                        <strong style={{ fontSize: '24px', color: 'var(--maroon)' }}>${pricing.totalAmount.toFixed(2)}</strong>
                       </div>
                     </div>
                   </div>
@@ -574,14 +707,27 @@ const VendorApplication = () => {
               </div>
 
               <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-                <button onClick={() => setStep(1)} className="brutal-btn" style={{ background: '#fff', border: '3px solid #000', flex: 1 }}>
+                <button
+                  onClick={() => setStep(1)}
+                  style={{
+                    ...buttonStyle,
+                    background: 'white',
+                    color: 'var(--dark)',
+                    border: '2px solid var(--gray-medium)',
+                    flex: 1
+                  }}
+                >
                   Back
                 </button>
                 <button
                   onClick={() => validateStep2() && setStep(3)}
                   disabled={!validateStep2()}
-                  className="brutal-btn brutal-btn-yellow"
-                  style={{ flex: 2, opacity: validateStep2() ? 1 : 0.5 }}
+                  style={{
+                    ...buttonStyle,
+                    flex: 2,
+                    opacity: validateStep2() ? 1 : 0.5,
+                    cursor: validateStep2() ? 'pointer' : 'not-allowed'
+                  }}
                 >
                   Continue to Terms
                 </button>
@@ -591,8 +737,20 @@ const VendorApplication = () => {
 
           {/* Step 3: Agreements & Submit */}
           {step === 3 && (
-            <div style={{ background: '#fff', border: '4px solid #000', padding: '32px' }}>
-              <h2 style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 800, fontSize: '24px', marginBottom: '24px', textTransform: 'uppercase' }}>
+            <div style={{
+              background: 'white',
+              borderRadius: '16px',
+              padding: '32px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
+            }}>
+              <h2 style={{
+                fontFamily: 'var(--font-display)',
+                fontWeight: 700,
+                fontSize: '24px',
+                marginBottom: '24px',
+                textTransform: 'uppercase',
+                color: 'var(--dark)'
+              }}>
                 Terms & Agreements
               </h2>
 
@@ -606,7 +764,7 @@ const VendorApplication = () => {
                   />
                   <div>
                     <strong>48-Hour Cancellation Notice *</strong>
-                    <div style={{ fontSize: '14px', color: '#666', marginTop: '4px' }}>
+                    <div style={{ fontSize: '14px', color: 'var(--gray-dark)', marginTop: '4px', lineHeight: 1.6 }}>
                       I agree to a 48 hour cancellation notice. If I do not give adequate notice, I understand I will lose my vendor space and forfeit full market dues.
                     </div>
                   </div>
@@ -621,7 +779,7 @@ const VendorApplication = () => {
                   />
                   <div>
                     <strong>No Show Authorization *</strong>
-                    <div style={{ fontSize: '14px', color: '#666', marginTop: '4px' }}>
+                    <div style={{ fontSize: '14px', color: 'var(--gray-dark)', marginTop: '4px', lineHeight: 1.6 }}>
                       I agree if I do not call or show to my agreed market dates there will be an automatic $45 inconvenience fee charged to my card on file.
                     </div>
                   </div>
@@ -630,19 +788,26 @@ const VendorApplication = () => {
 
               {/* Final Pricing Summary */}
               {pricing && (
-                <div style={{ background: '#FFD700', border: '3px solid #000', padding: '20px', marginTop: '24px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{
+                  background: 'var(--yellow)',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  marginTop: '24px'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
                     <div>
-                      <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 800, fontSize: '18px' }}>Invoice Amount Upon Approval</div>
-                      <div style={{ fontFamily: "'Sora', sans-serif", fontSize: '14px' }}>
+                      <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '18px', color: 'var(--dark)' }}>
+                        Invoice Amount Upon Approval
+                      </div>
+                      <div style={{ fontFamily: 'var(--font-body)', fontSize: '14px', color: 'var(--dark)' }}>
                         {formData.booth_size === 'single' ? 'Single' : 'Double'} Booth • {formData.markets_requested} Markets
                         {formData.needs_power && ' • Power Included'}
                       </div>
-                      <div style={{ fontFamily: "'Sora', sans-serif", fontSize: '12px', fontStyle: 'italic', marginTop: '4px' }}>
+                      <div style={{ fontFamily: 'var(--font-body)', fontSize: '12px', fontStyle: 'italic', marginTop: '4px', color: 'var(--gray-dark)' }}>
                         Includes ${pricing.ccFee.toFixed(2)} CC processing fee (3%)
                       </div>
                     </div>
-                    <div style={{ fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 800, fontSize: '32px' }}>
+                    <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '32px', color: 'var(--dark)' }}>
                       ${pricing.totalAmount.toFixed(2)}
                     </div>
                   </div>
@@ -650,14 +815,27 @@ const VendorApplication = () => {
               )}
 
               <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
-                <button onClick={() => setStep(2)} className="brutal-btn" style={{ background: '#fff', border: '3px solid #000', flex: 1 }}>
+                <button
+                  onClick={() => setStep(2)}
+                  style={{
+                    ...buttonStyle,
+                    background: 'white',
+                    color: 'var(--dark)',
+                    border: '2px solid var(--gray-medium)',
+                    flex: 1
+                  }}
+                >
                   Back
                 </button>
                 <button
                   onClick={submitApplication}
                   disabled={!validateStep3() || loading}
-                  className="brutal-btn brutal-btn-yellow"
-                  style={{ flex: 2, opacity: validateStep3() && !loading ? 1 : 0.5 }}
+                  style={{
+                    ...buttonStyle,
+                    flex: 2,
+                    opacity: validateStep3() && !loading ? 1 : 0.5,
+                    cursor: validateStep3() && !loading ? 'pointer' : 'not-allowed'
+                  }}
                 >
                   {loading ? 'Submitting...' : 'Submit Application'}
                 </button>
@@ -673,32 +851,50 @@ const VendorApplication = () => {
 // Styles
 const labelStyle = {
   display: 'block',
-  fontFamily: "'Bricolage Grotesque', sans-serif",
+  fontFamily: 'var(--font-display)',
   fontWeight: 700,
   fontSize: '14px',
   marginBottom: '8px',
   textTransform: 'uppercase',
-  letterSpacing: '0.5px'
+  letterSpacing: '0.5px',
+  color: 'var(--dark)'
 };
 
 const inputStyle = {
   width: '100%',
-  padding: '14px',
-  border: '3px solid #000',
-  fontFamily: "'Sora', sans-serif",
+  padding: '14px 16px',
+  border: '1px solid var(--gray-medium)',
+  borderRadius: '8px',
+  fontFamily: 'var(--font-body)',
   fontSize: '16px',
   outline: 'none',
-  boxSizing: 'border-box'
+  boxSizing: 'border-box',
+  transition: 'border-color 0.2s ease'
+};
+
+const buttonStyle = {
+  padding: '16px 32px',
+  fontSize: '16px',
+  fontFamily: 'var(--font-display)',
+  fontWeight: 700,
+  background: 'var(--yellow)',
+  color: 'var(--dark)',
+  border: 'none',
+  borderRadius: '50px',
+  textTransform: 'uppercase',
+  transition: 'all 0.2s ease'
 };
 
 const radioCardStyle = (selected) => ({
   display: 'flex',
   alignItems: 'center',
   padding: '16px',
-  border: selected ? '3px solid #000' : '2px solid #ddd',
-  background: selected ? '#FFD700' : '#fff',
+  borderRadius: '12px',
+  border: selected ? '2px solid var(--maroon)' : '1px solid var(--gray-medium)',
+  background: selected ? 'var(--yellow)' : 'white',
   cursor: 'pointer',
-  fontFamily: "'Sora', sans-serif"
+  fontFamily: 'var(--font-body)',
+  transition: 'all 0.15s ease'
 });
 
 export default VendorApplication;

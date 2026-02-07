@@ -72,6 +72,7 @@ router.get('/builder/:date_id', verifyToken, isAdmin, async (req, res) => {
        WHERE vb.market_date_id = $1
          AND vb.booth_location IS NOT NULL
          AND vb.booth_location != ''
+         AND v.is_active = true
        ORDER BY vb.booth_location`,
       [dateId]
     );
@@ -85,6 +86,7 @@ router.get('/builder/:date_id', verifyToken, isAdmin, async (req, res) => {
        WHERE vb.market_date_id = $1
          AND vb.status = 'confirmed'
          AND (vb.booth_location IS NULL OR vb.booth_location = '')
+         AND v.is_active = true
        ORDER BY v.business_name`,
       [dateId]
     );

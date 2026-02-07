@@ -11,126 +11,69 @@ const AdminLayout = () => {
     navigate('/admin/login');
   };
 
+  const navItems = [
+    { to: '/admin/dashboard', label: 'Dashboard' },
+    { to: '/admin/vendors', label: 'Vendors' },
+    { to: '/admin/dates', label: 'Market Dates' },
+    { to: '/admin/announcements', label: 'Announcements' },
+    { to: '/admin/payments', label: 'Payments' },
+    { to: '/admin/maps/builder', label: 'Map Builder' },
+    { to: '/admin/music-applications', label: 'Musicians' },
+    { to: '/admin/music-schedule', label: 'Music Schedule' },
+    { to: '/admin/blog', label: 'Blog' },
+  ];
+
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       {/* Sidebar */}
       <aside style={{
-        width: '240px',
-        background: '#1a1a2e',
-        color: 'white',
-        padding: '20px 0',
+        width: '220px',
+        background: 'var(--maroon)',
+        color: 'var(--cream)',
         position: 'fixed',
+        top: 0,
+        left: 0,
         height: '100vh',
-        overflowY: 'auto'
+        display: 'flex',
+        flexDirection: 'column'
       }}>
-        <div style={{ padding: '0 20px', marginBottom: '30px' }}>
-          <Link to="/admin/dashboard" style={{ color: 'white', fontSize: '18px', fontWeight: 700 }}>
-            MoM Admin
+        <div style={{ padding: '24px 20px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+          <Link to="/admin/dashboard" style={{ color: 'var(--cream)', textDecoration: 'none' }}>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '20px', margin: 0 }}>
+              Market on Main
+            </h1>
+            <span style={{ fontSize: '12px', opacity: 0.7 }}>Admin</span>
           </Link>
         </div>
 
-        <nav>
-          <NavLink
-            to="/admin/dashboard"
-            style={({ isActive }) => ({
-              display: 'block',
-              padding: '12px 20px',
-              color: isActive ? 'white' : '#999',
-              background: isActive ? 'rgba(255,255,255,0.1)' : 'transparent',
-              borderLeft: isActive ? '3px solid #4CAF50' : '3px solid transparent'
-            })}
-          >
-            Dashboard
-          </NavLink>
-          <NavLink
-            to="/admin/vendors"
-            style={({ isActive }) => ({
-              display: 'block',
-              padding: '12px 20px',
-              color: isActive ? 'white' : '#999',
-              background: isActive ? 'rgba(255,255,255,0.1)' : 'transparent',
-              borderLeft: isActive ? '3px solid #4CAF50' : '3px solid transparent'
-            })}
-          >
-            Vendors
-          </NavLink>
-          <NavLink
-            to="/admin/dates"
-            style={({ isActive }) => ({
-              display: 'block',
-              padding: '12px 20px',
-              color: isActive ? 'white' : '#999',
-              background: isActive ? 'rgba(255,255,255,0.1)' : 'transparent',
-              borderLeft: isActive ? '3px solid #4CAF50' : '3px solid transparent'
-            })}
-          >
-            Market Dates
-          </NavLink>
-          <NavLink
-            to="/admin/announcements"
-            style={({ isActive }) => ({
-              display: 'block',
-              padding: '12px 20px',
-              color: isActive ? 'white' : '#999',
-              background: isActive ? 'rgba(255,255,255,0.1)' : 'transparent',
-              borderLeft: isActive ? '3px solid #4CAF50' : '3px solid transparent'
-            })}
-          >
-            Announcements
-          </NavLink>
-          <NavLink
-            to="/admin/payments"
-            style={({ isActive }) => ({
-              display: 'block',
-              padding: '12px 20px',
-              color: isActive ? 'white' : '#999',
-              background: isActive ? 'rgba(255,255,255,0.1)' : 'transparent',
-              borderLeft: isActive ? '3px solid #4CAF50' : '3px solid transparent'
-            })}
-          >
-            Payments
-          </NavLink>
-          <NavLink
-            to="/admin/maps/builder"
-            style={({ isActive }) => ({
-              display: 'block',
-              padding: '12px 20px',
-              color: isActive ? 'white' : '#999',
-              background: isActive ? 'rgba(255,255,255,0.1)' : 'transparent',
-              borderLeft: isActive ? '3px solid #4CAF50' : '3px solid transparent'
-            })}
-          >
-            Map Builder
-          </NavLink>
-          <NavLink
-            to="/admin/music-applications"
-            style={({ isActive }) => ({
-              display: 'block',
-              padding: '12px 20px',
-              color: isActive ? 'white' : '#999',
-              background: isActive ? 'rgba(255,255,255,0.1)' : 'transparent',
-              borderLeft: isActive ? '3px solid #4CAF50' : '3px solid transparent'
-            })}
-          >
-            Music Applications
-          </NavLink>
+        <nav style={{ flex: 1, padding: '16px 0' }}>
+          {navItems.map(({ to, label }) => (
+            <NavLink
+              key={to}
+              to={to}
+              style={({ isActive }) => ({
+                display: 'block',
+                padding: '12px 20px',
+                color: 'var(--cream)',
+                textDecoration: 'none',
+                background: isActive ? 'rgba(255,255,255,0.1)' : 'transparent',
+                borderLeft: isActive ? '3px solid var(--yellow)' : '3px solid transparent',
+                fontSize: '14px'
+              })}
+            >
+              {label}
+            </NavLink>
+          ))}
         </nav>
 
-        <div style={{ position: 'absolute', bottom: '20px', left: '20px', right: '20px' }}>
-          <div style={{ color: '#666', fontSize: '12px', marginBottom: '8px' }}>
-            Logged in as {user?.name}
+        <div style={{ padding: '20px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+          <div style={{ fontSize: '12px', opacity: 0.7, marginBottom: '12px' }}>
+            {user?.name}
           </div>
           <button
             onClick={handleLogout}
-            style={{
-              width: '100%',
-              padding: '10px',
-              background: 'rgba(255,255,255,0.1)',
-              border: 'none',
-              color: 'white',
-              borderRadius: '6px',
-              cursor: 'pointer'
-            }}
+            className="btn btn-secondary"
+            style={{ width: '100%', fontSize: '12px' }}
           >
             Logout
           </button>
@@ -138,7 +81,7 @@ const AdminLayout = () => {
       </aside>
 
       {/* Main content */}
-      <main style={{ marginLeft: '240px', flex: 1, padding: '30px', background: '#f5f5f5' }}>
+      <main style={{ marginLeft: '220px', flex: 1, padding: '32px', background: 'var(--cream)' }}>
         <Outlet />
       </main>
     </div>

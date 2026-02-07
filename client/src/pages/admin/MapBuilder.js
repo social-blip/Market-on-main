@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useParams } from 'react-router-dom';
 import api from '../../api/client';
 
 const MapBuilder = () => {
+  const { dateId } = useParams();
   const [dates, setDates] = useState([]);
   const [selectedDateId, setSelectedDateId] = useState('');
   const [marketDate, setMarketDate] = useState(null);
@@ -12,20 +14,32 @@ const MapBuilder = () => {
   const [message, setMessage] = useState({ type: '', text: '' });
   const [draggedVendor, setDraggedVendor] = useState(null);
   const [highlightedSpots, setHighlightedSpots] = useState([]);
+  const [mapConfig, setMapConfig] = useState({ left_spots: 29, right_spots: 25, total_spots: 54 });
 
-  // Left column: spots 1-30, Right column: spots 31-55
-  const leftSpots = Array.from({ length: 30 }, (_, i) => i + 1);
-  const rightSpots = Array.from({ length: 25 }, (_, i) => i + 31);
+  const leftSpots = Array.from({ length: mapConfig.left_spots }, (_, i) => i + 1);
+  const rightSpots = Array.from({ length: mapConfig.right_spots }, (_, i) => i + mapConfig.left_spots + 1);
 
   useEffect(() => {
+    fetchMapConfig();
     fetchDates();
   }, []);
+
+  const fetchMapConfig = async () => {
+    try {
+      const response = await api.get('/settings/map_config');
+      setMapConfig(response.data);
+    } catch (err) {
+      console.error('Error fetching map config:', err);
+    }
+  };
 
   const fetchDates = async () => {
     try {
       const response = await api.get('/maps/builder/dates/list');
       setDates(response.data);
-      if (response.data.length > 0) {
+      if (dateId) {
+        setSelectedDateId(dateId);
+      } else if (response.data.length > 0) {
         setSelectedDateId(response.data[0].id.toString());
       }
     } catch (err) {
@@ -92,6 +106,14 @@ const MapBuilder = () => {
     if (!vendor || vendor.reserved || !vendor.booth_location) return false;
     const spots = vendor.booth_location.split(',').map(s => parseInt(s.trim()));
     return spots.length === 2 && spots[1] === spotNum;
+  };
+
+  // Check if spot belongs to a double booth vendor
+  const isDoubleBooth = (spotNum) => {
+    const vendor = getVendorAtSpot(spotNum);
+    if (!vendor || vendor.reserved || !vendor.booth_location) return false;
+    const spots = vendor.booth_location.split(',').map(s => parseInt(s.trim()));
+    return spots.length === 2;
   };
 
   // Drag handlers
@@ -281,14 +303,15 @@ const MapBuilder = () => {
                     const spot = 30 - i;
                     const vendor = getVendorAtSpot(spot);
                     const isSecond = isDoubleBoothSecond(spot);
+                    const isDouble = isDoubleBooth(spot);
 
                     return (
                       <tr key={spot}>
-                        <td className={`spot-number-cell ${vendor ? 'occupied' : 'empty'} ${highlightedSpots.includes(spot) ? 'highlighted' : ''}`}>
+                        <td className={`spot-number-cell ${vendor ? 'occupied' : 'empty'} ${isDouble ? 'double' : ''} ${highlightedSpots.includes(spot) ? 'highlighted' : ''}`}>
                           {spot}
                         </td>
                         <td
-                          className={`spot-vendor-cell ${vendor ? 'occupied' : 'empty'} ${vendor?.reserved ? 'reserved' : ''} ${highlightedSpots.includes(spot) ? 'highlighted' : ''}`}
+                          className={`spot-vendor-cell ${vendor ? 'occupied' : 'empty'} ${isDouble ? 'double' : ''} ${vendor?.reserved ? 'reserved' : ''} ${highlightedSpots.includes(spot) ? 'highlighted' : ''}`}
                           onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); !vendor && handleDragOver(e, spot); }}
                           onDragLeave={handleDragLeave}
                           onDrop={(e) => !vendor && handleDrop(e, spot)}
@@ -326,11 +349,12 @@ const MapBuilder = () => {
                     const spot = 55 - i;
                     const vendor = getVendorAtSpot(spot);
                     const isSecond = isDoubleBoothSecond(spot);
+                    const isDouble = isDoubleBooth(spot);
 
                     return (
                       <tr key={spot}>
                         <td
-                          className={`spot-vendor-cell right ${vendor ? 'occupied' : 'empty'} ${highlightedSpots.includes(spot) ? 'highlighted' : ''}`}
+                          className={`spot-vendor-cell right ${vendor ? 'occupied' : 'empty'} ${isDouble ? 'double' : ''} ${highlightedSpots.includes(spot) ? 'highlighted' : ''}`}
                           onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); !vendor && handleDragOver(e, spot); }}
                           onDragLeave={handleDragLeave}
                           onDrop={(e) => !vendor && handleDrop(e, spot)}
@@ -341,7 +365,7 @@ const MapBuilder = () => {
                             </span>
                           ) : null}
                         </td>
-                        <td className={`spot-number-cell ${vendor ? 'occupied' : 'empty'} ${highlightedSpots.includes(spot) ? 'highlighted' : ''}`}>
+                        <td className={`spot-number-cell ${vendor ? 'occupied' : 'empty'} ${isDouble ? 'double' : ''} ${highlightedSpots.includes(spot) ? 'highlighted' : ''}`}>
                           {spot}
                         </td>
                       </tr>

@@ -5,6 +5,26 @@ const { body, validationResult } = require('express-validator');
 const emailService = require('../services/email');
 const { verifyToken, isAdmin } = require('../middleware/auth');
 
+// Create musician directly (admin only)
+router.post('/', verifyToken, isAdmin, async (req, res) => {
+  const { name, email, phone, website, bio } = req.body;
+  if (!name || !name.trim()) {
+    return res.status(400).json({ error: 'Name is required' });
+  }
+  try {
+    const result = await db.query(
+      `INSERT INTO music_applications (name, email, phone, website, bio, status)
+       VALUES ($1, $2, $3, $4, $5, 'active')
+       RETURNING *`,
+      [name.trim(), email || null, phone || null, website || null, bio || null]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error('Error creating musician:', err);
+    res.status(500).json({ error: 'Failed to create musician' });
+  }
+});
+
 // Submit music application (public)
 router.post('/submit',
   [
@@ -112,19 +132,22 @@ router.get('/:id', verifyToken, isAdmin, async (req, res) => {
   }
 });
 
-// Update music application status (admin only)
+// Update musician (admin only)
 router.put('/:id', verifyToken, isAdmin, async (req, res) => {
-  const { status, admin_notes } = req.body;
+  const { name, email, phone, website, bio } = req.body;
 
   try {
     const result = await db.query(
       `UPDATE music_applications
-       SET status = COALESCE($1, status),
-           admin_notes = COALESCE($2, admin_notes),
+       SET name = COALESCE($1, name),
+           email = COALESCE($2, email),
+           phone = COALESCE($3, phone),
+           website = COALESCE($4, website),
+           bio = COALESCE($5, bio),
            updated_at = CURRENT_TIMESTAMP
-       WHERE id = $3
+       WHERE id = $6
        RETURNING *`,
-      [status, admin_notes, req.params.id]
+      [name, email, phone, website, bio, req.params.id]
     );
 
     if (result.rows.length === 0) {

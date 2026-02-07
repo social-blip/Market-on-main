@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link, NavLink, useLocation } from 'react-router-dom';
+import '../styles/public.css';
 
 const PublicLayout = () => {
   const location = useLocation();
@@ -11,280 +12,80 @@ const PublicLayout = () => {
     setMobileMenuOpen(false);
   }, [path]);
 
-  // Determine header color based on current page's first section
-  const getHeaderStyle = () => {
-    // Red pages (Home)
-    if (path === '/') {
-      return { background: '#E30613', borderBottom: 'none' };
-    }
-    // Yellow pages (Vendors, Calendar)
-    if (path === '/vendors' || path.startsWith('/vendors/') || path === '/calendar') {
-      return { background: '#FFD700', borderBottom: 'none' };
-    }
-    // Blue pages
-    if (path === '/become-vendor') {
-      return { background: '#1a56db', borderBottom: 'none' };
-    }
-    if (path === '/apply') {
-      return { background: '#0056b3', borderBottom: 'none' };
-    }
-    // Live Music page
-    if (path === '/live-music') {
-      return { background: '#E30613', borderBottom: 'none' };
-    }
-    // Find Us page
-    if (path === '/find-us') {
-      return { background: '#FFD700', borderBottom: 'none' };
-    }
-
-    return {}; // Default
-  };
-
-  // Determine if we're on a light background page
-  const isLightBg = path === '/vendors' || path.startsWith('/vendors/') || path === '/calendar' || path === '/find-us';
-  const textColor = isLightBg ? '#000' : '#fff';
-
-  // Get marquee text color based on page
-  const getMarqueeColor = () => {
-    if (path === '/') return '#E30613'; // Red
-    if (path === '/vendors' || path.startsWith('/vendors/') || path === '/calendar') return '#FFD700'; // Yellow
-    if (path === '/become-vendor') return '#1a56db'; // Blue
-    if (path === '/apply') return '#0056b3'; // Blue
-    if (path === '/live-music') return '#E30613'; // Red
-    if (path === '/find-us') return '#FFD700'; // Yellow
-    return '#000'; // Default
-  };
+  const navItems = [
+    { label: 'Home', sublabel: '', to: '/' },
+    { label: 'Shop', sublabel: 'Vendors', to: '/vendors' },
+    { label: 'Find', sublabel: 'Us', to: '/find-us' },
+    { label: 'Get', sublabel: 'Involved', to: '/get-involved' },
+    { label: 'Market', sublabel: 'News', to: '/blog' },
+  ];
 
   return (
     <div>
-      {/* MARQUEE BANNER */}
-      <div className="brutal-marquee">
-        <div className="brutal-marquee-content" style={{ color: getMarqueeColor() }}>
-          Market on Main. Downtown Twin Falls. Saturdays 9am - 2pm. Handmade. Local. Fresh. Market on Main. Downtown Twin Falls. Saturdays 9am - 2pm. Handmade. Local. Fresh.
-        </div>
-      </div>
-
-      {/* BRUTAL HEADER */}
-      <header className="brutal-header" style={getHeaderStyle()}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 20px', position: 'relative' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Link to="/" style={{ textDecoration: 'none' }}>
-              <h1 className="brutal-header-logo" style={{ color: textColor }}>MARKET ON MAIN</h1>
-            </Link>
-            {/* Hamburger Button - Mobile Only */}
-            <button
-              className="hamburger-btn"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Toggle menu"
-              style={{
-                display: 'none',
-                background: 'transparent',
-                border: `3px solid ${textColor}`,
-                padding: '8px',
-                cursor: 'pointer',
-                flexDirection: 'column',
-                gap: '5px',
-                width: '44px',
-                height: '44px',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}
-            >
-              <span style={{
-                display: 'block',
-                width: '24px',
-                height: '3px',
-                background: textColor,
-                transition: 'transform 0.3s, opacity 0.3s',
-                transform: mobileMenuOpen ? 'rotate(45deg) translate(5px, 5px)' : 'none'
-              }} />
-              <span style={{
-                display: 'block',
-                width: '24px',
-                height: '3px',
-                background: textColor,
-                transition: 'opacity 0.3s',
-                opacity: mobileMenuOpen ? 0 : 1
-              }} />
-              <span style={{
-                display: 'block',
-                width: '24px',
-                height: '3px',
-                background: textColor,
-                transition: 'transform 0.3s',
-                transform: mobileMenuOpen ? 'rotate(-45deg) translate(5px, -5px)' : 'none'
-              }} />
-            </button>
-          </div>
-          {/* Desktop Nav */}
-          <nav className="brutal-nav desktop-nav" style={{ '--nav-color': textColor }}>
-            <NavLink to="/" end style={{ color: textColor }}>Home</NavLink>
-            <NavLink to="/vendors" style={{ color: textColor }}>Vendors & Calendar</NavLink>
-            <NavLink to="/live-music" style={{ color: textColor }}>Live Music</NavLink>
-            <NavLink to="/find-us" style={{ color: textColor }}>Find Us</NavLink>
-            <NavLink to="/become-vendor" style={{ color: textColor }}>Become a Vendor</NavLink>
-            <NavLink
-              to="/vendor/login"
-              className="brutal-btn"
-              style={{
-                padding: '8px 20px',
-                fontSize: '14px',
-                background: '#000',
-                color: '#fff',
-                border: '3px solid #000'
-              }}
-            >
-              Vendor Login
-            </NavLink>
+      {/* Floating Header - matching TestHome4 */}
+      <header className="floating-header">
+        <div className="floating-header__inner">
+          <nav className="pill-nav">
+            {navItems.map((item, i) => (
+              <NavLink key={i} to={item.to} className="pill-nav__item">
+                <span className="pill-nav__label">{item.label} {item.sublabel}</span>
+              </NavLink>
+            ))}
           </nav>
+
+          {/* Hamburger Button - Mobile Only */}
+          <button
+            className="hamburger-btn"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            <span className={`hamburger-btn__line ${mobileMenuOpen ? 'hamburger-btn__line--open' : ''}`} />
+            <span className={`hamburger-btn__line ${mobileMenuOpen ? 'hamburger-btn__line--open' : ''}`} />
+            <span className={`hamburger-btn__line ${mobileMenuOpen ? 'hamburger-btn__line--open' : ''}`} />
+          </button>
         </div>
       </header>
 
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
-        <div
-          className="mobile-menu-overlay"
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: '#000',
-            zIndex: 999,
-            display: 'flex',
-            flexDirection: 'column',
-            padding: '20px'
-          }}
-        >
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
-            <Link to="/" style={{ textDecoration: 'none' }} onClick={() => setMobileMenuOpen(false)}>
-              <h1 style={{
-                fontFamily: "'Bricolage Grotesque', sans-serif",
-                fontWeight: 800,
-                fontSize: '28px',
-                color: '#fff',
-                margin: 0
-              }}>MARKET ON MAIN</h1>
+        <div className="mobile-menu-overlay">
+          <div className="mobile-menu-overlay__header">
+            <Link to="/" onClick={() => setMobileMenuOpen(false)} className="mobile-menu-overlay__logo">
+              <span className="floating-header__logo-text">MoM</span>
             </Link>
             <button
               onClick={() => setMobileMenuOpen(false)}
               aria-label="Close menu"
-              style={{
-                background: 'transparent',
-                border: '3px solid #fff',
-                color: '#fff',
-                width: '44px',
-                height: '44px',
-                fontSize: '24px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontFamily: 'sans-serif'
-              }}
+              className="mobile-menu-overlay__close"
             >
               ✕
             </button>
           </div>
-          <nav style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
-            <NavLink
-              to="/"
-              end
-              onClick={() => setMobileMenuOpen(false)}
-              style={{
-                fontFamily: "'Bricolage Grotesque', sans-serif",
-                fontWeight: 800,
-                fontSize: '32px',
-                color: '#fff',
-                textDecoration: 'none',
-                padding: '16px 0',
-                borderBottom: '2px solid rgba(255,255,255,0.2)',
-                textTransform: 'uppercase'
-              }}
-            >
+          <nav className="mobile-menu-overlay__nav">
+            <NavLink to="/" end onClick={() => setMobileMenuOpen(false)} className="mobile-menu-overlay__link">
               Home
             </NavLink>
-            <NavLink
-              to="/vendors"
-              onClick={() => setMobileMenuOpen(false)}
-              style={{
-                fontFamily: "'Bricolage Grotesque', sans-serif",
-                fontWeight: 800,
-                fontSize: '32px',
-                color: '#fff',
-                textDecoration: 'none',
-                padding: '16px 0',
-                borderBottom: '2px solid rgba(255,255,255,0.2)',
-                textTransform: 'uppercase'
-              }}
-            >
-              Vendors & Calendar
-            </NavLink>
-            <NavLink
-              to="/live-music"
-              onClick={() => setMobileMenuOpen(false)}
-              style={{
-                fontFamily: "'Bricolage Grotesque', sans-serif",
-                fontWeight: 800,
-                fontSize: '32px',
-                color: '#fff',
-                textDecoration: 'none',
-                padding: '16px 0',
-                borderBottom: '2px solid rgba(255,255,255,0.2)',
-                textTransform: 'uppercase'
-              }}
-            >
-              Live Music
-            </NavLink>
-            <NavLink
-              to="/find-us"
-              onClick={() => setMobileMenuOpen(false)}
-              style={{
-                fontFamily: "'Bricolage Grotesque', sans-serif",
-                fontWeight: 800,
-                fontSize: '32px',
-                color: '#fff',
-                textDecoration: 'none',
-                padding: '16px 0',
-                borderBottom: '2px solid rgba(255,255,255,0.2)',
-                textTransform: 'uppercase'
-              }}
-            >
-              Find Us
-            </NavLink>
+            {navItems.map((item, i) => (
+              <NavLink
+                key={i}
+                to={item.to}
+                onClick={() => setMobileMenuOpen(false)}
+                className="mobile-menu-overlay__link"
+              >
+                {item.label} {item.sublabel}
+              </NavLink>
+            ))}
             <NavLink
               to="/become-vendor"
               onClick={() => setMobileMenuOpen(false)}
-              style={{
-                fontFamily: "'Bricolage Grotesque', sans-serif",
-                fontWeight: 800,
-                fontSize: '32px',
-                color: '#fff',
-                textDecoration: 'none',
-                padding: '16px 0',
-                borderBottom: '2px solid rgba(255,255,255,0.2)',
-                textTransform: 'uppercase'
-              }}
+              className="mobile-menu-overlay__link"
             >
               Become a Vendor
             </NavLink>
             <NavLink
               to="/vendor/login"
               onClick={() => setMobileMenuOpen(false)}
-              style={{
-                fontFamily: "'Bricolage Grotesque', sans-serif",
-                fontWeight: 800,
-                fontSize: '24px',
-                color: '#000',
-                textDecoration: 'none',
-                padding: '16px 24px',
-                marginTop: '24px',
-                background: '#FFD700',
-                border: '3px solid #FFD700',
-                textTransform: 'uppercase',
-                textAlign: 'center'
-              }}
+              className="mobile-menu-overlay__cta"
             >
               Vendor Login
             </NavLink>
@@ -296,60 +97,42 @@ const PublicLayout = () => {
         <Outlet />
       </main>
 
-      {/* BRUTAL FOOTER */}
-      <div className="brutal-line"></div>
-      <footer className="brutal-footer">
-        <div className="brutal-footer-grid">
-          <div>
-            <h4>EXPLORE</h4>
-            <ul>
-              <li><Link to="/vendors">Vendors & Calendar</Link></li>
-              <li><Link to="/live-music">Live Music</Link></li>
-              <li><Link to="/become-vendor">Become a Vendor</Link></li>
-              <li><Link to="/find-us">Find Us</Link></li>
-            </ul>
+      {/* Footer - matching TestHome4 */}
+      <footer className="footer">
+        <div className="container">
+          <div className="footer__grid">
+            <div>
+              <h3 className="footer__brand-name">Market on Main</h3>
+              <p className="footer__brand-info">Every Saturday · June – August · 9am – 2pm</p>
+              <p className="footer__brand-info">100 Block Main Ave N, Twin Falls, ID</p>
+            </div>
+            <div>
+              <h4 className="footer__heading">Explore</h4>
+              <div className="footer__links">
+                <Link to="/vendors" className="footer__link">Vendors</Link>
+                <Link to="/find-us" className="footer__link">Find Us</Link>
+              </div>
+            </div>
+            <div>
+              <h4 className="footer__heading">Join Us</h4>
+              <div className="footer__links">
+                <Link to="/become-vendor" className="footer__link">Become a Vendor</Link>
+                <Link to="/get-involved" className="footer__link">Volunteer</Link>
+                <Link to="/get-involved" className="footer__link">Sponsor</Link>
+              </div>
+            </div>
+            <div>
+              <h4 className="footer__heading">Connect</h4>
+              <div className="footer__links">
+                <Link to="/find-us" className="footer__link">Find Us</Link>
+                <Link to="/contact" className="footer__link">Contact</Link>
+                <Link to="/vendor/login" className="footer__link">Vendor Login</Link>
+              </div>
+            </div>
           </div>
-          <div>
-            <h4>CONTACT</h4>
-            <p>
-              <strong>Market on Main</strong><br />
-              100 Block Main Ave N<br />
-              Twin Falls, ID 83301
-            </p>
-            <p style={{ marginTop: '12px' }}>
-              <a href="mailto:info@tfmarketonmain.com" style={{ color: '#fff' }}>
-                info@tfmarketonmain.com
-              </a>
-            </p>
+          <div className="footer__bottom">
+            © 2026 Market on Main · Twin Falls, Idaho
           </div>
-          <div>
-            <h4>FOLLOW US</h4>
-            <ul>
-              <li>
-                <a href="https://www.facebook.com/marketonmaintwinfalls" target="_blank" rel="noopener noreferrer">
-                  Facebook
-                </a>
-              </li>
-              <li>
-                <a href="https://www.instagram.com/market_on_main_twinfalls" target="_blank" rel="noopener noreferrer">
-                  Instagram
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div style={{
-          textAlign: 'center',
-          marginTop: '40px',
-          paddingTop: '20px',
-          borderTop: '3px solid rgba(255,255,255,0.3)',
-          color: 'rgba(255,255,255,0.7)',
-          fontFamily: 'Archivo Black, sans-serif',
-          textTransform: 'uppercase',
-          fontSize: '12px',
-          letterSpacing: '2px'
-        }}>
-          &copy; {new Date().getFullYear()} MARKET ON MAIN - TWIN FALLS, ID
         </div>
       </footer>
     </div>

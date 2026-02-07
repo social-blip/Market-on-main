@@ -1,5 +1,55 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+
+const HoverCard = ({ to, src, alt, title, text, shadowColor }) => {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <Link
+      to={to}
+      style={{
+        position: 'relative',
+        textDecoration: 'none',
+        display: 'block',
+        height: '100%'
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Shadow block */}
+      <div style={{
+        position: 'absolute',
+        top: '8px',
+        left: '8px',
+        right: '-8px',
+        bottom: '-8px',
+        background: shadowColor,
+        zIndex: 0,
+        opacity: hovered ? 1 : 0,
+        transition: 'opacity 0.15s ease'
+      }} />
+      <div
+        className="brutal-card"
+        style={{
+          position: 'relative',
+          zIndex: 1,
+          transform: hovered ? 'translate(-6px, -6px)' : 'none',
+          transition: 'transform 0.15s ease',
+          boxShadow: 'none',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column'
+        }}
+      >
+        <img src={src} alt={alt} />
+        <div className="brutal-card-content" style={{ flexGrow: 1 }}>
+          <h3 className="brutal-card-title">{title}</h3>
+          <p className="brutal-card-text">{text}</p>
+        </div>
+      </div>
+    </Link>
+  );
+};
 
 const Home = () => {
   return (
@@ -107,42 +157,38 @@ const Home = () => {
           Local Makers
         </h2>
         <div className="brutal-grid-4">
-          <div className="brutal-card">
-            <img src="/images/market/plant-cart.jpg" alt="Fresh produce and plants" />
-            <div className="brutal-card-content">
-              <h3 className="brutal-card-title">The Growers</h3>
-              <p className="brutal-card-text">
-                Farm-fresh produce, plants, and flowers straight from Idaho soil.
-              </p>
-            </div>
-          </div>
-          <div className="brutal-card">
-            <img src="/images/market/makers-card.jpg" alt="Handmade crafts" />
-            <div className="brutal-card-content">
-              <h3 className="brutal-card-title">The Makers</h3>
-              <p className="brutal-card-text">
-                Handmade pottery, jewelry, and crafts made with care by local artisans.
-              </p>
-            </div>
-          </div>
-          <div className="brutal-card">
-            <img src="/images/market/eats-card.jpg" alt="Food trucks and sweet treats" />
-            <div className="brutal-card-content">
-              <h3 className="brutal-card-title">The Eats</h3>
-              <p className="brutal-card-text">
-                Food trucks, sweet treats, and delicious bites to fuel your market morning.
-              </p>
-            </div>
-          </div>
-          <div className="brutal-card">
-            <img src="/images/market/artist-tapestries.jpg" alt="Unique finds" />
-            <div className="brutal-card-content">
-              <h3 className="brutal-card-title">Vintage & Finds</h3>
-              <p className="brutal-card-text">
-                One-of-a-kind treasures and unique goods you won't find anywhere else.
-              </p>
-            </div>
-          </div>
+          <HoverCard
+            to="/vendors"
+            src="/images/market/plant-cart.jpg"
+            alt="Fresh produce and plants"
+            title="The Growers"
+            text="Farm-fresh produce, plants, and flowers straight from Idaho soil."
+            shadowColor="#2d8a2d"
+          />
+          <HoverCard
+            to="/vendors"
+            src="/images/market/makers-card.jpg"
+            alt="Handmade crafts"
+            title="The Makers"
+            text="Handmade pottery, jewelry, and crafts made with care by local artisans."
+            shadowColor="#0056b3"
+          />
+          <HoverCard
+            to="/vendors"
+            src="/images/market/eats-card.jpg"
+            alt="Food trucks and sweet treats"
+            title="The Eats"
+            text="Food trucks, sweet treats, and delicious bites to fuel your market morning."
+            shadowColor="#E30613"
+          />
+          <HoverCard
+            to="/vendors"
+            src="/images/market/artist-tapestries.jpg"
+            alt="Unique finds"
+            title="Vintage & Finds"
+            text="One-of-a-kind treasures and unique goods you won't find anywhere else."
+            shadowColor="#FFD700"
+          />
         </div>
       </section>
 
@@ -153,33 +199,30 @@ const Home = () => {
           Let's be friends
         </h2>
         <div className="brutal-grid-3">
-          <div className="brutal-card">
-            <img src="/images/market/jae-foundation.jpg" alt="Volunteer" />
-            <div className="brutal-card-content">
-              <h3 className="brutal-card-title">Volunteer</h3>
-              <p className="brutal-card-text">
-                Help us set up, welcome neighbors, and keep the good vibes going.
-              </p>
-            </div>
-          </div>
-          <div className="brutal-card">
-            <img src="/images/market/firefighters-community.jpg" alt="Sponsor" />
-            <div className="brutal-card-content">
-              <h3 className="brutal-card-title">Sponsor</h3>
-              <p className="brutal-card-text">
-                Support local and get your business in front of the community.
-              </p>
-            </div>
-          </div>
-          <div className="brutal-card">
-            <img src="/images/market/community-card.jpg" alt="Community" />
-            <div className="brutal-card-content">
-              <h3 className="brutal-card-title">Community</h3>
-              <p className="brutal-card-text">
-                This is your market. Come hang, shop, and connect.
-              </p>
-            </div>
-          </div>
+          <HoverCard
+            to="/get-involved"
+            src="/images/market/jae-foundation.jpg"
+            alt="Volunteer"
+            title="Volunteer"
+            text="Help us set up, welcome neighbors, and keep the good vibes going."
+            shadowColor="#FFD700"
+          />
+          <HoverCard
+            to="/get-involved"
+            src="/images/market/firefighters-community.jpg"
+            alt="Sponsor"
+            title="Sponsor"
+            text="Support local and get your business in front of the community."
+            shadowColor="#0056b3"
+          />
+          <HoverCard
+            to="/get-involved"
+            src="/images/market/community-card.jpg"
+            alt="Community"
+            title="Community"
+            text="This is your market. Come hang, shop, and connect."
+            shadowColor="#FFD700"
+          />
         </div>
       </section>
 

@@ -1,0 +1,539 @@
+/* ==========================================
+   GLOBAL CSS - Market on Main
+   Single source of truth for styles
+   ========================================== */
+
+/* ==========================================
+   CSS VARIABLES
+   ========================================== */
+
+:root {
+  /* Colors */
+  --primary: #4CAF50;
+  --primary-dark: #388E3C;
+  --secondary: #FF9800;
+  --danger: #f44336;
+  --success: #4CAF50;
+  --warning: #ff9800;
+  --info: #2196F3;
+  --dark: #333;
+  --light: #f5f5f5;
+  --gray: #666;
+  --border: #ddd;
+
+  /* Brand Colors */
+  --maroon: #5c1e3d;
+  --yellow: #FFD93D;
+  --purple: #7C3AED;
+  --cyan: #06B6D4;
+  --pink: #EC4899;
+
+  /* Theme Colors */
+  --cream: #FDF5E0;
+  --peach: #FDDCCC;
+  --black: #1a1a1a;
+  --white: #ffffff;
+  --gray-light: #f0f0f0;
+  --gray-medium: #888;
+  --gray-dark: #666;
+  --orange-accent: #e55b19;
+  --dark-bg: #1a1a2e;
+
+  /* CTA Card Colors */
+  --cta-yellow: #fef3c7;
+  --cta-green: #dcfce7;
+  --cta-pink: #fce7f3;
+
+  /* UI Colors */
+  --border-light: #eee;
+  --disabled: #ccc;
+  --maroon-hover: #7a2a4e;
+  --black-hover: #333;
+  --gray-muted: #999;
+
+  /* Typography */
+  --font-display: 'Krana Fat', 'Oswald', sans-serif;
+  --font-body: 'Inter Tight', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* Container */
+  --container-max: 1400px;
+  --container-padding: 24px;
+}
+
+/* ==========================================
+   RESET & BASE
+   ========================================== */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  line-height: 1.6;
+  color: var(--dark);
+  background-color: #fafafa;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================
+   TYPOGRAPHY
+   ========================================== */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+h1 {
+  font-size: clamp(40px, 5vw, 64px);
+  letter-spacing: 0.01em;
+}
+
+h2 {
+  font-size: clamp(32px, 4vw, 48px);
+  letter-spacing: 0.01em;
+}
+
+h3 {
+  font-size: clamp(24px, 3vw, 36px);
+}
+
+h4 {
+  font-size: clamp(20px, 2.5vw, 28px);
+}
+
+h5 {
+  font-size: 20px;
+}
+
+h6 {
+  font-size: 16px;
+}
+
+p {
+  font-family: var(--font-body);
+  line-height: 1.6;
+}
+
+.text-display {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+}
+
+.text-body {
+  font-family: var(--font-body);
+}
+
+/* ==========================================
+   LAYOUT
+   ========================================== */
+
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+}
+
+.container-sm {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+}
+
+.section {
+  padding: var(--space-3xl) 0;
+}
+
+.section-sm {
+  padding: var(--space-xl) 0;
+}
+
+/* Two column layout */
+.two-col {
+  display: flex;
+  gap: var(--space-xl);
+}
+
+.two-col > * {
+  flex: 1;
+}
+
+/* Grid */
+.grid {
+  display: grid;
+  gap: 24px;
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 768px) {
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================
+   BUTTONS
+   ========================================== */
+
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+  text-decoration: none;
+}
+
+.btn-secondary {
+  background-color: white;
+  color: var(--dark);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background-color: var(--light);
+}
+
+.btn-danger {
+  background-color: var(--danger);
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #d32f2f;
+}
+
+/* Pill Buttons */
+.btn-pill {
+  display: inline-block;
+  padding: 12px 28px;
+  border-radius: 100px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-pill:hover {
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.btn-pill-yellow {
+  background: var(--yellow);
+  color: #000;
+}
+
+.btn-pill-yellow:hover {
+  box-shadow: 0 4px 12px rgba(255, 217, 61, 0.4);
+}
+
+.btn-pill-white {
+  background: #fff;
+  color: #000;
+}
+
+.btn-pill-dark {
+  background: var(--maroon);
+  color: #fff;
+}
+
+/* ==========================================
+   FORMS
+   ========================================== */
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: var(--dark);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+/* ==========================================
+   CARDS - Simple reusable card (NO fixed dimensions)
+   ========================================== */
+
+.card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.card-header {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--dark);
+}
+
+/* Bordered cards with accent colors */
+.card-bordered {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 5px solid var(--yellow);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+}
+
+.card-bordered.border-purple {
+  border-color: var(--purple);
+}
+
+.card-bordered.border-cyan {
+  border-color: var(--cyan);
+}
+
+.card-bordered.border-pink {
+  border-color: var(--pink);
+}
+
+/* ==========================================
+   TABLES
+   ========================================== */
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.table th {
+  font-weight: 600;
+  background-color: var(--light);
+}
+
+.table tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* ==========================================
+   BADGES
+   ========================================== */
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.badge-success,
+.badge--success {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.badge-warning,
+.badge--warning {
+  background-color: #fff3e0;
+  color: #ef6c00;
+}
+
+.badge-danger,
+.badge--danger {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.badge-info,
+.badge--info {
+  background-color: #e3f2fd;
+  color: #1565c0;
+}
+
+/* ==========================================
+   ALERTS
+   ========================================== */
+
+.alert {
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.alert-success {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+}
+
+.alert-error {
+  background-color: #ffebee;
+  color: #c62828;
+  border: 1px solid #ffcdd2;
+}
+
+.alert-warning {
+  background-color: #fff3e0;
+  color: #ef6c00;
+  border: 1px solid #ffe0b2;
+}
+
+.alert-info {
+  background-color: #e3f2fd;
+  color: #1565c0;
+  border: 1px solid #bbdefb;
+}
+
+/* ==========================================
+   BACKGROUNDS
+   ========================================== */
+
+.bg-maroon {
+  background-color: var(--maroon);
+  color: #fff;
+}
+
+.bg-yellow {
+  background-color: var(--yellow);
+  color: #000;
+}
+
+.bg-white {
+  background-color: #fff;
+}
+
+.bg-light {
+  background-color: var(--light);
+}
+
+/* ==========================================
+   SPINNER
+   ========================================== */
+
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================
+   UTILITIES
+   ========================================== */
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.mt-1 { margin-top: 8px; }
+.mt-2 { margin-top: 16px; }
+.mt-3 { margin-top: 24px; }
+.mt-4 { margin-top: 32px; }
+
+.mb-1 { margin-bottom: 8px; }
+.mb-2 { margin-bottom: 16px; }
+.mb-3 { margin-bottom: 24px; }
+.mb-4 { margin-bottom: 32px; }
+
+.flex {
+  display: flex;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gap-1 { gap: 8px; }
+.gap-2 { gap: 16px; }

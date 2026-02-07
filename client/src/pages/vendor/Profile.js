@@ -129,36 +129,9 @@ const VendorProfile = () => {
     }
   };
 
-  const inputStyle = {
-    width: '100%',
-    padding: '14px 16px',
-    fontFamily: "'Sora', sans-serif",
-    fontSize: '16px',
-    border: '3px solid #000',
-    background: '#fff',
-    outline: 'none',
-    boxSizing: 'border-box'
-  };
-
-  const labelStyle = {
-    display: 'block',
-    fontFamily: "'Bricolage Grotesque', sans-serif",
-    fontWeight: 700,
-    fontSize: '14px',
-    color: '#000',
-    marginBottom: '8px',
-    textTransform: 'uppercase',
-    letterSpacing: '1px'
-  };
-
   if (loading) {
     return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '50vh'
-      }}>
+      <div className="vendor-loading">
         <span className="spinner"></span>
       </div>
     );
@@ -167,171 +140,86 @@ const VendorProfile = () => {
   return (
     <div>
       {/* Header */}
-      <div style={{ marginBottom: '40px' }}>
-        <h1 style={{
-          fontFamily: "'Bricolage Grotesque', sans-serif",
-          fontWeight: 800,
-          fontSize: 'clamp(28px, 4vw, 40px)',
-          color: '#000',
-          margin: '0 0 8px 0',
-          textTransform: 'uppercase'
-        }}>
-          My Profile
-        </h1>
-        <p style={{
-          fontFamily: "'Sora', sans-serif",
-          fontSize: '18px',
-          color: '#666',
-          margin: 0
-        }}>
+      <div className="vendor-page__header">
+        <h1 className="vendor-page__title">My Profile</h1>
+        <p className="vendor-page__subtitle">
           Manage your vendor information
         </p>
       </div>
 
       {/* Success/Error Messages */}
       {message.text && (
-        <div style={{
-          background: message.type === 'success' ? '#e8f5e9' : '#fee',
-          border: `4px solid ${message.type === 'success' ? '#4CAF50' : '#E30613'}`,
-          padding: '16px 20px',
+        <div className="vendor-card" style={{
+          background: message.type === 'success' ? 'var(--cta-green)' : '#fee2e2',
           marginBottom: '24px',
-          fontFamily: "'Sora', sans-serif",
-          fontSize: '14px',
-          color: message.type === 'success' ? '#2e7d32' : '#E30613'
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px'
         }}>
-          {message.text}
+          <span style={{ fontSize: '20px' }}>
+            {message.type === 'success' ? '✓' : '!'}
+          </span>
+          <span style={{
+            fontFamily: 'var(--font-body)',
+            fontSize: '14px',
+            color: message.type === 'success' ? 'var(--black)' : '#991b1b'
+          }}>
+            {message.text}
+          </span>
         </div>
       )}
 
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
         gap: '24px'
       }}>
         {/* Business Info (Read Only) */}
-        <div style={{
-          background: '#fff',
-          border: '4px solid #000',
-          padding: '24px'
-        }}>
-          <h3 style={{
-            fontFamily: "'Bricolage Grotesque', sans-serif",
-            fontWeight: 800,
-            fontSize: '20px',
-            color: '#000',
-            margin: '0 0 8px 0',
-            textTransform: 'uppercase'
-          }}>
-            Business Information
-          </h3>
+        <div className="vendor-card">
+          <div className="vendor-card__header">
+            <h3 className="vendor-card__title">Business Information</h3>
+          </div>
           <p style={{
-            fontFamily: "'Sora', sans-serif",
-            color: '#666',
+            fontFamily: 'var(--font-body)',
+            color: 'var(--gray-dark)',
             fontSize: '14px',
-            marginBottom: '24px',
-            paddingBottom: '16px',
-            borderBottom: '3px solid #000',
-            margin: '0 0 24px 0'
+            marginBottom: '24px'
           }}>
             Contact us to update this information.
           </p>
 
-          <div style={{ marginBottom: '20px' }}>
-            <div style={{
-              fontFamily: "'Bricolage Grotesque', sans-serif",
-              fontWeight: 700,
-              fontSize: '12px',
-              color: '#999',
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-              marginBottom: '4px'
-            }}>Business Name</div>
-            <div style={{
-              fontFamily: "'Sora', sans-serif",
-              fontSize: '16px',
-              color: '#000'
-            }}>{profile?.business_name}</div>
+          <div className="vendor-profile__field">
+            <div className="vendor-profile__label">Business Name</div>
+            <div className="vendor-profile__value">{profile?.business_name}</div>
           </div>
 
-          <div style={{ marginBottom: '20px' }}>
-            <div style={{
-              fontFamily: "'Bricolage Grotesque', sans-serif",
-              fontWeight: 700,
-              fontSize: '12px',
-              color: '#999',
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-              marginBottom: '4px'
-            }}>Contact Name</div>
-            <div style={{
-              fontFamily: "'Sora', sans-serif",
-              fontSize: '16px',
-              color: '#000'
-            }}>{profile?.contact_name}</div>
+          <div className="vendor-profile__field">
+            <div className="vendor-profile__label">Contact Name</div>
+            <div className="vendor-profile__value">{profile?.contact_name}</div>
           </div>
 
-          <div style={{ marginBottom: '20px' }}>
-            <div style={{
-              fontFamily: "'Bricolage Grotesque', sans-serif",
-              fontWeight: 700,
-              fontSize: '12px',
-              color: '#999',
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-              marginBottom: '4px'
-            }}>Email</div>
-            <div style={{
-              fontFamily: "'Sora', sans-serif",
-              fontSize: '16px',
-              color: '#000'
-            }}>{profile?.email}</div>
+          <div className="vendor-profile__field">
+            <div className="vendor-profile__label">Email</div>
+            <div className="vendor-profile__value">{profile?.email}</div>
           </div>
 
-          <div style={{ marginBottom: '20px' }}>
-            <div style={{
-              fontFamily: "'Bricolage Grotesque', sans-serif",
-              fontWeight: 700,
-              fontSize: '12px',
-              color: '#999',
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-              marginBottom: '4px'
-            }}>Booth Size</div>
-            <div style={{
-              fontFamily: "'Sora', sans-serif",
-              fontSize: '16px',
-              color: '#000'
-            }}>{profile?.booth_size === 'double' ? '20x10 Double Booth' : '10x10 Single Booth'}</div>
+          <div className="vendor-profile__field">
+            <div className="vendor-profile__label">Booth Size</div>
+            <div className="vendor-profile__value">
+              {profile?.booth_size === 'double' ? '20x10 Double Booth' : '10x10 Single Booth'}
+            </div>
           </div>
 
-          <div style={{ marginBottom: '20px' }}>
-            <div style={{
-              fontFamily: "'Bricolage Grotesque', sans-serif",
-              fontWeight: 700,
-              fontSize: '12px',
-              color: '#999',
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-              marginBottom: '4px'
-            }}>Needs Power</div>
-            <div style={{
-              fontFamily: "'Sora', sans-serif",
-              fontSize: '16px',
-              color: '#000'
-            }}>{profile?.needs_power ? 'Yes' : 'No'}</div>
+          <div className="vendor-profile__field">
+            <div className="vendor-profile__label">Needs Power</div>
+            <div className="vendor-profile__value">{profile?.needs_power ? 'Yes' : 'No'}</div>
           </div>
 
           {profile?.is_nonprofit && (
-            <span style={{
-              display: 'inline-block',
-              fontFamily: "'Sora', sans-serif",
-              fontWeight: 700,
-              fontSize: '12px',
-              padding: '8px 14px',
-              background: '#0056b3',
-              color: '#fff',
-              textTransform: 'uppercase',
-              letterSpacing: '1px'
+            <span className="vendor-badge" style={{
+              background: 'var(--maroon)',
+              color: 'var(--white)',
+              marginTop: '8px'
             }}>
               Nonprofit Organization
             </span>
@@ -339,43 +227,18 @@ const VendorProfile = () => {
         </div>
 
         {/* Editable Info */}
-        <div style={{
-          background: '#fff',
-          border: '4px solid #000',
-          padding: '24px'
-        }}>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '24px',
-            paddingBottom: '16px',
-            borderBottom: '3px solid #000'
-          }}>
-            <h3 style={{
-              fontFamily: "'Bricolage Grotesque', sans-serif",
-              fontWeight: 800,
-              fontSize: '20px',
-              color: '#000',
-              margin: 0,
-              textTransform: 'uppercase'
-            }}>
-              Contact Details
-            </h3>
+        <div className="vendor-card">
+          <div className="vendor-card__header">
+            <h3 className="vendor-card__title">Contact Details</h3>
             {!editing && (
               <button
                 onClick={() => setEditing(true)}
+                className="vendor-card__link"
                 style={{
-                  fontFamily: "'Bricolage Grotesque', sans-serif",
-                  fontWeight: 700,
-                  fontSize: '12px',
-                  padding: '8px 16px',
-                  background: '#fff',
-                  color: '#000',
-                  border: '3px solid #000',
+                  background: 'none',
+                  border: 'none',
                   cursor: 'pointer',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px'
+                  padding: 0
                 }}
               >
                 Edit
@@ -384,51 +247,47 @@ const VendorProfile = () => {
           </div>
 
           {editing ? (
-            <form onSubmit={handleSubmit}>
-              <div style={{ marginBottom: '20px' }}>
-                <label style={labelStyle}>Phone</label>
+            <form onSubmit={handleSubmit} className="vendor-form">
+              <div className="vendor-form__group">
+                <label className="vendor-form__label">Phone</label>
                 <input
                   type="tel"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  style={inputStyle}
+                  className="vendor-form__input"
                 />
               </div>
 
-              <div style={{ marginBottom: '20px' }}>
-                <label style={labelStyle}>Website</label>
+              <div className="vendor-form__group">
+                <label className="vendor-form__label">Website</label>
                 <input
                   type="url"
                   value={formData.website}
                   onChange={(e) => setFormData({ ...formData, website: e.target.value })}
                   placeholder="https://"
-                  style={inputStyle}
+                  className="vendor-form__input"
                 />
               </div>
 
-              <div style={{ marginBottom: '20px' }}>
-                <label style={labelStyle}>Social Media Handles</label>
+              <div className="vendor-form__group">
+                <label className="vendor-form__label">Social Media Handles</label>
                 <input
                   type="text"
                   value={formData.social_handles}
                   onChange={(e) => setFormData({ ...formData, social_handles: e.target.value })}
                   placeholder="@instagram, facebook.com/page"
-                  style={inputStyle}
+                  className="vendor-form__input"
                 />
               </div>
 
-              <div style={{ marginBottom: '24px' }}>
-                <label style={labelStyle}>Description</label>
+              <div className="vendor-form__group">
+                <label className="vendor-form__label">Description</label>
                 <textarea
                   rows={4}
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Describe your products or services..."
-                  style={{
-                    ...inputStyle,
-                    resize: 'vertical',
-                    minHeight: '120px'
-                  }}
+                  className="vendor-form__textarea"
                 />
               </div>
 
@@ -436,37 +295,22 @@ const VendorProfile = () => {
                 <button
                   type="submit"
                   disabled={saving}
-                  style={{
-                    fontFamily: "'Bricolage Grotesque', sans-serif",
-                    fontWeight: 700,
-                    fontSize: '14px',
-                    padding: '12px 24px',
-                    background: '#FFD700',
-                    color: '#000',
-                    border: '3px solid #000',
-                    cursor: saving ? 'not-allowed' : 'pointer',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px',
-                    opacity: saving ? 0.7 : 1
-                  }}
+                  className="vendor-form__btn"
+                  style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
                 >
-                  {saving ? 'Saving...' : 'Save Changes'}
+                  {saving ? (
+                    <>
+                      <span className="spinner" style={{ width: '16px', height: '16px' }}></span>
+                      Saving...
+                    </>
+                  ) : (
+                    'Save Changes'
+                  )}
                 </button>
                 <button
                   type="button"
                   onClick={() => setEditing(false)}
-                  style={{
-                    fontFamily: "'Bricolage Grotesque', sans-serif",
-                    fontWeight: 700,
-                    fontSize: '14px',
-                    padding: '12px 24px',
-                    background: '#fff',
-                    color: '#000',
-                    border: '3px solid #000',
-                    cursor: 'pointer',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px'
-                  }}
+                  className="vendor-form__btn vendor-form__btn--secondary"
                 >
                   Cancel
                 </button>
@@ -474,84 +318,46 @@ const VendorProfile = () => {
             </form>
           ) : (
             <div>
-              <div style={{ marginBottom: '20px' }}>
-                <div style={{
-                  fontFamily: "'Bricolage Grotesque', sans-serif",
-                  fontWeight: 700,
-                  fontSize: '12px',
-                  color: '#999',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px',
-                  marginBottom: '4px'
-                }}>Phone</div>
-                <div style={{
-                  fontFamily: "'Sora', sans-serif",
-                  fontSize: '16px',
-                  color: profile?.phone ? '#000' : '#999'
-                }}>{profile?.phone || 'Not provided'}</div>
+              <div className="vendor-profile__field">
+                <div className="vendor-profile__label">Phone</div>
+                <div className="vendor-profile__value" style={{ color: profile?.phone ? 'var(--black)' : 'var(--gray-medium)' }}>
+                  {profile?.phone || 'Not provided'}
+                </div>
               </div>
 
-              <div style={{ marginBottom: '20px' }}>
-                <div style={{
-                  fontFamily: "'Bricolage Grotesque', sans-serif",
-                  fontWeight: 700,
-                  fontSize: '12px',
-                  color: '#999',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px',
-                  marginBottom: '4px'
-                }}>Website</div>
-                <div style={{
-                  fontFamily: "'Sora', sans-serif",
-                  fontSize: '16px',
-                  color: profile?.website ? '#000' : '#999'
-                }}>
+              <div className="vendor-profile__field">
+                <div className="vendor-profile__label">Website</div>
+                <div className="vendor-profile__value">
                   {profile?.website ? (
                     <a
                       href={profile.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{ color: '#000', textDecoration: 'underline' }}
+                      style={{ color: 'var(--maroon)', textDecoration: 'underline' }}
                     >
                       {profile.website}
                     </a>
-                  ) : 'Not provided'}
+                  ) : (
+                    <span style={{ color: 'var(--gray-medium)' }}>Not provided</span>
+                  )}
                 </div>
               </div>
 
-              <div style={{ marginBottom: '20px' }}>
-                <div style={{
-                  fontFamily: "'Bricolage Grotesque', sans-serif",
-                  fontWeight: 700,
-                  fontSize: '12px',
-                  color: '#999',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px',
-                  marginBottom: '4px'
-                }}>Social Media</div>
-                <div style={{
-                  fontFamily: "'Sora', sans-serif",
-                  fontSize: '16px',
-                  color: profile?.social_handles ? '#000' : '#999'
-                }}>{profile?.social_handles || 'Not provided'}</div>
+              <div className="vendor-profile__field">
+                <div className="vendor-profile__label">Social Media</div>
+                <div className="vendor-profile__value" style={{ color: profile?.social_handles ? 'var(--black)' : 'var(--gray-medium)' }}>
+                  {profile?.social_handles || 'Not provided'}
+                </div>
               </div>
 
-              <div>
-                <div style={{
-                  fontFamily: "'Bricolage Grotesque', sans-serif",
-                  fontWeight: 700,
-                  fontSize: '12px',
-                  color: '#999',
-                  textTransform: 'uppercase',
-                  letterSpacing: '1px',
-                  marginBottom: '4px'
-                }}>Description</div>
-                <div style={{
-                  fontFamily: "'Sora', sans-serif",
-                  fontSize: '16px',
-                  color: profile?.description ? '#000' : '#999',
+              <div className="vendor-profile__field">
+                <div className="vendor-profile__label">Description</div>
+                <div className="vendor-profile__value" style={{
+                  color: profile?.description ? 'var(--black)' : 'var(--gray-medium)',
                   lineHeight: 1.6
-                }}>{profile?.description || 'Not provided'}</div>
+                }}>
+                  {profile?.description || 'Not provided'}
+                </div>
               </div>
             </div>
           )}
@@ -559,35 +365,14 @@ const VendorProfile = () => {
       </div>
 
       {/* Photos Section */}
-      <div style={{
-        background: '#fff',
-        border: '4px solid #000',
-        padding: '24px',
-        marginTop: '24px'
-      }}>
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: '24px',
-          paddingBottom: '16px',
-          borderBottom: '3px solid #000'
-        }}>
+      <div className="vendor-card" style={{ marginTop: '24px' }}>
+        <div className="vendor-card__header">
           <div>
-            <h3 style={{
-              fontFamily: "'Bricolage Grotesque', sans-serif",
-              fontWeight: 800,
-              fontSize: '20px',
-              color: '#000',
-              margin: 0,
-              textTransform: 'uppercase'
-            }}>
-              Photos
-            </h3>
+            <h3 className="vendor-card__title">Photos</h3>
             <p style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: 'var(--font-body)',
               fontSize: '14px',
-              color: '#666',
+              color: 'var(--gray-dark)',
               margin: '8px 0 0 0'
             }}>
               Upload photos of your products and booth. The hero photo will be displayed on the vendors page.
@@ -605,21 +390,17 @@ const VendorProfile = () => {
             <button
               onClick={() => fileInputRef.current?.click()}
               disabled={uploadingPhotos}
-              style={{
-                fontFamily: "'Bricolage Grotesque', sans-serif",
-                fontWeight: 700,
-                fontSize: '12px',
-                padding: '10px 20px',
-                background: '#FFD700',
-                color: '#000',
-                border: '3px solid #000',
-                cursor: uploadingPhotos ? 'not-allowed' : 'pointer',
-                textTransform: 'uppercase',
-                letterSpacing: '1px',
-                opacity: uploadingPhotos ? 0.7 : 1
-              }}
+              className="vendor-form__btn"
+              style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
             >
-              {uploadingPhotos ? 'Uploading...' : 'Upload Photos'}
+              {uploadingPhotos ? (
+                <>
+                  <span className="spinner" style={{ width: '16px', height: '16px' }}></span>
+                  Uploading...
+                </>
+              ) : (
+                'Upload Photos'
+              )}
             </button>
           </div>
         </div>
@@ -628,13 +409,14 @@ const VendorProfile = () => {
           <div style={{
             textAlign: 'center',
             padding: '40px 20px',
-            background: '#f5f5f0',
-            border: '3px dashed #ccc'
+            background: 'var(--gray-light)',
+            borderRadius: '12px',
+            border: '2px dashed var(--border-light)'
           }}>
             <p style={{
-              fontFamily: "'Sora', sans-serif",
+              fontFamily: 'var(--font-body)',
               fontSize: '16px',
-              color: '#666',
+              color: 'var(--gray-dark)',
               margin: 0
             }}>
               No photos uploaded yet. Upload photos to showcase your products and booth setup.
@@ -643,16 +425,18 @@ const VendorProfile = () => {
         ) : (
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
             gap: '16px'
           }}>
             {photos.map((photo, index) => (
               <div
                 key={index}
+                className="vendor-photo"
                 style={{
                   position: 'relative',
-                  border: heroPhoto === photo ? '4px solid #FFD700' : '3px solid #000',
-                  background: '#f5f5f0',
+                  borderRadius: '12px',
+                  border: heroPhoto === photo ? '3px solid var(--maroon)' : '1px solid var(--border-light)',
+                  background: 'var(--gray-light)',
                   aspectRatio: '1',
                   overflow: 'hidden'
                 }}
@@ -671,15 +455,15 @@ const VendorProfile = () => {
                     position: 'absolute',
                     top: '8px',
                     left: '8px',
-                    background: '#FFD700',
-                    color: '#000',
-                    padding: '4px 8px',
-                    fontFamily: "'Bricolage Grotesque', sans-serif",
-                    fontWeight: 700,
+                    background: 'var(--maroon)',
+                    color: 'var(--white)',
+                    padding: '4px 10px',
+                    fontFamily: 'var(--font-body)',
+                    fontWeight: 600,
                     fontSize: '10px',
                     textTransform: 'uppercase',
-                    letterSpacing: '1px',
-                    border: '2px solid #000'
+                    letterSpacing: '0.5px',
+                    borderRadius: '100px'
                   }}>
                     Hero
                   </div>
@@ -690,47 +474,45 @@ const VendorProfile = () => {
                   left: 0,
                   right: 0,
                   display: 'flex',
-                  gap: '0'
+                  gap: '1px',
+                  background: 'var(--border-light)'
                 }}>
                   {heroPhoto !== photo && (
                     <button
                       onClick={() => handleSetHero(photo)}
                       style={{
                         flex: 1,
-                        padding: '8px',
-                        background: '#FFD700',
-                        color: '#000',
+                        padding: '10px',
+                        background: 'var(--white)',
+                        color: 'var(--black)',
                         border: 'none',
-                        borderTop: '3px solid #000',
-                        fontFamily: "'Sora', sans-serif",
+                        fontFamily: 'var(--font-body)',
                         fontWeight: 600,
                         fontSize: '11px',
                         cursor: 'pointer',
                         textTransform: 'uppercase'
                       }}
                     >
-                      Set as Hero
+                      Set Hero
                     </button>
                   )}
                   <button
                     onClick={() => handleDeletePhoto(photo)}
                     style={{
                       flex: heroPhoto === photo ? 1 : 0,
-                      minWidth: heroPhoto === photo ? 'auto' : '40px',
-                      padding: '8px',
-                      background: '#E30613',
-                      color: '#fff',
+                      minWidth: heroPhoto === photo ? 'auto' : '44px',
+                      padding: '10px',
+                      background: heroPhoto === photo ? 'var(--white)' : '#fee2e2',
+                      color: '#991b1b',
                       border: 'none',
-                      borderTop: '3px solid #000',
-                      borderLeft: heroPhoto !== photo ? '3px solid #000' : 'none',
-                      fontFamily: "'Sora', sans-serif",
+                      fontFamily: 'var(--font-body)',
                       fontWeight: 600,
                       fontSize: '11px',
                       cursor: 'pointer',
                       textTransform: 'uppercase'
                     }}
                   >
-                    {heroPhoto === photo ? 'Delete' : 'X'}
+                    {heroPhoto === photo ? 'Delete' : '×'}
                   </button>
                 </div>
               </div>

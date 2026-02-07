@@ -27,6 +27,10 @@ app.use('/api/payments', require('./routes/payments'));
 app.use('/api/maps', require('./routes/maps'));
 app.use('/api/applications', require('./routes/applications'));
 app.use('/api/music-applications', require('./routes/musicApplications'));
+app.use('/api/blog', require('./routes/blog'));
+app.use('/api/music', require('./routes/music'));
+app.use('/api/settings', require('./routes/settings'));
+app.use('/api/contact', require('./routes/contact'));
 
 // Health check
 app.get('/api/health', (req, res) => {

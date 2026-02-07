@@ -19,17 +19,20 @@ import VendorLayout from './components/VendorLayout';
 import AdminLayout from './components/AdminLayout';
 
 // Public Pages
-import Home from './pages/public/Home';
-import Calendar from './pages/public/Calendar';
 import Vendors from './pages/public/Vendors';
 import VendorDetail from './pages/public/VendorDetail';
 import Map from './pages/public/Map';
 import Apply from './pages/public/Apply';
 import BecomeVendor from './pages/public/BecomeVendor';
-import LiveMusic from './pages/public/LiveMusic';
 import FindUs from './pages/public/FindUs';
-import FontTest from './pages/public/FontTest';
-import Typography from './pages/public/Typography';
+import GetInvolved from './pages/public/GetInvolved';
+import Contact from './pages/public/Contact';
+import TestHome from './pages/public/TestHome';
+import TestHome2 from './pages/public/TestHome2';
+import TestHome3 from './pages/public/TestHome3';
+import TestHome4 from './pages/public/TestHome4';
+import BlogPost from './pages/public/BlogPost';
+import Blog from './pages/public/Blog';
 
 // Auth Pages
 import VendorLogin from './pages/vendor/Login';
@@ -52,6 +55,9 @@ import AdminPayments from './pages/admin/Payments';
 import AdminMaps from './pages/admin/Maps';
 import MapBuilder from './pages/admin/MapBuilder';
 import AdminMusicApplications from './pages/admin/MusicApplications';
+import MusicScheduleBuilder from './pages/admin/MusicScheduleBuilder';
+import AdminBlog from './pages/admin/Blog';
+import AdminBlogEditor from './pages/admin/BlogEditor';
 
 // Protected Route Components
 const VendorRoute = ({ children }) => {
@@ -87,22 +93,27 @@ function App() {
     <>
       <ScrollToTop />
       <Routes>
-      {/* Public Routes */}
-      <Route path="/" element={<PublicLayout />}>
-        <Route index element={<Home />} />
-        <Route path="calendar" element={<Calendar />} />
+      {/* Homepage - has its own header/footer */}
+      <Route path="/" element={<TestHome4 />} />
+
+      {/* Public Routes with shared layout */}
+      <Route element={<PublicLayout />}>
         <Route path="vendors" element={<Vendors />} />
         <Route path="vendors/:id" element={<VendorDetail />} />
         <Route path="map" element={<Map />} />
         <Route path="apply" element={<Apply />} />
         <Route path="become-vendor" element={<BecomeVendor />} />
-        <Route path="live-music" element={<LiveMusic />} />
         <Route path="find-us" element={<FindUs />} />
+        <Route path="get-involved" element={<GetInvolved />} />
+        <Route path="contact" element={<Contact />} />
+        <Route path="blog" element={<Blog />} />
+        <Route path="blog/:slug" element={<BlogPost />} />
       </Route>
 
-      {/* Font Test Page */}
-      <Route path="/fonts" element={<FontTest />} />
-      <Route path="/typography" element={<Typography />} />
+      {/* Test Pages */}
+      <Route path="/test-home" element={<TestHome />} />
+      <Route path="/test-home-2" element={<TestHome2 />} />
+      <Route path="/test-home-3" element={<TestHome3 />} />
 
       {/* Auth Routes */}
       <Route path="/vendor/login" element={<VendorLogin />} />
@@ -137,7 +148,12 @@ function App() {
         <Route path="payments" element={<AdminPayments />} />
         <Route path="maps" element={<AdminMaps />} />
         <Route path="maps/builder" element={<MapBuilder />} />
+        <Route path="maps/builder/:dateId" element={<MapBuilder />} />
         <Route path="music-applications" element={<AdminMusicApplications />} />
+        <Route path="music-schedule" element={<MusicScheduleBuilder />} />
+        <Route path="blog" element={<AdminBlog />} />
+        <Route path="blog/new" element={<AdminBlogEditor />} />
+        <Route path="blog/:id/edit" element={<AdminBlogEditor />} />
       </Route>
 
       {/* Catch all */}

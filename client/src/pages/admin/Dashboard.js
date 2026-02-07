@@ -57,12 +57,7 @@ const AdminDashboard = () => {
 
   if (loading) {
     return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '50vh'
-      }}>
+      <div className="text-center mt-4">
         <span className="spinner"></span>
       </div>
     );
@@ -70,358 +65,79 @@ const AdminDashboard = () => {
 
   return (
     <div>
-      {/* Header */}
-      <div style={{ marginBottom: '40px' }}>
-        <h1 style={{
-          fontFamily: "'Bricolage Grotesque', sans-serif",
-          fontWeight: 800,
-          fontSize: 'clamp(32px, 5vw, 48px)',
-          color: '#000',
-          margin: '0 0 8px 0',
-          textTransform: 'uppercase'
-        }}>
-          Dashboard
-        </h1>
-        <p style={{
-          fontFamily: "'Sora', sans-serif",
-          fontSize: '18px',
-          color: '#666',
-          margin: 0
-        }}>
-          Market on Main 2026 Overview
-        </p>
-      </div>
+      <h1 className="mb-2">Dashboard</h1>
+      <p style={{ color: 'var(--gray-dark)', marginBottom: '32px' }}>Market on Main 2026 Overview</p>
 
       {/* Stats Grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-        gap: '20px',
-        marginBottom: '40px'
-      }}>
-        {/* Active Vendors */}
-        <div style={{
-          background: '#FFD700',
-          border: '4px solid #000',
-          padding: '24px',
-          textAlign: 'center'
-        }}>
-          <div style={{
-            fontFamily: "'Bricolage Grotesque', sans-serif",
-            fontWeight: 800,
-            fontSize: '48px',
-            color: '#000',
-            lineHeight: 1
-          }}>
-            {stats.activeVendors}
-          </div>
-          <div style={{
-            fontFamily: "'Sora', sans-serif",
-            fontWeight: 600,
-            fontSize: '14px',
-            color: '#000',
-            textTransform: 'uppercase',
-            letterSpacing: '1px',
-            marginTop: '8px'
-          }}>
-            Active Vendors
-          </div>
+      <div className="grid grid-4 mb-4" style={{ gap: '16px' }}>
+        <div className="card" style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '36px', fontWeight: 700, color: 'var(--maroon)' }}>{stats.activeVendors}</div>
+          <div style={{ fontSize: '12px', color: 'var(--gray-dark)', textTransform: 'uppercase' }}>Active Vendors</div>
         </div>
-
-        {/* Pending Applications */}
-        <div style={{
-          background: stats.pendingApplications > 0 ? '#fff' : '#fff',
-          border: stats.pendingApplications > 0 ? '4px solid #E30613' : '4px solid #000',
-          padding: '24px',
-          textAlign: 'center'
-        }}>
-          <div style={{
-            fontFamily: "'Bricolage Grotesque', sans-serif",
-            fontWeight: 800,
-            fontSize: '48px',
-            color: stats.pendingApplications > 0 ? '#E30613' : '#000',
-            lineHeight: 1
-          }}>
-            {stats.pendingApplications}
-          </div>
-          <div style={{
-            fontFamily: "'Sora', sans-serif",
-            fontWeight: 600,
-            fontSize: '14px',
-            color: stats.pendingApplications > 0 ? '#E30613' : '#666',
-            textTransform: 'uppercase',
-            letterSpacing: '1px',
-            marginTop: '8px'
-          }}>
-            Pending Apps
-          </div>
+        <div className="card" style={{ textAlign: 'center', borderColor: stats.pendingApplications > 0 ? 'var(--danger)' : undefined }}>
+          <div style={{ fontSize: '36px', fontWeight: 700, color: stats.pendingApplications > 0 ? 'var(--danger)' : 'var(--dark)' }}>{stats.pendingApplications}</div>
+          <div style={{ fontSize: '12px', color: 'var(--gray-dark)', textTransform: 'uppercase' }}>Pending Apps</div>
         </div>
-
-        {/* Upcoming Markets */}
-        <div style={{
-          background: '#fff',
-          border: '4px solid #000',
-          padding: '24px',
-          textAlign: 'center'
-        }}>
-          <div style={{
-            fontFamily: "'Bricolage Grotesque', sans-serif",
-            fontWeight: 800,
-            fontSize: '48px',
-            color: '#000',
-            lineHeight: 1
-          }}>
-            {stats.upcomingMarkets}
-          </div>
-          <div style={{
-            fontFamily: "'Sora', sans-serif",
-            fontWeight: 600,
-            fontSize: '14px',
-            color: '#666',
-            textTransform: 'uppercase',
-            letterSpacing: '1px',
-            marginTop: '8px'
-          }}>
-            Upcoming Markets
-          </div>
+        <div className="card" style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '36px', fontWeight: 700 }}>{stats.upcomingMarkets}</div>
+          <div style={{ fontSize: '12px', color: 'var(--gray-dark)', textTransform: 'uppercase' }}>Upcoming Markets</div>
         </div>
-
-        {/* Revenue */}
-        <div style={{
-          background: '#000',
-          border: '4px solid #000',
-          padding: '24px',
-          textAlign: 'center'
-        }}>
-          <div style={{
-            fontFamily: "'Bricolage Grotesque', sans-serif",
-            fontWeight: 800,
-            fontSize: '48px',
-            color: '#FFD700',
-            lineHeight: 1
-          }}>
-            ${stats.totalPayments.toFixed(0)}
-          </div>
-          <div style={{
-            fontFamily: "'Sora', sans-serif",
-            fontWeight: 600,
-            fontSize: '14px',
-            color: '#fff',
-            textTransform: 'uppercase',
-            letterSpacing: '1px',
-            marginTop: '8px'
-          }}>
-            Revenue
-          </div>
-        </div>
-
-        {/* Pending Payments */}
-        <div style={{
-          background: stats.pendingPayments > 0 ? '#fff' : '#fff',
-          border: stats.pendingPayments > 0 ? '4px solid #E30613' : '4px solid #000',
-          padding: '24px',
-          textAlign: 'center'
-        }}>
-          <div style={{
-            fontFamily: "'Bricolage Grotesque', sans-serif",
-            fontWeight: 800,
-            fontSize: '48px',
-            color: stats.pendingPayments > 0 ? '#E30613' : '#000',
-            lineHeight: 1
-          }}>
-            ${stats.pendingPayments.toFixed(0)}
-          </div>
-          <div style={{
-            fontFamily: "'Sora', sans-serif",
-            fontWeight: 600,
-            fontSize: '14px',
-            color: stats.pendingPayments > 0 ? '#E30613' : '#666',
-            textTransform: 'uppercase',
-            letterSpacing: '1px',
-            marginTop: '8px'
-          }}>
-            Outstanding
-          </div>
+        <div className="card" style={{ textAlign: 'center', background: 'var(--maroon)', color: 'var(--cream)' }}>
+          <div style={{ fontSize: '36px', fontWeight: 700, color: 'var(--yellow)' }}>${stats.totalPayments.toFixed(0)}</div>
+          <div style={{ fontSize: '12px', textTransform: 'uppercase', opacity: 0.8 }}>Revenue</div>
         </div>
       </div>
 
-      {/* Two Column Layout */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-        gap: '24px'
-      }}>
+      {/* Cards Row */}
+      <div className="grid grid-3" style={{ gap: '24px' }}>
         {/* Pending Applications */}
         {pendingVendors.length > 0 && (
-          <div style={{
-            background: '#fff',
-            border: '4px solid #E30613',
-            padding: '24px'
-          }}>
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '20px',
-              paddingBottom: '16px',
-              borderBottom: '3px solid #E30613'
-            }}>
-              <h3 style={{
-                fontFamily: "'Bricolage Grotesque', sans-serif",
-                fontWeight: 800,
-                fontSize: '20px',
-                color: '#E30613',
-                margin: 0,
-                textTransform: 'uppercase'
-              }}>
-                Needs Review
-              </h3>
-              <Link to="/admin/vendors" style={{
-                fontFamily: "'Sora', sans-serif",
-                fontSize: '14px',
-                color: '#E30613',
-                fontWeight: 600
-              }}>
-                View All →
-              </Link>
+          <div className="card">
+            <div className="flex-between mb-2">
+              <h4 style={{ color: 'var(--danger)', margin: 0 }}>Needs Review</h4>
+              <Link to="/admin/vendors">View All →</Link>
             </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {pendingVendors.map(vendor => (
                 <Link
                   key={vendor.id}
                   to={`/admin/vendors/${vendor.id}`}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '12px 16px',
-                    background: '#f5f5f5',
-                    border: '2px solid #000',
-                    textDecoration: 'none',
-                    color: '#000'
-                  }}
+                  className="flex-between"
+                  style={{ padding: '12px', background: 'var(--light)', borderRadius: '6px', textDecoration: 'none', color: 'inherit' }}
                 >
                   <div>
-                    <div style={{
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
-                      fontWeight: 700,
-                      fontSize: '14px'
-                    }}>
-                      {vendor.business_name}
-                    </div>
-                    <div style={{
-                      fontFamily: "'Sora', sans-serif",
-                      fontSize: '12px',
-                      color: '#666'
-                    }}>
-                      {vendor.contact_name}
-                    </div>
+                    <div style={{ fontWeight: 600 }}>{vendor.business_name}</div>
+                    <div style={{ fontSize: '12px', color: 'var(--gray)' }}>{vendor.contact_name}</div>
                   </div>
-                  <span style={{
-                    fontFamily: "'Sora', sans-serif",
-                    fontWeight: 700,
-                    fontSize: '11px',
-                    padding: '4px 8px',
-                    background: '#FFD700',
-                    border: '2px solid #000',
-                    textTransform: 'uppercase'
-                  }}>
-                    Review
-                  </span>
+                  <span className="badge badge-warning">Review</span>
                 </Link>
               ))}
             </div>
           </div>
         )}
 
-        {/* Recent Active Vendors */}
-        <div style={{
-          background: '#fff',
-          border: '4px solid #000',
-          padding: '24px'
-        }}>
-          <div style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '20px',
-            paddingBottom: '16px',
-            borderBottom: '3px solid #000'
-          }}>
-            <h3 style={{
-              fontFamily: "'Bricolage Grotesque', sans-serif",
-              fontWeight: 800,
-              fontSize: '20px',
-              color: '#000',
-              margin: 0,
-              textTransform: 'uppercase'
-            }}>
-              Active Vendors
-            </h3>
-            <Link to="/admin/vendors" style={{
-              fontFamily: "'Sora', sans-serif",
-              fontSize: '14px',
-              color: '#000',
-              fontWeight: 600
-            }}>
-              View All →
-            </Link>
+        {/* Active Vendors */}
+        <div className="card">
+          <div className="flex-between mb-2">
+            <h4 style={{ margin: 0 }}>Active Vendors</h4>
+            <Link to="/admin/vendors">View All →</Link>
           </div>
-
           {recentVendors.length === 0 ? (
-            <p style={{
-              fontFamily: "'Sora', sans-serif",
-              color: '#666',
-              margin: 0
-            }}>
-              No active vendors yet.
-            </p>
+            <p style={{ color: 'var(--gray)' }}>No active vendors yet.</p>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {recentVendors.map(vendor => (
                 <Link
                   key={vendor.id}
                   to={`/admin/vendors/${vendor.id}`}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '12px 16px',
-                    background: '#f5f5f5',
-                    border: '2px solid #000',
-                    textDecoration: 'none',
-                    color: '#000'
-                  }}
+                  className="flex-between"
+                  style={{ padding: '12px', background: 'var(--light)', borderRadius: '6px', textDecoration: 'none', color: 'inherit' }}
                 >
                   <div>
-                    <div style={{
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
-                      fontWeight: 700,
-                      fontSize: '14px'
-                    }}>
-                      {vendor.business_name}
-                    </div>
-                    <div style={{
-                      fontFamily: "'Sora', sans-serif",
-                      fontSize: '12px',
-                      color: '#666'
-                    }}>
-                      {vendor.contact_name}
-                    </div>
+                    <div style={{ fontWeight: 600 }}>{vendor.business_name}</div>
+                    <div style={{ fontSize: '12px', color: 'var(--gray)' }}>{vendor.contact_name}</div>
                   </div>
-                  <span style={{
-                    fontFamily: "'Sora', sans-serif",
-                    fontWeight: 700,
-                    fontSize: '11px',
-                    padding: '4px 8px',
-                    background: '#d4edda',
-                    border: '2px solid #28a745',
-                    color: '#28a745',
-                    textTransform: 'uppercase'
-                  }}>
-                    Active
-                  </span>
+                  <span className="badge badge-success">Active</span>
                 </Link>
               ))}
             </div>
@@ -429,114 +145,20 @@ const AdminDashboard = () => {
         </div>
 
         {/* Quick Actions */}
-        <div style={{
-          background: '#000',
-          border: '4px solid #000',
-          padding: '24px'
-        }}>
-          <h3 style={{
-            fontFamily: "'Bricolage Grotesque', sans-serif",
-            fontWeight: 800,
-            fontSize: '20px',
-            color: '#FFD700',
-            margin: '0 0 20px 0',
-            paddingBottom: '16px',
-            borderBottom: '3px solid #FFD700',
-            textTransform: 'uppercase'
-          }}>
-            Quick Actions
-          </h3>
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <Link
-              to="/admin/vendors"
-              style={{
-                fontFamily: "'Bricolage Grotesque', sans-serif",
-                fontWeight: 800,
-                fontSize: '14px',
-                padding: '14px 20px',
-                background: '#FFD700',
-                color: '#000',
-                border: '3px solid #FFD700',
-                textDecoration: 'none',
-                textAlign: 'center',
-                textTransform: 'uppercase',
-                letterSpacing: '1px'
-              }}
-            >
+        <div className="card" style={{ background: 'var(--maroon)', color: 'var(--cream)' }}>
+          <h4 style={{ margin: '0 0 16px 0', color: 'var(--yellow)' }}>Quick Actions</h4>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <Link to="/admin/vendors" className="btn btn-primary" style={{ background: 'var(--yellow)', color: 'var(--dark)', textAlign: 'center' }}>
               Manage Vendors
             </Link>
-            <Link
-              to="/admin/payments"
-              style={{
-                fontFamily: "'Bricolage Grotesque', sans-serif",
-                fontWeight: 800,
-                fontSize: '14px',
-                padding: '14px 20px',
-                background: 'transparent',
-                color: '#fff',
-                border: '3px solid #fff',
-                textDecoration: 'none',
-                textAlign: 'center',
-                textTransform: 'uppercase',
-                letterSpacing: '1px'
-              }}
-            >
+            <Link to="/admin/payments" className="btn btn-secondary" style={{ textAlign: 'center' }}>
               View Payments
             </Link>
-            <Link
-              to="/admin/announcements"
-              style={{
-                fontFamily: "'Bricolage Grotesque', sans-serif",
-                fontWeight: 800,
-                fontSize: '14px',
-                padding: '14px 20px',
-                background: 'transparent',
-                color: '#fff',
-                border: '3px solid #fff',
-                textDecoration: 'none',
-                textAlign: 'center',
-                textTransform: 'uppercase',
-                letterSpacing: '1px'
-              }}
-            >
+            <Link to="/admin/announcements" className="btn btn-secondary" style={{ textAlign: 'center' }}>
               Announcements
             </Link>
-            <Link
-              to="/admin/dates"
-              style={{
-                fontFamily: "'Bricolage Grotesque', sans-serif",
-                fontWeight: 800,
-                fontSize: '14px',
-                padding: '14px 20px',
-                background: 'transparent',
-                color: '#fff',
-                border: '3px solid #fff',
-                textDecoration: 'none',
-                textAlign: 'center',
-                textTransform: 'uppercase',
-                letterSpacing: '1px'
-              }}
-            >
+            <Link to="/admin/dates" className="btn btn-secondary" style={{ textAlign: 'center' }}>
               Market Dates
-            </Link>
-            <Link
-              to="/admin/maps"
-              style={{
-                fontFamily: "'Bricolage Grotesque', sans-serif",
-                fontWeight: 800,
-                fontSize: '14px',
-                padding: '14px 20px',
-                background: 'transparent',
-                color: '#fff',
-                border: '3px solid #fff',
-                textDecoration: 'none',
-                textAlign: 'center',
-                textTransform: 'uppercase',
-                letterSpacing: '1px'
-              }}
-            >
-              Market Maps
             </Link>
           </div>
         </div>

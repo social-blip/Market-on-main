@@ -41,7 +41,8 @@ router.get('/public', async (req, res) => {
     if (date) {
       // Filter vendors by specific market date
       result = await db.query(
-        `SELECT DISTINCT v.id, v.business_name, v.description, v.category, v.booth_size, v.image_url
+        `SELECT DISTINCT v.id, v.business_name, v.description, v.category, v.booth_size, v.image_url,
+                (SELECT COUNT(*) FROM vendor_bookings WHERE vendor_id = v.id AND status = 'confirmed') as market_count
          FROM vendors v
          JOIN vendor_bookings vb ON v.id = vb.vendor_id
          JOIN market_dates md ON vb.market_date_id = md.id
@@ -53,7 +54,8 @@ router.get('/public', async (req, res) => {
       );
     } else {
       result = await db.query(
-        `SELECT id, business_name, description, category, booth_size, image_url
+        `SELECT id, business_name, description, category, booth_size, image_url,
+                (SELECT COUNT(*) FROM vendor_bookings WHERE vendor_id = vendors.id AND status = 'confirmed') as market_count
          FROM vendors
          WHERE is_active = true AND is_approved = true
          ORDER BY business_name ASC`
@@ -74,6 +76,7 @@ router.get('/public', async (req, res) => {
         );
         return {
           ...vendor,
+          market_count: parseInt(vendor.market_count) || 0,
           next_date: datesResult.rows[0]?.date || null
         };
       })
@@ -190,16 +193,41 @@ router.get('/payments', verifyToken, isVendor, async (req, res) => {
   }
 });
 
-// Get announcements for vendor
+// Get announcements for vendor (with read status)
 router.get('/announcements', verifyToken, isVendor, async (req, res) => {
   try {
+    const vendorId = req.user.id;
     const result = await db.query(
-      `SELECT * FROM announcements
-       ORDER BY created_at DESC
-       LIMIT 20`
+      `SELECT a.*,
+              CASE WHEN ar.id IS NOT NULL THEN true ELSE false END as is_read
+       FROM announcements a
+       LEFT JOIN announcement_reads ar ON a.id = ar.announcement_id AND ar.vendor_id = $1
+       ORDER BY a.created_at DESC
+       LIMIT 20`,
+      [vendorId]
     );
 
     res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Mark announcement as read
+router.post('/announcements/:id/read', verifyToken, isVendor, async (req, res) => {
+  try {
+    const vendorId = req.user.id;
+    const announcementId = req.params.id;
+
+    await db.query(
+      `INSERT INTO announcement_reads (announcement_id, vendor_id)
+       VALUES ($1, $2)
+       ON CONFLICT (announcement_id, vendor_id) DO NOTHING`,
+      [announcementId, vendorId]
+    );
+
+    res.json({ success: true });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });

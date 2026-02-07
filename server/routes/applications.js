@@ -73,14 +73,14 @@ router.post('/submit',
     body('booth_size').isIn(['single', 'double']),
     body('markets_requested').isIn(['3', '6', '10']),
     body('requested_dates').notEmpty(),
-    body('needs_power').isBoolean(),
-    body('is_nonprofit').isBoolean(),
+    body('needs_power').custom(value => ['true', 'false', true, false].includes(value)),
+    body('is_nonprofit').custom(value => ['true', 'false', true, false].includes(value)),
     body('agreements').notEmpty()
   ],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ error: errors.array().map(e => e.msg).join(', '), errors: errors.array() });
     }
 
     const {
@@ -178,7 +178,7 @@ router.post('/submit',
       });
     } catch (err) {
       console.error('Error submitting application:', err);
-      res.status(500).json({ error: 'Failed to submit application' });
+      res.status(500).json({ error: err.message || 'Failed to submit application' });
     }
   }
 );

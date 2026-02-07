@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import api from '../../api/client';
 
 const AdminDates = () => {
@@ -38,12 +39,7 @@ const AdminDates = () => {
 
   if (loading) {
     return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '50vh'
-      }}>
+      <div className="text-center mt-4">
         <span className="spinner"></span>
       </div>
     );
@@ -51,288 +47,93 @@ const AdminDates = () => {
 
   return (
     <div>
-      {/* Header */}
-      <div style={{ marginBottom: '32px' }}>
-        <h1 style={{
-          fontFamily: "'Bricolage Grotesque', sans-serif",
-          fontWeight: 800,
-          fontSize: 'clamp(32px, 5vw, 48px)',
-          color: '#000',
-          margin: '0 0 8px 0',
-          textTransform: 'uppercase'
-        }}>
-          Market Dates
-        </h1>
-        <p style={{
-          fontFamily: "'Sora', sans-serif",
-          fontSize: '18px',
-          color: '#666',
-          margin: 0
-        }}>
-          2026 Season • {dates.length} Saturdays
-        </p>
-      </div>
+      <h1 className="mb-2">Market Dates</h1>
+      <p style={{ color: 'var(--gray-dark)', marginBottom: '24px' }}>2026 Season · {dates.length} Saturdays</p>
 
       {/* Stats */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-        gap: '16px',
-        marginBottom: '32px'
-      }}>
-        <div style={{
-          background: '#FFD700',
-          border: '4px solid #000',
-          padding: '20px',
-          textAlign: 'center'
-        }}>
-          <div style={{
-            fontFamily: "'Bricolage Grotesque', sans-serif",
-            fontWeight: 800,
-            fontSize: '36px',
-            color: '#000'
-          }}>
-            {upcomingDates.length}
-          </div>
-          <div style={{
-            fontFamily: "'Sora', sans-serif",
-            fontWeight: 600,
-            fontSize: '12px',
-            color: '#000',
-            textTransform: 'uppercase',
-            letterSpacing: '1px'
-          }}>
-            Upcoming
-          </div>
+      <div className="grid grid-3 mb-4" style={{ gap: '16px' }}>
+        <div className="card" style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '36px', fontWeight: 700, color: 'var(--maroon)' }}>{upcomingDates.length}</div>
+          <div style={{ fontSize: '12px', color: 'var(--gray-dark)', textTransform: 'uppercase' }}>Upcoming</div>
         </div>
-        <div style={{
-          background: '#fff',
-          border: '4px solid #000',
-          padding: '20px',
-          textAlign: 'center'
-        }}>
-          <div style={{
-            fontFamily: "'Bricolage Grotesque', sans-serif",
-            fontWeight: 800,
-            fontSize: '36px',
-            color: '#000'
-          }}>
-            {pastDates.length}
-          </div>
-          <div style={{
-            fontFamily: "'Sora', sans-serif",
-            fontWeight: 600,
-            fontSize: '12px',
-            color: '#666',
-            textTransform: 'uppercase',
-            letterSpacing: '1px'
-          }}>
-            Completed
-          </div>
+        <div className="card" style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '36px', fontWeight: 700 }}>{pastDates.length}</div>
+          <div style={{ fontSize: '12px', color: 'var(--gray-dark)', textTransform: 'uppercase' }}>Completed</div>
         </div>
         {cancelledDates.length > 0 && (
-          <div style={{
-            background: '#fff',
-            border: '4px solid #E30613',
-            padding: '20px',
-            textAlign: 'center'
-          }}>
-            <div style={{
-              fontFamily: "'Bricolage Grotesque', sans-serif",
-              fontWeight: 800,
-              fontSize: '36px',
-              color: '#E30613'
-            }}>
-              {cancelledDates.length}
-            </div>
-            <div style={{
-              fontFamily: "'Sora', sans-serif",
-              fontWeight: 600,
-              fontSize: '12px',
-              color: '#E30613',
-              textTransform: 'uppercase',
-              letterSpacing: '1px'
-            }}>
-              Cancelled
-            </div>
+          <div className="card" style={{ textAlign: 'center', borderColor: 'var(--danger)' }}>
+            <div style={{ fontSize: '36px', fontWeight: 700, color: 'var(--danger)' }}>{cancelledDates.length}</div>
+            <div style={{ fontSize: '12px', color: 'var(--danger)', textTransform: 'uppercase' }}>Cancelled</div>
           </div>
         )}
       </div>
 
       {/* Dates Grid */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-        gap: '20px'
-      }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px' }}>
         {dates.map((date, index) => {
           const dateObj = new Date(date.date);
           const isPast = dateObj < today;
           const isCancelled = date.is_cancelled;
 
           return (
-            <div
-              key={date.id}
-              style={{
-                background: isCancelled ? '#f5f5f5' : isPast ? '#fff' : '#fff',
-                border: isCancelled ? '4px solid #E30613' : '4px solid #000',
-                opacity: isCancelled ? 0.7 : 1,
-                overflow: 'hidden'
-              }}
-            >
-              {/* Date Header */}
-              <div style={{
-                background: isCancelled ? '#E30613' : isPast ? '#666' : '#FFD700',
-                padding: '16px 20px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
-              }}>
+            <div key={date.id} className="card" style={{
+              padding: 0,
+              overflow: 'hidden',
+              opacity: isCancelled ? 0.6 : 1,
+              borderColor: isCancelled ? 'var(--danger)' : undefined
+            }}>
+              {/* Header */}
+              <Link
+                to={`/admin/maps/builder/${date.id}`}
+                style={{
+                  display: 'flex',
+                  padding: '16px',
+                  background: isCancelled ? 'var(--danger)' : isPast ? 'var(--gray)' : 'var(--maroon)',
+                  color: 'white',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  textDecoration: 'none'
+                }}
+              >
                 <div>
-                  <div style={{
-                    fontFamily: "'Bricolage Grotesque', sans-serif",
-                    fontWeight: 800,
-                    fontSize: '14px',
-                    color: isCancelled || isPast ? '#fff' : '#000',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px'
-                  }}>
+                  <div style={{ fontSize: '12px', textTransform: 'uppercase', opacity: 0.8 }}>
                     {dateObj.toLocaleDateString('en-US', { weekday: 'long' })}
                   </div>
-                  <div style={{
-                    fontFamily: "'Bricolage Grotesque', sans-serif",
-                    fontWeight: 800,
-                    fontSize: '24px',
-                    color: isCancelled || isPast ? '#fff' : '#000'
-                  }}>
+                  <div style={{ fontSize: '20px', fontWeight: 700 }}>
                     {dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                   </div>
                 </div>
-                <div style={{
-                  fontFamily: "'Bricolage Grotesque', sans-serif",
-                  fontWeight: 800,
-                  fontSize: '32px',
-                  color: isCancelled || isPast ? 'rgba(255,255,255,0.3)' : 'rgba(0,0,0,0.2)'
-                }}>
-                  #{index + 1}
-                </div>
-              </div>
+                <div style={{ fontSize: '24px', opacity: 0.3, fontWeight: 700 }}>#{index + 1}</div>
+              </Link>
 
-              {/* Date Content */}
-              <div style={{ padding: '20px' }}>
-                {/* Time */}
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  marginBottom: '12px'
-                }}>
-                  <span style={{ fontSize: '16px' }}>🕐</span>
-                  <span style={{
-                    fontFamily: "'Sora', sans-serif",
-                    fontSize: '14px',
-                    color: '#000'
-                  }}>
-                    {date.start_time?.slice(0, 5)} - {date.end_time?.slice(0, 5)}
-                  </span>
+              {/* Body */}
+              <div style={{ padding: '16px' }}>
+                <div style={{ marginBottom: '8px', fontSize: '14px' }}>
+                  <strong>{date.vendor_count || 0}</strong> vendors booked
+                </div>
+                <div style={{ marginBottom: '8px', fontSize: '14px' }}>
+                  <strong>{date.spots_used || 0}</strong> spots filled
+                </div>
+                <div style={{ marginBottom: '12px', fontSize: '14px' }}>
+                  <strong>{(date.total_spots || 54) - (date.spots_used || 0)}</strong> open spots
                 </div>
 
-                {/* Vendor Count */}
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  marginBottom: '16px'
-                }}>
-                  <span style={{ fontSize: '16px' }}>👥</span>
-                  <span style={{
-                    fontFamily: "'Sora', sans-serif",
-                    fontSize: '14px',
-                    color: '#000'
-                  }}>
-                    <strong>{date.vendor_count || 0}</strong> vendors booked
-                  </span>
-                </div>
+                {isCancelled ? (
+                  <span className="badge badge-danger">Cancelled</span>
+                ) : isPast ? (
+                  <span className="badge" style={{ background: 'var(--light)', color: 'var(--gray)' }}>Completed</span>
+                ) : null}
 
-                {/* Status Badge */}
-                <div style={{ marginBottom: '16px' }}>
-                  {isCancelled ? (
-                    <span style={{
-                      fontFamily: "'Sora', sans-serif",
-                      fontWeight: 700,
-                      fontSize: '11px',
-                      padding: '6px 12px',
-                      background: '#f8d7da',
-                      color: '#E30613',
-                      border: '2px solid #E30613',
-                      textTransform: 'uppercase',
-                      display: 'inline-block'
-                    }}>
-                      Cancelled
-                    </span>
-                  ) : isPast ? (
-                    <span style={{
-                      fontFamily: "'Sora', sans-serif",
-                      fontWeight: 700,
-                      fontSize: '11px',
-                      padding: '6px 12px',
-                      background: '#e9ecef',
-                      color: '#666',
-                      border: '2px solid #666',
-                      textTransform: 'uppercase',
-                      display: 'inline-block'
-                    }}>
-                      Completed
-                    </span>
-                  ) : (
-                    <span style={{
-                      fontFamily: "'Sora', sans-serif",
-                      fontWeight: 700,
-                      fontSize: '11px',
-                      padding: '6px 12px',
-                      background: '#d4edda',
-                      color: '#28a745',
-                      border: '2px solid #28a745',
-                      textTransform: 'uppercase',
-                      display: 'inline-block'
-                    }}>
-                      Scheduled
-                    </span>
-                  )}
-                </div>
-
-                {/* Notes */}
                 {date.notes && (
-                  <div style={{
-                    fontFamily: "'Sora', sans-serif",
-                    fontSize: '13px',
-                    color: '#666',
-                    fontStyle: 'italic',
-                    marginBottom: '16px',
-                    padding: '8px 12px',
-                    background: '#f5f5f5',
-                    borderLeft: '3px solid #FFD700'
-                  }}>
+                  <div style={{ marginTop: '12px', padding: '8px', background: 'var(--light)', borderRadius: '4px', fontSize: '13px', fontStyle: 'italic', color: 'var(--gray)' }}>
                     {date.notes}
                   </div>
                 )}
 
-                {/* Action Button */}
                 <button
                   onClick={() => toggleCancelled(date)}
-                  style={{
-                    fontFamily: "'Bricolage Grotesque', sans-serif",
-                    fontWeight: 700,
-                    fontSize: '12px',
-                    padding: '10px 20px',
-                    width: '100%',
-                    background: isCancelled ? '#fff' : '#fff',
-                    color: isCancelled ? '#28a745' : '#E30613',
-                    border: isCancelled ? '3px solid #28a745' : '3px solid #E30613',
-                    cursor: 'pointer',
-                    textTransform: 'uppercase',
-                    letterSpacing: '1px'
-                  }}
+                  className={isCancelled ? 'btn btn-primary' : 'btn btn-danger'}
+                  style={{ width: '100%', marginTop: '16px', fontSize: '12px' }}
                 >
                   {isCancelled ? 'Restore Date' : 'Cancel Date'}
                 </button>

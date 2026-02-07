@@ -31,31 +31,31 @@ const VendorLogin = () => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: '#f5f5f0',
+      background: 'var(--cream)',
       padding: '20px'
     }}>
       <div style={{
         maxWidth: '420px',
         width: '100%',
-        background: '#fff',
-        border: '4px solid #000',
-        padding: '40px'
+        background: 'white',
+        borderRadius: '16px',
+        padding: '40px',
+        boxShadow: '0 4px 20px rgba(0,0,0,0.08)'
       }}>
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
           <h1 style={{
-            fontFamily: "'Bricolage Grotesque', sans-serif",
-            fontWeight: 800,
+            fontFamily: 'var(--font-display)',
+            fontWeight: 700,
             fontSize: '32px',
-            color: '#000',
+            color: 'var(--maroon)',
             margin: '0 0 8px 0',
-            textTransform: 'uppercase',
-            letterSpacing: '1px'
+            textTransform: 'uppercase'
           }}>
             Vendor Portal
           </h1>
           <p style={{
-            fontFamily: "'Sora', sans-serif",
-            color: '#666',
+            fontFamily: 'var(--font-body)',
+            color: 'var(--gray-dark)',
             margin: 0,
             fontSize: '16px'
           }}>
@@ -65,13 +65,14 @@ const VendorLogin = () => {
 
         {error && (
           <div style={{
-            background: '#fee',
-            border: '3px solid #E30613',
+            background: '#fef2f2',
+            border: '1px solid #fecaca',
+            borderRadius: '8px',
             padding: '12px 16px',
             marginBottom: '20px',
-            fontFamily: "'Sora', sans-serif",
+            fontFamily: 'var(--font-body)',
             fontSize: '14px',
-            color: '#E30613'
+            color: '#dc2626'
           }}>
             {error}
           </div>
@@ -81,13 +82,13 @@ const VendorLogin = () => {
           <div style={{ marginBottom: '20px' }}>
             <label style={{
               display: 'block',
-              fontFamily: "'Bricolage Grotesque', sans-serif",
+              fontFamily: 'var(--font-display)',
               fontWeight: 700,
               fontSize: '14px',
-              color: '#000',
+              color: 'var(--dark)',
               marginBottom: '8px',
               textTransform: 'uppercase',
-              letterSpacing: '1px'
+              letterSpacing: '0.5px'
             }}>
               Email
             </label>
@@ -100,26 +101,30 @@ const VendorLogin = () => {
               style={{
                 width: '100%',
                 padding: '14px 16px',
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: 'var(--font-body)',
                 fontSize: '16px',
-                border: '3px solid #000',
-                background: '#fff',
+                border: '1px solid var(--gray-medium)',
+                borderRadius: '8px',
+                background: 'white',
                 outline: 'none',
-                boxSizing: 'border-box'
+                boxSizing: 'border-box',
+                transition: 'border-color 0.2s'
               }}
+              onFocus={(e) => e.target.style.borderColor = 'var(--maroon)'}
+              onBlur={(e) => e.target.style.borderColor = 'var(--gray-medium)'}
             />
           </div>
 
           <div style={{ marginBottom: '24px' }}>
             <label style={{
               display: 'block',
-              fontFamily: "'Bricolage Grotesque', sans-serif",
+              fontFamily: 'var(--font-display)',
               fontWeight: 700,
               fontSize: '14px',
-              color: '#000',
+              color: 'var(--dark)',
               marginBottom: '8px',
               textTransform: 'uppercase',
-              letterSpacing: '1px'
+              letterSpacing: '0.5px'
             }}>
               Password
             </label>
@@ -131,13 +136,17 @@ const VendorLogin = () => {
               style={{
                 width: '100%',
                 padding: '14px 16px',
-                fontFamily: "'Sora', sans-serif",
+                fontFamily: 'var(--font-body)',
                 fontSize: '16px',
-                border: '3px solid #000',
-                background: '#fff',
+                border: '1px solid var(--gray-medium)',
+                borderRadius: '8px',
+                background: 'white',
                 outline: 'none',
-                boxSizing: 'border-box'
+                boxSizing: 'border-box',
+                transition: 'border-color 0.2s'
               }}
+              onFocus={(e) => e.target.style.borderColor = 'var(--maroon)'}
+              onBlur={(e) => e.target.style.borderColor = 'var(--gray-medium)'}
             />
           </div>
 
@@ -147,27 +156,17 @@ const VendorLogin = () => {
             style={{
               width: '100%',
               padding: '16px',
-              fontFamily: "'Bricolage Grotesque', sans-serif",
-              fontWeight: 800,
-              fontSize: '18px',
-              color: '#000',
-              background: '#FFD700',
-              border: '4px solid #000',
+              fontFamily: 'var(--font-display)',
+              fontWeight: 700,
+              fontSize: '16px',
+              color: 'var(--dark)',
+              background: 'var(--yellow)',
+              border: 'none',
+              borderRadius: '50px',
               cursor: loading ? 'not-allowed' : 'pointer',
               textTransform: 'uppercase',
-              letterSpacing: '1px',
-              transition: 'transform 0.1s, box-shadow 0.1s',
+              transition: 'opacity 0.2s',
               opacity: loading ? 0.7 : 1
-            }}
-            onMouseEnter={(e) => {
-              if (!loading && window.matchMedia('(hover: hover)').matches) {
-                e.currentTarget.style.transform = 'translate(-3px, -3px)';
-                e.currentTarget.style.boxShadow = '5px 5px 0px #000';
-              }
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'none';
-              e.currentTarget.style.boxShadow = 'none';
             }}
           >
             {loading ? 'Logging in...' : 'Log In'}
@@ -178,14 +177,14 @@ const VendorLogin = () => {
           <Link
             to="/"
             style={{
-              fontFamily: "'Sora', sans-serif",
-              color: '#000',
+              fontFamily: 'var(--font-body)',
+              color: 'var(--maroon)',
               fontSize: '14px',
               textDecoration: 'none',
-              borderBottom: '2px solid #000'
+              fontWeight: 600
             }}
           >
-            Back to Market on Main
+            ← Back to Market on Main
           </Link>
         </div>
       </div>

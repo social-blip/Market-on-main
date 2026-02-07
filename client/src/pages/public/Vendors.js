@@ -1,22 +1,73 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import api from '../../api/client';
+import '../../styles/vendors.css';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
+const CATEGORIES = [
+  { key: 'all', label: 'All Vendors' },
+  { key: 'growers', label: 'Growers' },
+  { key: 'makers', label: 'Makers' },
+  { key: 'eats', label: 'Eats' },
+  { key: 'finds', label: 'Finds' }
+];
 
-const CATEGORIES = {
-  all: { label: 'All Vendors', filter: null },
-  growers: { label: 'Growers', filter: 'growers' },
-  makers: { label: 'Makers', filter: 'makers' },
-  eats: { label: 'Eats', filter: 'eats' },
-  vintage: { label: 'Vintage & Finds', filter: 'vintage' }
-};
+const GREETINGS = [
+  "Say Howdy",
+  "Meet the Maker",
+  "Come Say Hi",
+  "Stop By",
+  "Wave Hello",
+  "Pop In & Visit",
+  "Swing By",
+  "Check Us Out",
+  "Say Hey"
+];
 
-const CATEGORY_DISPLAY = {
-  growers: 'GROWERS',
-  makers: 'MAKERS',
-  eats: 'EATS',
-  vintage: 'VINTAGE'
+const VendorCard = ({ vendor }) => {
+  const truncateDesc = (text, maxLength = 100) => {
+    if (!text) return 'Local vendor at Market on Main.';
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength).trim() + '...';
+  };
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return null;
+    const date = new Date(dateStr);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
+  const greeting = GREETINGS[vendor.id % GREETINGS.length];
+
+  return (
+    <Link to={`/vendors/${vendor.id}`} className="homepage-vendor-card">
+      <div className="homepage-vendor-card__img">
+        {vendor.image_url ? (
+          <img src={vendor.image_url} alt={vendor.business_name} />
+        ) : (
+          <div className="homepage-vendor-card__placeholder">
+            {vendor.business_name?.charAt(0) || '?'}
+          </div>
+        )}
+        {vendor.next_date && (
+          <div className="homepage-vendor-card__date">
+            <div className="homepage-vendor-card__date-label">Next up</div>
+            <div>{formatDate(vendor.next_date)}</div>
+          </div>
+        )}
+      </div>
+      <div className="homepage-vendor-card__content">
+        <div className="homepage-vendor-card__tags">
+          <span className="homepage-vendor-card__tag">{vendor.category}</span>
+          {vendor.market_count >= 10 && (
+            <span className="homepage-vendor-card__tag homepage-vendor-card__tag--regular">Every Saturday</span>
+          )}
+        </div>
+        <h3 className="homepage-vendor-card__title">{vendor.business_name}</h3>
+        <p className="homepage-vendor-card__desc">{truncateDesc(vendor.description)}</p>
+        <span className="homepage-vendor-card__btn">Learn More →</span>
+      </div>
+    </Link>
+  );
 };
 
 const Vendors = () => {
@@ -68,87 +119,37 @@ const Vendors = () => {
 
   const filteredVendors = filter === 'all'
     ? vendors
-    : vendors.filter(v => v.category === CATEGORIES[filter].filter);
-
-  if (loading) {
-    return (
-      <div style={{
-        minHeight: '60vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: '#f5f5f0'
-      }}>
-        <span className="spinner"></span>
-      </div>
-    );
-  }
+    : vendors.filter(v => v.category === filter);
 
   return (
-    <div>
-      {/* Header */}
-      <section style={{
-        background: '#FFD700',
-        padding: '40px 20px'
-      }}>
-        <h1 style={{
-          fontFamily: "'Bricolage Grotesque', sans-serif",
-          fontWeight: 800,
-          fontSize: 'clamp(60px, 14vw, 160px)',
-          color: '#000',
-          textAlign: 'center',
-          margin: 0,
-          lineHeight: 1,
-          letterSpacing: '0.08em'
-        }}>
-          Vendors and Calendar
-        </h1>
+    <div className="vendors-page">
+      {/* Hero Header */}
+      <section className="vendors-page__hero">
+        <h1 className="vendors-page__title">Meet Our Vendors</h1>
+        <p className="vendors-page__subtitle">
+          Local growers, makers, and small businesses<br />all in one place every Saturday.
+        </p>
       </section>
 
       {/* Filter Bar */}
-      <section style={{
-        background: '#f5f5f0',
-        padding: '30px 20px'
-      }}>
-        <div style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          alignItems: 'center',
-          gap: '16px',
-          maxWidth: '1200px',
-          margin: '0 auto'
-        }}>
-          {/* Category Filters */}
-          <div className="category-filters">
-            {Object.entries(CATEGORIES).map(([key, { label }]) => (
+      <section className="vendors-page__filters">
+        <div className="vendors-page__filters-inner">
+          <div className="vendors-page__category-filters">
+            {CATEGORIES.map(({ key, label }) => (
               <button
                 key={key}
                 onClick={() => setFilter(key)}
-                className={`category-btn ${filter === key ? 'active' : ''}`}
+                className={`pill-link ${filter === key ? 'pill-link--active' : ''}`}
               >
                 {label}
               </button>
             ))}
           </div>
 
-          {/* Date Filter */}
           <select
             value={dateFilter || ''}
             onChange={handleDateChange}
-            style={{
-              fontFamily: "'Bricolage Grotesque', sans-serif",
-              fontWeight: 700,
-              fontSize: '16px',
-              padding: '12px 20px',
-              background: dateFilter ? '#E30613' : '#fff',
-              color: dateFilter ? '#fff' : '#000',
-              border: '4px solid #000',
-              cursor: 'pointer',
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-              minWidth: '200px'
-            }}
+            className="vendors-page__date-select"
           >
             <option value="">All Dates</option>
             {dates.map(date => (
@@ -160,205 +161,42 @@ const Vendors = () => {
         </div>
       </section>
 
-      {/* 2026 Lineup Message */}
-      <section style={{
-        background: '#f5f5f0',
-        padding: '24px 20px',
-        textAlign: 'center'
-      }}>
-        <p style={{
-          fontFamily: "'Sora', sans-serif",
-          fontSize: '16px',
-          color: '#333',
-          margin: 0,
-          maxWidth: '700px',
-          marginLeft: 'auto',
-          marginRight: 'auto'
-        }}>
-          This is just a preview of our 2026 lineup — more vendors will be added as we get closer to the season. Check back often to see who's joining us!{' '}
-          Want to sell at the market? <Link to="/become-vendor" style={{ color: '#0056b3', fontWeight: 600 }}>Apply to become a vendor</Link>.
+      {/* Info Message */}
+      <section className="vendors-page__info">
+        <p>
+          This is a preview of our 2026 lineup — more vendors will be added as we get closer to the season.{' '}
+          <Link to="/become-vendor">Apply to become a vendor</Link>.
         </p>
       </section>
 
       {/* Vendor Grid */}
-      <section style={{
-        background: '#f5f5f0',
-        padding: '60px 20px',
-        minHeight: '50vh'
-      }}>
-        {filteredVendors.length === 0 ? (
-          <div style={{
-            textAlign: 'center',
-            padding: '60px 20px'
-          }}>
-            <p style={{
-              fontFamily: "'Sora', sans-serif",
-              fontSize: '24px',
-              color: '#333'
-            }}>
+      <section className="vendors-page__grid-section">
+        {loading ? (
+          <div className="vendors-page__loading-grid">
+            <span className="spinner"></span>
+          </div>
+        ) : filteredVendors.length === 0 ? (
+          <div className="vendors-page__empty">
+            <p>
               {vendors.length === 0
                 ? 'Vendor lineup coming soon! Check back in April 2026.'
                 : 'No vendors in this category yet.'}
             </p>
           </div>
         ) : (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-            gap: '24px',
-            maxWidth: '1400px',
-            margin: '0 auto'
-          }}>
+          <div className="vendors-page__grid">
             {filteredVendors.map(vendor => (
-              <Link
-                key={vendor.id}
-                to={`/vendors/${vendor.id}`}
-                style={{
-                  background: '#fff',
-                  border: '4px solid #000',
-                  transition: 'transform 0.1s, box-shadow 0.1s',
-                  cursor: 'pointer',
-                  textDecoration: 'none',
-                  display: 'flex',
-                  flexDirection: 'column'
-                }}
-                onMouseEnter={(e) => {
-                  if (window.matchMedia('(hover: hover)').matches) {
-                    e.currentTarget.style.transform = 'translate(-4px, -4px)';
-                    e.currentTarget.style.boxShadow = '6px 6px 0px #000';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'none';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
-              >
-                {/* Vendor image */}
-                <div style={{
-                  width: '100%',
-                  height: '200px',
-                  background: 'linear-gradient(135deg, #FFD700 0%, #a8d000 100%)',
-                  borderBottom: '4px solid #000',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  overflow: 'hidden'
-                }}>
-                  {vendor.image_url ? (
-                    <img
-                      src={vendor.image_url}
-                      alt={vendor.business_name}
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover'
-                      }}
-                    />
-                  ) : (
-                    <span style={{
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
-                      fontWeight: 800,
-                      fontSize: '48px',
-                      color: 'rgba(0,0,0,0.2)'
-                    }}>
-                      {vendor.business_name.charAt(0)}
-                    </span>
-                  )}
-                </div>
-
-                {/* Content */}
-                <div style={{
-                  padding: '20px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  flexGrow: 1
-                }}>
-                  <h3 style={{
-                    fontFamily: "'Bricolage Grotesque', sans-serif",
-                    fontWeight: 800,
-                    fontSize: '24px',
-                    color: '#000',
-                    margin: '0 0 8px 0',
-                    textTransform: 'uppercase'
-                  }}>
-                    {vendor.business_name}
-                  </h3>
-
-                  <p style={{
-                    fontFamily: "'Sora', sans-serif",
-                    fontSize: '16px',
-                    color: '#333',
-                    lineHeight: 1.5,
-                    margin: '0',
-                    flexGrow: 1
-                  }}>
-                    {vendor.description
-                      ? (vendor.description.length > 80
-                          ? vendor.description.substring(0, 80) + '...'
-                          : vendor.description)
-                      : 'Local vendor at Market on Main.'}
-                  </p>
-
-                  {/* Category Tag and Next Date */}
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', alignItems: 'center', marginTop: '16px' }}>
-                    <span style={{
-                      display: 'inline-block',
-                      fontFamily: "'Sora', sans-serif",
-                      fontWeight: 700,
-                      fontSize: '12px',
-                      padding: '6px 12px',
-                      background: '#FFD700',
-                      color: '#000',
-                      border: '3px solid #000',
-                      textTransform: 'uppercase',
-                      letterSpacing: '1px'
-                    }}>
-                      {CATEGORY_DISPLAY[vendor.category] || 'VENDOR'}
-                    </span>
-                    {vendor.next_date && (
-                      <span style={{
-                        display: 'inline-block',
-                        fontFamily: "'Sora', sans-serif",
-                        fontWeight: 700,
-                        fontSize: '12px',
-                        padding: '6px 12px',
-                        background: '#000',
-                        color: '#fff',
-                        textTransform: 'uppercase',
-                        letterSpacing: '1px'
-                      }}>
-                        Next: {new Date(vendor.next_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </Link>
+              <VendorCard key={vendor.id} vendor={vendor} />
             ))}
           </div>
         )}
       </section>
 
-      {/* Become a Vendor CTA */}
-      <section style={{
-        background: '#FFD700',
-        padding: '40px 20px',
-        textAlign: 'center'
-      }}>
-        <Link
-          to="/apply"
-          style={{
-            display: 'inline-block',
-            fontFamily: "'Bricolage Grotesque', sans-serif",
-            fontWeight: 800,
-            fontSize: 'clamp(24px, 4vw, 40px)',
-            color: '#000',
-            textDecoration: 'none',
-            textTransform: 'uppercase',
-            letterSpacing: '2px'
-          }}
-        >
-          Become a Vendor: Apply Now
-        </Link>
+      {/* CTA */}
+      <section className="vendors-page__cta">
+        <h2>Want to sell at the market?</h2>
+        <p>Join our community of local vendors and makers.</p>
+        <Link to="/become-vendor" className="btn-pill">Apply Now</Link>
       </section>
     </div>
   );

@@ -8,7 +8,9 @@ router.get('/', async (req, res) => {
   try {
     const result = await db.query(
       `SELECT md.*,
-        (SELECT COUNT(*) FROM vendor_bookings WHERE market_date_id = md.id AND status = 'confirmed') as vendor_count
+        (SELECT COUNT(*) FROM vendor_bookings WHERE market_date_id = md.id AND status = 'confirmed') as vendor_count,
+        (SELECT COALESCE(SUM(array_length(string_to_array(booth_location, ','), 1)), 0) FROM vendor_bookings WHERE market_date_id = md.id AND status = 'confirmed' AND booth_location IS NOT NULL AND booth_location != '') as spots_used,
+        (SELECT value->>'total_spots' FROM settings WHERE key = 'map_config')::int as total_spots
        FROM market_dates md
        ORDER BY md.date ASC`
     );

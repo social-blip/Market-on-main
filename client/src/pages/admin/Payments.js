@@ -46,12 +46,7 @@ const AdminPayments = () => {
 
   if (loading) {
     return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '50vh'
-      }}>
+      <div className="text-center mt-4">
         <span className="spinner"></span>
       </div>
     );
@@ -59,160 +54,40 @@ const AdminPayments = () => {
 
   return (
     <div>
-      {/* Header */}
-      <div style={{ marginBottom: '32px' }}>
-        <h1 style={{
-          fontFamily: "'Bricolage Grotesque', sans-serif",
-          fontWeight: 800,
-          fontSize: 'clamp(32px, 5vw, 48px)',
-          color: '#000',
-          margin: '0 0 8px 0',
-          textTransform: 'uppercase'
-        }}>
-          Payments
-        </h1>
-        <p style={{
-          fontFamily: "'Sora', sans-serif",
-          fontSize: '18px',
-          color: '#666',
-          margin: 0
-        }}>
-          Track and manage vendor payments
-        </p>
-      </div>
+      <h1 className="mb-1">Payments</h1>
+      <p style={{ color: 'var(--gray-dark)', marginBottom: '24px' }}>Track and manage vendor payments</p>
 
-      {/* Success/Error Message */}
       {message.text && (
-        <div style={{
-          padding: '16px 20px',
-          marginBottom: '24px',
-          background: message.type === 'success' ? '#d4edda' : '#f8d7da',
-          border: `4px solid ${message.type === 'success' ? '#28a745' : '#E30613'}`,
-          fontFamily: "'Sora', sans-serif",
-          fontWeight: 600,
-          color: message.type === 'success' ? '#28a745' : '#E30613'
-        }}>
-          {message.text}
-        </div>
+        <div className={`alert alert-${message.type} mb-3`}>{message.text}</div>
       )}
 
       {/* Stats */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-        gap: '16px',
-        marginBottom: '32px'
-      }}>
-        <div style={{
-          background: '#000',
-          border: '4px solid #000',
-          padding: '24px',
-          textAlign: 'center'
-        }}>
-          <div style={{
-            fontFamily: "'Bricolage Grotesque', sans-serif",
-            fontWeight: 800,
-            fontSize: '36px',
-            color: '#FFD700'
-          }}>
-            ${totalPaid.toFixed(0)}
-          </div>
-          <div style={{
-            fontFamily: "'Sora', sans-serif",
-            fontWeight: 600,
-            fontSize: '12px',
-            color: '#fff',
-            textTransform: 'uppercase',
-            letterSpacing: '1px'
-          }}>
-            Collected
-          </div>
+      <div className="grid grid-4 mb-4" style={{ gap: '16px' }}>
+        <div className="card" style={{ textAlign: 'center', background: 'var(--maroon)', color: 'var(--cream)' }}>
+          <div style={{ fontSize: '36px', fontWeight: 700, color: 'var(--yellow)' }}>${totalPaid.toFixed(0)}</div>
+          <div style={{ fontSize: '12px', textTransform: 'uppercase', opacity: 0.8 }}>Collected</div>
         </div>
-        <div style={{
-          background: totalPending > 0 ? '#fff' : '#fff',
-          border: totalPending > 0 ? '4px solid #E30613' : '4px solid #000',
-          padding: '24px',
-          textAlign: 'center'
-        }}>
-          <div style={{
-            fontFamily: "'Bricolage Grotesque', sans-serif",
-            fontWeight: 800,
-            fontSize: '36px',
-            color: totalPending > 0 ? '#E30613' : '#000'
-          }}>
+        <div className="card" style={{ textAlign: 'center', borderColor: totalPending > 0 ? 'var(--danger)' : undefined }}>
+          <div style={{ fontSize: '36px', fontWeight: 700, color: totalPending > 0 ? 'var(--danger)' : 'var(--dark)' }}>
             ${totalPending.toFixed(0)}
           </div>
-          <div style={{
-            fontFamily: "'Sora', sans-serif",
-            fontWeight: 600,
-            fontSize: '12px',
-            color: totalPending > 0 ? '#E30613' : '#666',
-            textTransform: 'uppercase',
-            letterSpacing: '1px'
-          }}>
+          <div style={{ fontSize: '12px', color: totalPending > 0 ? 'var(--danger)' : 'var(--gray-dark)', textTransform: 'uppercase' }}>
             Outstanding
           </div>
         </div>
-        <div style={{
-          background: '#FFD700',
-          border: '4px solid #000',
-          padding: '24px',
-          textAlign: 'center'
-        }}>
-          <div style={{
-            fontFamily: "'Bricolage Grotesque', sans-serif",
-            fontWeight: 800,
-            fontSize: '36px',
-            color: '#000'
-          }}>
-            {paidCount}
-          </div>
-          <div style={{
-            fontFamily: "'Sora', sans-serif",
-            fontWeight: 600,
-            fontSize: '12px',
-            color: '#000',
-            textTransform: 'uppercase',
-            letterSpacing: '1px'
-          }}>
-            Paid
-          </div>
+        <div className="card" style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '36px', fontWeight: 700, color: 'var(--maroon)' }}>{paidCount}</div>
+          <div style={{ fontSize: '12px', color: 'var(--gray-dark)', textTransform: 'uppercase' }}>Paid</div>
         </div>
-        <div style={{
-          background: '#fff',
-          border: '4px solid #000',
-          padding: '24px',
-          textAlign: 'center'
-        }}>
-          <div style={{
-            fontFamily: "'Bricolage Grotesque', sans-serif",
-            fontWeight: 800,
-            fontSize: '36px',
-            color: '#000'
-          }}>
-            {pendingCount}
-          </div>
-          <div style={{
-            fontFamily: "'Sora', sans-serif",
-            fontWeight: 600,
-            fontSize: '12px',
-            color: '#666',
-            textTransform: 'uppercase',
-            letterSpacing: '1px'
-          }}>
-            Pending
-          </div>
+        <div className="card" style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '36px', fontWeight: 700 }}>{pendingCount}</div>
+          <div style={{ fontSize: '12px', color: 'var(--gray-dark)', textTransform: 'uppercase' }}>Pending</div>
         </div>
       </div>
 
       {/* Filters */}
-      <div style={{
-        background: '#fff',
-        border: '4px solid #000',
-        padding: '20px',
-        marginBottom: '24px'
-      }}>
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+      <div className="card mb-3">
+        <div className="flex gap-1">
           {[
             { key: 'all', label: 'All', count: payments.length },
             { key: 'pending', label: 'Pending', count: pendingCount },
@@ -221,18 +96,8 @@ const AdminPayments = () => {
             <button
               key={key}
               onClick={() => setFilter(key)}
-              style={{
-                fontFamily: "'Bricolage Grotesque', sans-serif",
-                fontWeight: 700,
-                fontSize: '13px',
-                padding: '10px 16px',
-                background: filter === key ? '#FFD700' : '#fff',
-                color: '#000',
-                border: filter === key ? '3px solid #000' : '2px solid #000',
-                cursor: 'pointer',
-                textTransform: 'uppercase',
-                letterSpacing: '0.5px'
-              }}
+              className={filter === key ? 'btn btn-primary' : 'btn btn-secondary'}
+              style={{ fontSize: '13px', padding: '8px 14px' }}
             >
               {label} ({count})
             </button>
@@ -241,201 +106,63 @@ const AdminPayments = () => {
       </div>
 
       {/* Payments Table */}
-      <div style={{
-        background: '#fff',
-        border: '4px solid #000'
-      }}>
-        {/* Table Header */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '100px 2fr 2fr 100px 100px 120px',
-          gap: '16px',
-          padding: '16px 20px',
-          background: '#000',
-          color: '#fff'
-        }}>
-          <div style={{
-            fontFamily: "'Bricolage Grotesque', sans-serif",
-            fontWeight: 700,
-            fontSize: '12px',
-            textTransform: 'uppercase',
-            letterSpacing: '1px'
-          }}>Date</div>
-          <div style={{
-            fontFamily: "'Bricolage Grotesque', sans-serif",
-            fontWeight: 700,
-            fontSize: '12px',
-            textTransform: 'uppercase',
-            letterSpacing: '1px'
-          }}>Vendor</div>
-          <div style={{
-            fontFamily: "'Bricolage Grotesque', sans-serif",
-            fontWeight: 700,
-            fontSize: '12px',
-            textTransform: 'uppercase',
-            letterSpacing: '1px'
-          }}>Description</div>
-          <div style={{
-            fontFamily: "'Bricolage Grotesque', sans-serif",
-            fontWeight: 700,
-            fontSize: '12px',
-            textTransform: 'uppercase',
-            letterSpacing: '1px'
-          }}>Amount</div>
-          <div style={{
-            fontFamily: "'Bricolage Grotesque', sans-serif",
-            fontWeight: 700,
-            fontSize: '12px',
-            textTransform: 'uppercase',
-            letterSpacing: '1px'
-          }}>Status</div>
-          <div></div>
-        </div>
-
-        {/* Table Rows */}
-        {filteredPayments.length === 0 ? (
-          <div style={{
-            padding: '40px',
-            textAlign: 'center',
-            fontFamily: "'Sora', sans-serif",
-            color: '#666'
-          }}>
-            No payments found.
-          </div>
-        ) : (
-          filteredPayments.map((payment, index) => (
-            <div
-              key={payment.id}
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '100px 2fr 2fr 100px 100px 120px',
-                gap: '16px',
-                padding: '16px 20px',
-                alignItems: 'center',
-                borderBottom: index < filteredPayments.length - 1 ? '2px solid #eee' : 'none',
-                background: payment.status === 'pending' ? '#fff9e6' : '#fff'
-              }}
-            >
-              {/* Date */}
-              <div style={{
-                fontFamily: "'Sora', sans-serif",
-                fontSize: '13px',
-                color: '#666'
-              }}>
-                {new Date(payment.created_at).toLocaleDateString()}
-              </div>
-
-              {/* Vendor */}
-              <div>
-                <Link
-                  to={`/admin/vendors/${payment.vendor_id}`}
-                  style={{
-                    fontFamily: "'Bricolage Grotesque', sans-serif",
-                    fontWeight: 700,
-                    fontSize: '14px',
-                    color: '#000',
-                    textDecoration: 'none'
-                  }}
-                >
-                  {payment.business_name}
-                </Link>
-                <div style={{
-                  fontFamily: "'Sora', sans-serif",
-                  fontSize: '12px',
-                  color: '#666'
-                }}>
-                  {payment.contact_name}
-                </div>
-              </div>
-
-              {/* Description */}
-              <div style={{
-                fontFamily: "'Sora', sans-serif",
-                fontSize: '14px',
-                color: '#333'
-              }}>
-                {payment.description || 'Market fees'}
-              </div>
-
-              {/* Amount */}
-              <div style={{
-                fontFamily: "'Bricolage Grotesque', sans-serif",
-                fontWeight: 800,
-                fontSize: '16px',
-                color: '#000'
-              }}>
-                ${parseFloat(payment.amount).toFixed(0)}
-              </div>
-
-              {/* Status */}
-              <div>
-                {payment.status === 'paid' ? (
-                  <span style={{
-                    fontFamily: "'Sora', sans-serif",
-                    fontWeight: 700,
-                    fontSize: '11px',
-                    padding: '6px 10px',
-                    background: '#d4edda',
-                    color: '#28a745',
-                    border: '2px solid #28a745',
-                    textTransform: 'uppercase',
-                    display: 'inline-block'
-                  }}>
-                    Paid
-                  </span>
-                ) : (
-                  <span style={{
-                    fontFamily: "'Sora', sans-serif",
-                    fontWeight: 700,
-                    fontSize: '11px',
-                    padding: '6px 10px',
-                    background: '#FFD700',
-                    color: '#000',
-                    border: '2px solid #000',
-                    textTransform: 'uppercase',
-                    display: 'inline-block'
-                  }}>
-                    Pending
-                  </span>
-                )}
-              </div>
-
-              {/* Actions */}
-              <div>
-                {payment.status === 'pending' && (
-                  <button
-                    onClick={() => markAsPaid(payment.id)}
-                    style={{
-                      fontFamily: "'Bricolage Grotesque', sans-serif",
-                      fontWeight: 700,
-                      fontSize: '11px',
-                      padding: '8px 14px',
-                      background: '#28a745',
-                      color: '#fff',
-                      border: '2px solid #28a745',
-                      cursor: 'pointer',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px'
-                    }}
-                  >
-                    Mark Paid
-                  </button>
-                )}
-              </div>
-            </div>
-          ))
-        )}
+      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Vendor</th>
+              <th>Description</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredPayments.length === 0 ? (
+              <tr>
+                <td colSpan="6" className="text-center" style={{ padding: '40px', color: 'var(--gray)' }}>
+                  No payments found.
+                </td>
+              </tr>
+            ) : (
+              filteredPayments.map(payment => (
+                <tr key={payment.id} style={{ background: payment.status === 'pending' ? '#fff9e6' : undefined }}>
+                  <td style={{ fontSize: '13px', color: 'var(--gray)' }}>
+                    {new Date(payment.created_at).toLocaleDateString()}
+                  </td>
+                  <td>
+                    <Link to={`/admin/vendors/${payment.vendor_id}`} style={{ fontWeight: 600, color: 'inherit', textDecoration: 'none' }}>
+                      {payment.business_name}
+                    </Link>
+                    <div style={{ fontSize: '12px', color: 'var(--gray)' }}>{payment.contact_name}</div>
+                  </td>
+                  <td>{payment.description || 'Market fees'}</td>
+                  <td style={{ fontWeight: 700, fontSize: '16px' }}>${parseFloat(payment.amount).toFixed(0)}</td>
+                  <td>
+                    {payment.status === 'paid' ? (
+                      <span className="badge badge-success">Paid</span>
+                    ) : (
+                      <span className="badge badge-warning">Pending</span>
+                    )}
+                  </td>
+                  <td>
+                    {payment.status === 'pending' && (
+                      <button
+                        onClick={() => markAsPaid(payment.id)}
+                        className="btn btn-primary"
+                        style={{ fontSize: '12px', padding: '6px 12px' }}
+                      >
+                        Mark Paid
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
-
-      {/* Mobile Responsive Note */}
-      <style>{`
-        @media (max-width: 900px) {
-          .payment-table-header,
-          .payment-table-row {
-            grid-template-columns: 1fr !important;
-          }
-        }
-      `}</style>
     </div>
   );
 };
