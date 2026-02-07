@@ -185,7 +185,6 @@ const VendorPayments = () => {
         {/* Amount Due */}
         <div className="vendor-card" style={{
           textAlign: 'center',
-          borderLeft: totalDue > 0 ? '4px solid #991b1b' : undefined
         }}>
           <div style={{
             fontFamily: 'var(--font-display)',
@@ -357,7 +356,7 @@ const VendorPayments = () => {
 
       {/* Open Invoices */}
       {pendingPayments.length > 0 && (
-        <div className="vendor-card" style={{ marginBottom: '24px', borderLeft: '4px solid #991b1b' }}>
+        <div className="vendor-card" style={{ marginBottom: '24px' }}>
           <div className="vendor-card__header">
             <h3 className="vendor-card__title" style={{ color: '#991b1b' }}>Open Invoices</h3>
           </div>
