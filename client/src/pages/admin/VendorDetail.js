@@ -38,6 +38,8 @@ const AdminVendorDetail = () => {
   const [markingPaid, setMarkingPaid] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState('');
   const [memo, setMemo] = useState('');
+  const [reviewDecisions, setReviewDecisions] = useState({});
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
 
   useEffect(() => {
     fetchVendor();
@@ -119,6 +121,28 @@ const AdminVendorDetail = () => {
       fetchVendor();
     } catch (err) {
       setMessage({ type: 'error', text: 'Failed to update booking.' });
+    }
+  };
+
+  const submitReview = async () => {
+    const approve_ids = Object.entries(reviewDecisions).filter(([, v]) => v === 'approve').map(([k]) => parseInt(k));
+    const deny_ids = Object.entries(reviewDecisions).filter(([, v]) => v === 'deny').map(([k]) => parseInt(k));
+
+    if (approve_ids.length === 0 && deny_ids.length === 0) return;
+
+    setReviewSubmitting(true);
+    try {
+      const res = await api.post('/admin/bookings/review', { approve_ids, deny_ids });
+      setReviewDecisions({});
+      fetchVendor();
+      const parts = [];
+      if (res.data.approved > 0) parts.push(`${res.data.approved} approved`);
+      if (res.data.denied > 0) parts.push(`${res.data.denied} denied`);
+      setMessage({ type: 'success', text: `${parts.join(', ')}. Vendor notified by email.` });
+    } catch (err) {
+      setMessage({ type: 'error', text: 'Failed to submit review.' });
+    } finally {
+      setReviewSubmitting(false);
     }
   };
 
@@ -265,7 +289,7 @@ const AdminVendorDetail = () => {
   }
 
   const { vendor, bookings, payments } = data;
-  const bookedCount = bookings.length;
+  const bookedCount = bookings.filter(b => b.status === 'confirmed').length;
 
   return (
     <div>
@@ -472,6 +496,103 @@ const AdminVendorDetail = () => {
         </div>
       </div>
 
+      {/* Requested Dates Review */}
+      {bookings.filter(b => b.status === 'requested').length > 0 && (
+        <div className="card mt-3" style={{ borderLeft: '4px solid #f59e0b' }}>
+          <h3 style={{ marginBottom: '4px' }}>Date Requests</h3>
+          <p style={{ color: '#666', fontSize: '14px', marginBottom: '16px' }}>
+            Mark each requested date as Approve or Deny, then submit all at once. The vendor will receive one email.
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px' }}>
+            {bookings.filter(b => b.status === 'requested').map(booking => {
+              const decision = reviewDecisions[booking.id];
+              return (
+                <div
+                  key={booking.id}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '10px',
+                    padding: '10px 14px',
+                    borderRadius: '6px',
+                    border: '1px solid #ddd',
+                    background: decision === 'approve' ? '#f0fdf4' : decision === 'deny' ? '#fef2f2' : '#fffbeb'
+                  }}
+                >
+                  <span style={{ fontSize: '14px', fontWeight: 500, flex: 1 }}>{formatDate(booking.date)}</span>
+                  <div style={{ display: 'flex', gap: '4px' }}>
+                    <button
+                      onClick={() => setReviewDecisions(prev => ({ ...prev, [booking.id]: prev[booking.id] === 'approve' ? undefined : 'approve' }))}
+                      style={{
+                        padding: '4px 12px',
+                        fontSize: '12px',
+                        fontWeight: 600,
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        border: decision === 'approve' ? '2px solid #16a34a' : '1px solid #ddd',
+                        background: decision === 'approve' ? '#dcfce7' : '#fff',
+                        color: decision === 'approve' ? '#16a34a' : '#333'
+                      }}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      onClick={() => setReviewDecisions(prev => ({ ...prev, [booking.id]: prev[booking.id] === 'deny' ? undefined : 'deny' }))}
+                      style={{
+                        padding: '4px 12px',
+                        fontSize: '12px',
+                        fontWeight: 600,
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        border: decision === 'deny' ? '2px solid #dc2626' : '1px solid #ddd',
+                        background: decision === 'deny' ? '#fee2e2' : '#fff',
+                        color: decision === 'deny' ? '#dc2626' : '#333'
+                      }}
+                    >
+                      Deny
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <button
+              onClick={submitReview}
+              disabled={reviewSubmitting || Object.values(reviewDecisions).filter(Boolean).length === 0}
+              className="btn btn-primary"
+              style={{
+                fontSize: '13px',
+                padding: '8px 16px',
+                opacity: (reviewSubmitting || Object.values(reviewDecisions).filter(Boolean).length === 0) ? 0.5 : 1
+              }}
+            >
+              {reviewSubmitting ? 'Submitting...' : 'Submit Decisions'}
+            </button>
+            <button
+              onClick={() => {
+                const requestedIds = bookings.filter(b => b.status === 'requested').reduce((acc, b) => ({ ...acc, [b.id]: 'approve' }), {});
+                setReviewDecisions(requestedIds);
+              }}
+              style={{ background: 'none', border: 'none', color: '#16a34a', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}
+            >
+              Approve All
+            </button>
+            <button
+              onClick={() => {
+                const requestedIds = bookings.filter(b => b.status === 'requested').reduce((acc, b) => ({ ...acc, [b.id]: 'deny' }), {});
+                setReviewDecisions(requestedIds);
+              }}
+              style={{ background: 'none', border: 'none', color: '#dc3545', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}
+            >
+              Deny All
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Market Dates - All dates with checkboxes */}
       <div className="card mt-3">
         <h3 style={{ marginBottom: '16px' }}>Market Dates ({bookedCount} of {allDates.length} booked)</h3>
@@ -481,7 +602,9 @@ const AdminVendorDetail = () => {
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '8px' }}>
             {allDates.map(md => {
-              const isBooked = bookings.some(b => b.market_date_id === md.id);
+              const booking = bookings.find(b => b.market_date_id === md.id);
+              const isBooked = booking && booking.status === 'confirmed';
+              const isRequested = booking && booking.status === 'requested';
               return (
                 <label
                   key={md.id}
@@ -492,19 +615,24 @@ const AdminVendorDetail = () => {
                     padding: '8px 12px',
                     border: '1px solid #ddd',
                     borderRadius: '6px',
-                    cursor: 'pointer',
-                    background: isBooked ? '#f0fdf4' : '#fff'
+                    cursor: isRequested ? 'default' : 'pointer',
+                    background: isRequested ? '#fffbeb' : isBooked ? '#f0fdf4' : '#fff',
+                    opacity: isRequested ? 0.6 : 1
                   }}
                 >
                   <input
                     type="checkbox"
                     checked={isBooked}
-                    onChange={() => toggleBooking(md)}
+                    disabled={isRequested}
+                    onChange={() => !isRequested && toggleBooking(md)}
                     style={{ width: '16px', height: '16px' }}
                   />
                   <span style={{ fontSize: '14px' }}>{formatDate(md.date)}</span>
                   {isBooked && (
                     <span className="badge badge-success" style={{ marginLeft: 'auto', fontSize: '11px' }}>Booked</span>
+                  )}
+                  {isRequested && (
+                    <span className="badge badge-warning" style={{ marginLeft: 'auto', fontSize: '11px' }}>Pending</span>
                   )}
                 </label>
               );

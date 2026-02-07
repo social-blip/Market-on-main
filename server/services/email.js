@@ -439,6 +439,150 @@ const sendContactFormNotification = async (data) => {
   }
 };
 
+// Send date request notification to admin
+const sendDateRequestNotification = async (vendor, dates) => {
+  if (!isEmailConfigured()) {
+    console.log('[DEV] Would send date request notification for:', vendor.business_name);
+    return true;
+  }
+
+  const dateList = dates.map(d => {
+    return new Date(d.date).toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  }).join('<br>');
+
+  try {
+    await resend.emails.send({
+      from: EMAIL_FROM,
+      to: 'info@tfmarketonmain.com',
+      subject: `Date Request from ${vendor.business_name}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h1 style="color: #333;">New Date Request</h1>
+
+          <p><strong>${vendor.business_name}</strong> (${vendor.contact_name}) has requested additional market dates.</p>
+
+          <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="margin-top: 0;">Requested Dates</h3>
+            <p>${dateList}</p>
+          </div>
+
+          <p style="text-align: center; margin: 30px 0;">
+            <a href="${process.env.FRONTEND_URL}/admin/vendors/${vendor.id}"
+               style="background-color: #5c1e3d; color: #ffffff; padding: 14px 32px; text-decoration: none; border: none; display: inline-block; font-weight: 600; border-radius: 100px; font-family: Arial, sans-serif; font-size: 14px;">
+              View Vendor
+            </a>
+          </p>
+
+          <p><strong>MoM Crew</strong></p>
+        </div>
+      `
+    });
+    await logEmail(vendor.id, 'date_request', `Date Request from ${vendor.business_name}`, 'info@tfmarketonmain.com', 'sent');
+    return true;
+  } catch (err) {
+    console.error('Failed to send date request notification:', err);
+    await logEmail(vendor.id, 'date_request', `Date Request from ${vendor.business_name}`, 'info@tfmarketonmain.com', 'failed');
+    return false;
+  }
+};
+
+// Send date request review email to vendor (approved and/or denied dates)
+const sendDateRequestApproval = async (vendor, approvedDates = [], deniedDates = []) => {
+  if (!isEmailConfigured()) {
+    console.log('[DEV] Would send date request review to:', vendor.email);
+    return true;
+  }
+
+  const formatDates = (dates) => dates.map(d => {
+    return new Date(d).toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  }).join('<br>');
+
+  const hasApproved = approvedDates.length > 0;
+  const hasDenied = deniedDates.length > 0;
+
+  const subject = hasApproved && !hasDenied
+    ? 'Dates Approved - Market on Main'
+    : !hasApproved && hasDenied
+    ? 'Date Request Update - Market on Main'
+    : 'Date Request Update - Market on Main';
+
+  const heading = hasApproved && !hasDenied
+    ? 'Your Dates Are Confirmed!'
+    : 'Date Request Update';
+
+  let intro = '';
+  if (hasApproved && !hasDenied) {
+    intro = `Great news! Your requested market date${approvedDates.length !== 1 ? 's have' : ' has'} been approved.`;
+  } else if (!hasApproved && hasDenied) {
+    intro = `We've reviewed your date request${deniedDates.length !== 1 ? 's' : ''} and unfortunately ${deniedDates.length !== 1 ? 'those dates are' : 'that date is'} not available.`;
+  } else {
+    intro = `We've reviewed your date requests. Here's the update:`;
+  }
+
+  let sections = '';
+  if (hasApproved) {
+    sections += `
+      <div style="background-color: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0;">
+        <h3 style="margin-top: 0; color: #16a34a;">Approved</h3>
+        <p style="margin-bottom: 0;">${formatDates(approvedDates)}</p>
+      </div>`;
+  }
+  if (hasDenied) {
+    sections += `
+      <div style="background-color: #fef2f2; padding: 20px; border-radius: 8px; margin: 20px 0;">
+        <h3 style="margin-top: 0; color: #dc2626;">Not Available</h3>
+        <p style="margin-bottom: 0;">${formatDates(deniedDates)}</p>
+      </div>`;
+  }
+
+  try {
+    await resend.emails.send({
+      from: EMAIL_FROM,
+      to: vendor.email,
+      subject,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h1 style="color: #333;">${heading}</h1>
+
+          <p>Hi ${vendor.contact_name},</p>
+
+          <p>${intro}</p>
+
+          ${sections}
+
+          <p>Log in to your vendor portal to view your full schedule.</p>
+
+          <p style="text-align: center; margin: 30px 0;">
+            <a href="${process.env.FRONTEND_URL}/vendor/login"
+               style="background-color: #5c1e3d; color: #ffffff; padding: 14px 32px; text-decoration: none; border: none; display: inline-block; font-weight: 600; border-radius: 100px; font-family: Arial, sans-serif; font-size: 14px;">
+              View My Schedule
+            </a>
+          </p>
+
+          <p>See you at the market!</p>
+          <p><strong>MoM Crew</strong></p>
+        </div>
+      `
+    });
+    await logEmail(vendor.id, 'date_request_review', subject, vendor.email, 'sent');
+    return true;
+  } catch (err) {
+    console.error('Failed to send date request review:', err);
+    await logEmail(vendor.id, 'date_request_review', subject, vendor.email, 'failed');
+    return false;
+  }
+};
+
 module.exports = {
   sendWelcomeEmail,
   sendPaymentConfirmation,
@@ -446,5 +590,7 @@ module.exports = {
   sendMarketReminder,
   sendApplicationConfirmation,
   sendMusicApplicationConfirmation,
-  sendContactFormNotification
+  sendContactFormNotification,
+  sendDateRequestNotification,
+  sendDateRequestApproval
 };

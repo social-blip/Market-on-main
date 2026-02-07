@@ -244,6 +244,102 @@ router.delete('/vendors/:id', verifyToken, isAdmin, async (req, res) => {
   }
 });
 
+// Get date requests (vendor bookings with status 'requested')
+router.get('/date-requests', verifyToken, isAdmin, async (req, res) => {
+  try {
+    const result = await db.query(
+      `SELECT vb.id, vb.vendor_id, vb.market_date_id, vb.status,
+              v.business_name, v.contact_name,
+              md.date
+       FROM vendor_bookings vb
+       JOIN vendors v ON vb.vendor_id = v.id
+       JOIN market_dates md ON vb.market_date_id = md.id
+       WHERE vb.status = 'requested'
+       ORDER BY md.date ASC`
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Review requested bookings — approve and/or deny in one action
+router.post('/bookings/review', verifyToken, isAdmin, async (req, res) => {
+  const { approve_ids = [], deny_ids = [] } = req.body;
+
+  if (approve_ids.length === 0 && deny_ids.length === 0) {
+    return res.status(400).json({ error: 'No bookings specified' });
+  }
+
+  try {
+    let approvedDates = [];
+    let deniedDates = [];
+    let vendorId = null;
+
+    // Approve selected
+    if (approve_ids.length > 0) {
+      const approveResult = await db.query(
+        `UPDATE vendor_bookings
+         SET status = 'confirmed'
+         WHERE id = ANY($1) AND status = 'requested'
+         RETURNING *`,
+        [approve_ids]
+      );
+      if (approveResult.rows.length > 0) {
+        vendorId = approveResult.rows[0].vendor_id;
+        const dateIds = approveResult.rows.map(r => r.market_date_id);
+        const datesResult = await db.query(
+          'SELECT date FROM market_dates WHERE id = ANY($1) ORDER BY date ASC',
+          [dateIds]
+        );
+        approvedDates = datesResult.rows.map(d => d.date);
+      }
+    }
+
+    // Deny selected (delete the booking)
+    if (deny_ids.length > 0) {
+      // Get the dates before deleting so we can include in email
+      const denyInfo = await db.query(
+        `SELECT vb.vendor_id, md.date
+         FROM vendor_bookings vb
+         JOIN market_dates md ON vb.market_date_id = md.id
+         WHERE vb.id = ANY($1)`,
+        [deny_ids]
+      );
+      if (denyInfo.rows.length > 0) {
+        vendorId = vendorId || denyInfo.rows[0].vendor_id;
+        deniedDates = denyInfo.rows.map(r => r.date);
+      }
+
+      await db.query(
+        `DELETE FROM vendor_bookings WHERE id = ANY($1) AND status = 'requested'`,
+        [deny_ids]
+      );
+    }
+
+    // Send one email with all decisions
+    if (vendorId && (approvedDates.length > 0 || deniedDates.length > 0)) {
+      const vendorResult = await db.query(
+        'SELECT id, contact_name, email, business_name FROM vendors WHERE id = $1',
+        [vendorId]
+      );
+      if (vendorResult.rows[0]) {
+        await emailService.sendDateRequestApproval(
+          vendorResult.rows[0],
+          approvedDates,
+          deniedDates
+        );
+      }
+    }
+
+    res.json({ success: true, approved: approvedDates.length, denied: deniedDates.length });
+  } catch (err) {
+    console.error('Error reviewing bookings:', err);
+    res.status(500).json({ error: 'Failed to review bookings' });
+  }
+});
+
 // Assign vendor to market date
 router.post('/bookings', verifyToken, isAdmin, async (req, res) => {
   const { vendor_id, market_date_id, booth_location, status } = req.body;

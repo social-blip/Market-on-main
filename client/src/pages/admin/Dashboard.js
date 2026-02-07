@@ -13,6 +13,7 @@ const AdminDashboard = () => {
   });
   const [recentVendors, setRecentVendors] = useState([]);
   const [pendingVendors, setPendingVendors] = useState([]);
+  const [dateRequests, setDateRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,15 +22,17 @@ const AdminDashboard = () => {
 
   const fetchData = async () => {
     try {
-      const [vendorsRes, paymentsRes, datesRes] = await Promise.all([
+      const [vendorsRes, paymentsRes, datesRes, dateRequestsRes] = await Promise.all([
         api.get('/admin/vendors'),
         api.get('/payments'),
-        api.get('/dates')
+        api.get('/dates'),
+        api.get('/admin/date-requests')
       ]);
 
       const vendors = vendorsRes.data;
       const payments = paymentsRes.data;
       const dates = datesRes.data;
+      setDateRequests(dateRequestsRes.data);
 
       const today = new Date();
       const upcomingMarkets = dates.filter(d => new Date(d.date) >= today && !d.is_cancelled).length;
@@ -43,7 +46,8 @@ const AdminDashboard = () => {
         pendingApplications: pendingApps.length,
         totalPayments,
         pendingPayments,
-        upcomingMarkets
+        upcomingMarkets,
+        dateRequests: dateRequestsRes.data.length
       });
 
       setRecentVendors(vendors.filter(v => v.is_active).slice(0, 5));
@@ -87,6 +91,40 @@ const AdminDashboard = () => {
           <div style={{ fontSize: '12px', textTransform: 'uppercase', opacity: 0.8 }}>Revenue</div>
         </div>
       </div>
+
+      {/* Date Requests */}
+      {dateRequests.length > 0 && (
+        <div className="card mb-4" style={{ borderLeft: '4px solid #f59e0b' }}>
+          <div className="flex-between mb-2">
+            <h4 style={{ color: '#f59e0b', margin: 0 }}>Date Requests ({dateRequests.length})</h4>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {/* Group by vendor */}
+            {Object.values(dateRequests.reduce((acc, req) => {
+              if (!acc[req.vendor_id]) {
+                acc[req.vendor_id] = { vendor_id: req.vendor_id, business_name: req.business_name, contact_name: req.contact_name, dates: [] };
+              }
+              acc[req.vendor_id].dates.push(req.date);
+              return acc;
+            }, {})).map(vendor => (
+              <Link
+                key={vendor.vendor_id}
+                to={`/admin/vendors/${vendor.vendor_id}`}
+                className="flex-between"
+                style={{ padding: '12px', background: '#fffbeb', borderRadius: '6px', textDecoration: 'none', color: 'inherit' }}
+              >
+                <div>
+                  <div style={{ fontWeight: 600 }}>{vendor.business_name}</div>
+                  <div style={{ fontSize: '12px', color: 'var(--gray)' }}>
+                    {vendor.dates.length} date{vendor.dates.length !== 1 ? 's' : ''} requested
+                  </div>
+                </div>
+                <span className="badge badge-warning">Review</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Cards Row */}
       <div className="grid grid-3" style={{ gap: '24px' }}>

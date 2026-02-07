@@ -300,6 +300,45 @@ router.post('/payments/:id/create-payment-intent', verifyToken, isVendor, async 
   }
 });
 
+// Request additional market dates
+router.post('/request-dates', verifyToken, isVendor, async (req, res) => {
+  const { market_date_ids } = req.body;
+
+  if (!market_date_ids || !Array.isArray(market_date_ids) || market_date_ids.length === 0) {
+    return res.status(400).json({ error: 'Please select at least one date' });
+  }
+
+  try {
+    let requested = 0;
+
+    for (const dateId of market_date_ids) {
+      const result = await db.query(
+        `INSERT INTO vendor_bookings (vendor_id, market_date_id, status)
+         VALUES ($1, $2, 'requested')
+         ON CONFLICT (vendor_id, market_date_id) DO NOTHING`,
+        [req.vendor.id, dateId]
+      );
+      if (result.rowCount > 0) requested++;
+    }
+
+    // Get vendor info and date details for notification email
+    if (requested > 0) {
+      const datesResult = await db.query(
+        `SELECT date FROM market_dates WHERE id = ANY($1) ORDER BY date ASC`,
+        [market_date_ids]
+      );
+
+      const emailService = require('../services/email');
+      await emailService.sendDateRequestNotification(req.vendor, datesResult.rows);
+    }
+
+    res.json({ success: true, requested });
+  } catch (err) {
+    console.error('Error requesting dates:', err);
+    res.status(500).json({ error: 'Failed to submit date request' });
+  }
+});
+
 // Upload vendor photos
 router.post('/photos', verifyToken, isVendor, upload.array('photos', 10), async (req, res) => {
   try {
