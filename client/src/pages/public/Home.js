@@ -67,7 +67,7 @@ const Home = () => {
             <h1 style={{
               fontFamily: "'Bricolage Grotesque', sans-serif",
               fontWeight: 800,
-              fontSize: 'clamp(48px, 10vw, 120px)',
+              fontSize: 'clamp(65px, 10vw, 120px)',
               color: '#fff',
               margin: '0 0 24px 0',
               lineHeight: 1,
