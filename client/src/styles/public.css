@@ -33,6 +33,7 @@
   background-color: var(--maroon);
   background-size: cover;
   background-position: center top;
+  background-attachment: fixed;
   position: relative;
   overflow: hidden;
 }
@@ -1517,9 +1518,10 @@
   }
 
   .hero__images {
-    height: 220px;
+    height: 260px;
     overflow: hidden;
     margin-bottom: 24px;
+    padding-bottom: 8px;
   }
 
   .hero__images-inner {
@@ -1546,7 +1548,7 @@
 
   .hero__image-col .image-column {
     flex-direction: row;
-    gap: 6px;
+    gap: 12px;
     overflow: hidden;
     animation: none;
   }
@@ -1560,7 +1562,7 @@
     --speed: 60;
     --origin-x: calc(((var(--count) - var(--index)) + -1) * 100%);
     --origin-y: 0;
-    --destination-x: calc((var(--index) + 1 + 0) * -100% - (6px * var(--count)));
+    --destination-x: calc((var(--index) + 1 + 0) * -100% - (12px * var(--count)));
     --destination-y: 0;
     --duration: calc(var(--speed) * 1s);
     --delay: calc(var(--duration) / var(--count) * (var(--index) - var(--count) / 0.5));
