@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const db = require('../models/db');
 const { verifyToken, isVendor } = require('../middleware/auth');
+const compressUpload = require('../middleware/compressUpload');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 // Configure multer for vendor photo uploads
@@ -22,7 +23,7 @@ const upload = multer({
   storage,
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
   fileFilter: (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|gif|webp/;
+    const allowedTypes = /jpeg|jpg|png|gif|webp|heic|heif/;
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
     const mimetype = allowedTypes.test(file.mimetype);
     if (extname && mimetype) {
@@ -340,7 +341,7 @@ router.post('/request-dates', verifyToken, isVendor, async (req, res) => {
 });
 
 // Upload vendor photos
-router.post('/photos', verifyToken, isVendor, upload.array('photos', 10), async (req, res) => {
+router.post('/photos', verifyToken, isVendor, upload.array('photos', 10), compressUpload, async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ error: 'No files uploaded' });

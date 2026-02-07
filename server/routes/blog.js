@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const db = require('../models/db');
 const { verifyToken, isAdmin } = require('../middleware/auth');
+const compressUpload = require('../middleware/compressUpload');
 
 // Configure multer for blog image uploads
 const storage = multer.diskStorage({
@@ -205,7 +206,7 @@ router.delete('/admin/:id', verifyToken, isAdmin, async (req, res) => {
 });
 
 // Upload blog image - admin only
-router.post('/admin/:id/image', verifyToken, isAdmin, upload.single('image'), async (req, res) => {
+router.post('/admin/:id/image', verifyToken, isAdmin, upload.single('image'), compressUpload, async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });

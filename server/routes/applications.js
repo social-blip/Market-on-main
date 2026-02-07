@@ -5,6 +5,7 @@ const path = require('path');
 const db = require('../models/db');
 const { body, validationResult } = require('express-validator');
 const emailService = require('../services/email');
+const compressUpload = require('../middleware/compressUpload');
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -63,6 +64,7 @@ const calculateTotal = (boothSize, marketsRequested, needsPower) => {
 // Submit vendor application
 router.post('/submit',
   upload.array('images', 5),
+  compressUpload,
   [
     body('contact_name').notEmpty().trim(),
     body('business_name').notEmpty().trim(),

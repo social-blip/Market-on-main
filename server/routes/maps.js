@@ -4,6 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const db = require('../models/db');
 const { verifyToken, isAdmin } = require('../middleware/auth');
+const compressUpload = require('../middleware/compressUpload');
 
 // Configure multer for map uploads
 const storage = multer.diskStorage({
@@ -231,7 +232,7 @@ router.get('/', async (req, res) => {
 });
 
 // Upload new map (admin)
-router.post('/', verifyToken, isAdmin, upload.single('map'), async (req, res) => {
+router.post('/', verifyToken, isAdmin, upload.single('map'), compressUpload, async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
   }
