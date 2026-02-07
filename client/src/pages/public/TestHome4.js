@@ -339,12 +339,6 @@ const TestHome4 = () => {
           <div className="hero__container">
             {/* Left Column - Text */}
             <div className="hero__content">
-              <div className="hero__decor">
-                <div className="hero__decor-shape hero__decor-shape--1" />
-                <div className="hero__decor-shape hero__decor-shape--2" />
-                <div className="hero__decor-shape hero__decor-shape--3" />
-              </div>
-
               <div className="hero__content-inner">
                 <div className="hero__tabs">
                   <button
