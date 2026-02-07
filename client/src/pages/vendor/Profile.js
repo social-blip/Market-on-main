@@ -21,7 +21,9 @@ const VendorProfile = () => {
   const [formData, setFormData] = useState({
     phone: '',
     website: '',
-    social_handles: '',
+    facebook: '',
+    instagram: '',
+    x: '',
     description: ''
   });
 
@@ -34,10 +36,19 @@ const VendorProfile = () => {
     try {
       const response = await api.get('/vendors/profile');
       setProfile(response.data);
+      let handles = { facebook: '', instagram: '', x: '' };
+      try {
+        const raw = response.data.social_handles;
+        if (raw) {
+          handles = typeof raw === 'string' ? JSON.parse(raw) : raw;
+        }
+      } catch {}
       setFormData({
         phone: response.data.phone || '',
         website: response.data.website || '',
-        social_handles: response.data.social_handles || '',
+        facebook: handles.facebook || '',
+        instagram: handles.instagram || '',
+        x: handles.x || '',
         description: response.data.description || ''
       });
     } catch (err) {
@@ -118,7 +129,13 @@ const VendorProfile = () => {
     setMessage({ type: '', text: '' });
 
     try {
-      const response = await api.put('/vendors/profile', formData);
+      const payload = {
+        phone: formData.phone,
+        website: formData.website,
+        social_handles: JSON.stringify({ facebook: formData.facebook, instagram: formData.instagram, x: formData.x }),
+        description: formData.description
+      };
+      const response = await api.put('/vendors/profile', payload);
       setProfile(response.data);
       setEditing(false);
       setMessage({ type: 'success', text: 'Profile updated successfully!' });
@@ -261,21 +278,43 @@ const VendorProfile = () => {
               <div className="vendor-form__group">
                 <label className="vendor-form__label">Website</label>
                 <input
-                  type="url"
+                  type="text"
                   value={formData.website}
                   onChange={(e) => setFormData({ ...formData, website: e.target.value })}
-                  placeholder="https://"
+                  placeholder="yourwebsite.com"
                   className="vendor-form__input"
                 />
               </div>
 
               <div className="vendor-form__group">
-                <label className="vendor-form__label">Social Media Handles</label>
+                <label className="vendor-form__label">Facebook</label>
                 <input
                   type="text"
-                  value={formData.social_handles}
-                  onChange={(e) => setFormData({ ...formData, social_handles: e.target.value })}
-                  placeholder="@instagram, facebook.com/page"
+                  value={formData.facebook}
+                  onChange={(e) => setFormData({ ...formData, facebook: e.target.value })}
+                  placeholder="facebook.com/yourpage"
+                  className="vendor-form__input"
+                />
+              </div>
+
+              <div className="vendor-form__group">
+                <label className="vendor-form__label">Instagram</label>
+                <input
+                  type="text"
+                  value={formData.instagram}
+                  onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
+                  placeholder="instagram.com/yourpage"
+                  className="vendor-form__input"
+                />
+              </div>
+
+              <div className="vendor-form__group">
+                <label className="vendor-form__label">X / Twitter</label>
+                <input
+                  type="text"
+                  value={formData.x}
+                  onChange={(e) => setFormData({ ...formData, x: e.target.value })}
+                  placeholder="x.com/yourhandle"
                   className="vendor-form__input"
                 />
               </div>
@@ -345,8 +384,23 @@ const VendorProfile = () => {
 
               <div className="vendor-profile__field">
                 <div className="vendor-profile__label">Social Media</div>
-                <div className="vendor-profile__value" style={{ color: profile?.social_handles ? 'var(--black)' : 'var(--gray-medium)' }}>
-                  {profile?.social_handles || 'Not provided'}
+                <div className="vendor-profile__value">
+                  {(() => {
+                    let handles = {};
+                    try {
+                      const raw = profile?.social_handles;
+                      if (raw) handles = typeof raw === 'string' ? JSON.parse(raw) : raw;
+                    } catch {}
+                    const hasAny = handles.facebook || handles.instagram || handles.x;
+                    if (!hasAny) return <span style={{ color: 'var(--gray-medium)' }}>Not provided</span>;
+                    return (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        {handles.facebook && <span><strong>FB:</strong> {handles.facebook}</span>}
+                        {handles.instagram && <span><strong>IG:</strong> {handles.instagram}</span>}
+                        {handles.x && <span><strong>X:</strong> {handles.x}</span>}
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
 

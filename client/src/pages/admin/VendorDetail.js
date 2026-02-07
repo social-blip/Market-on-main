@@ -347,41 +347,32 @@ const AdminVendorDetail = () => {
             </div>
           )}
 
-          {vendor.social_handles && (
-            <div style={{ marginBottom: '12px' }}>
-              <strong>Social Media</strong>
-              <div style={{ color: '#666', display: 'flex', gap: '16px', flexWrap: 'wrap', marginTop: '4px' }}>
-                {(() => {
-                  try {
-                    const handles = typeof vendor.social_handles === 'string'
-                      ? JSON.parse(vendor.social_handles)
-                      : vendor.social_handles;
-                    return (
-                      <>
-                        {handles.facebook && (
-                          <span>
-                            <strong>FB:</strong> {handles.facebook}
-                          </span>
-                        )}
-                        {handles.instagram && (
-                          <span>
-                            <strong>IG:</strong> {handles.instagram}
-                          </span>
-                        )}
-                        {handles.x && (
-                          <span>
-                            <strong>X:</strong> {handles.x}
-                          </span>
-                        )}
-                      </>
-                    );
-                  } catch {
-                    return <span>{vendor.social_handles}</span>;
-                  }
-                })()}
-              </div>
-            </div>
-          )}
+          {(() => {
+            let handles = {};
+            try {
+              const raw = vendor.social_handles;
+              if (raw) handles = typeof raw === 'string' ? JSON.parse(raw) : raw;
+            } catch {
+              // Plain string — treat as instagram handle
+              if (vendor.social_handles) handles = { instagram: vendor.social_handles };
+            }
+            return (
+              <>
+                <div style={{ marginBottom: '12px' }}>
+                  <strong>Facebook</strong>
+                  <p style={{ color: '#666' }}>{handles.facebook || 'Not provided'}</p>
+                </div>
+                <div style={{ marginBottom: '12px' }}>
+                  <strong>Instagram</strong>
+                  <p style={{ color: '#666' }}>{handles.instagram || 'Not provided'}</p>
+                </div>
+                <div style={{ marginBottom: '12px' }}>
+                  <strong>X / Twitter</strong>
+                  <p style={{ color: '#666' }}>{handles.x || 'Not provided'}</p>
+                </div>
+              </>
+            );
+          })()}
 
           <div style={{ marginBottom: '12px' }}>
             <strong>Category</strong>
