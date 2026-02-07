@@ -392,9 +392,6 @@ const TestHome4 = () => {
             </button>
           </div>
           <nav className="mobile-menu-overlay__nav">
-            <NavLink to="/" end onClick={() => setMobileMenuOpen(false)} className="mobile-menu-overlay__link">
-              Home
-            </NavLink>
             {navItems.map((item, i) => (
               <NavLink
                 key={i}

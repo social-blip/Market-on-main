@@ -24,7 +24,7 @@ const GREETINGS = [
 ];
 
 const VendorCard = ({ vendor }) => {
-  const truncateDesc = (text, maxLength = 100) => {
+  const truncateDesc = (text, maxLength = 200) => {
     if (!text) return 'Local vendor at Market on Main.';
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength).trim() + '...';
