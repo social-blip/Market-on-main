@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import api from '../../api/client';
 import '../../styles/public.css';
 
@@ -141,6 +141,7 @@ const TestHome4 = () => {
   const [musicLineup, setMusicLineup] = useState([]);
   const [musicIndex, setMusicIndex] = useState(0);
   const [selectedMusician, setSelectedMusician] = useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const scrollRef = useRef(null);
   const musicScrollRef = useRef(null);
   const CARD_WIDTH = 260; // card width (240) + gap (20)
@@ -361,9 +362,66 @@ const TestHome4 = () => {
               </Link>
             ))}
           </nav>
-        </div>
 
+          {/* Hamburger Button - Mobile Only */}
+          <button
+            className="hamburger-btn"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            <span className={`hamburger-btn__line ${mobileMenuOpen ? 'hamburger-btn__line--open' : ''}`} />
+            <span className={`hamburger-btn__line ${mobileMenuOpen ? 'hamburger-btn__line--open' : ''}`} />
+            <span className={`hamburger-btn__line ${mobileMenuOpen ? 'hamburger-btn__line--open' : ''}`} />
+          </button>
+        </div>
       </header>
+
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <div className="mobile-menu-overlay">
+          <div className="mobile-menu-overlay__header">
+            <Link to="/" onClick={() => setMobileMenuOpen(false)} className="mobile-menu-overlay__logo">
+              <span className="floating-header__logo-text">MoM</span>
+            </Link>
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              aria-label="Close menu"
+              className="mobile-menu-overlay__close"
+            >
+              ✕
+            </button>
+          </div>
+          <nav className="mobile-menu-overlay__nav">
+            <NavLink to="/" end onClick={() => setMobileMenuOpen(false)} className="mobile-menu-overlay__link">
+              Home
+            </NavLink>
+            {navItems.map((item, i) => (
+              <NavLink
+                key={i}
+                to={item.to}
+                onClick={() => setMobileMenuOpen(false)}
+                className="mobile-menu-overlay__link"
+              >
+                {item.label} {item.sublabel}
+              </NavLink>
+            ))}
+            <NavLink
+              to="/become-vendor"
+              onClick={() => setMobileMenuOpen(false)}
+              className="mobile-menu-overlay__link"
+            >
+              Become a Vendor
+            </NavLink>
+            <NavLink
+              to="/vendor/login"
+              onClick={() => setMobileMenuOpen(false)}
+              className="mobile-menu-overlay__cta"
+            >
+              Vendor Login
+            </NavLink>
+          </nav>
+        </div>
+      )}
 
       <main>
         {/* Hero Section */}
