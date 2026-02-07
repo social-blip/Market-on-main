@@ -6,6 +6,7 @@ import '../../styles/public.css';
 // Vertical scrolling image column component
 const VerticalImageColumn = ({ images, direction = 'up', borderColors = ['yellow', 'purple', 'cyan', 'pink'] }) => {
   const duplicatedImages = [...images, ...images, ...images];
+  const count = duplicatedImages.length;
   const colorMap = {
     yellow: 'image-column__item--yellow',
     purple: 'image-column__item--purple',
@@ -14,9 +15,9 @@ const VerticalImageColumn = ({ images, direction = 'up', borderColors = ['yellow
   };
 
   return (
-    <div className={`image-column image-column--${direction}`}>
+    <div className={`image-column image-column--${direction}`} style={{ '--count': count }}>
       {duplicatedImages.map((src, i) => (
-        <div key={i} className={`image-column__item ${colorMap[borderColors[i % borderColors.length]]}`}>
+        <div key={i} className={`image-column__item ${colorMap[borderColors[i % borderColors.length]]}`} style={{ '--index': i }}>
           <img src={src} alt="" className="image-column__img" />
         </div>
       ))}
@@ -408,7 +409,10 @@ const TestHome4 = () => {
             <div className="vendors-section__inner">
               {/* Left Column */}
               <div className="vendors-section__left">
-                <h2 className="vendors-section__title">VENDORS</h2>
+                <div className="vendors-section__title-row">
+                  <h2 className="vendors-section__title">VENDORS</h2>
+                  <Link to="/vendors" className="vendors-section__calendar-btn vendors-section__mobile-cta">See All Vendors</Link>
+                </div>
                 <div className="vendors-section__filters">
                   <button
                     className={`pill-link ${vendorFilter === 'all' ? 'pill-link--active' : ''}`}
