@@ -1549,27 +1549,11 @@
   .hero__image-col .image-column {
     flex-direction: row;
     gap: 12px;
-    overflow: hidden;
-    animation: none;
-  }
-
-  .hero .image-column--down,
-  .hero .image-column--up {
-    animation: none !important;
+    overflow: visible;
+    animation: scroll-left 30s linear infinite !important;
   }
 
   .hero__image-col .image-column__item {
-    --speed: 60;
-    --origin-x: calc(((var(--count) - var(--index)) + -1) * 100%);
-    --origin-y: 0;
-    --destination-x: calc((var(--index) + 1 + 0) * -100% - (12px * var(--count)));
-    --destination-y: 0;
-    --duration: calc(var(--speed) * 1s);
-    --delay: calc(var(--duration) / var(--count) * (var(--index) - var(--count) / 0.5));
-    translate: var(--origin-x) var(--origin-y);
-    animation: slide var(--duration) calc(var(--delay) - var(--count) * 0.5s) infinite linear;
-    backface-visibility: hidden;
-    will-change: transform;
     width: 38vw;
     min-width: 38vw;
     aspect-ratio: 3/4;
