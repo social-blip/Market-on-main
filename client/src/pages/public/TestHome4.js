@@ -73,7 +73,7 @@ const VendorCard = ({ vendor, onPartialClick, isPartial }) => {
     <Link to={`/vendors/${vendor.id || ''}`} className="homepage-vendor-card" onClick={handleClick}>
       <div className="homepage-vendor-card__img">
         {vendor.image_url ? (
-          <img src={vendor.image_url} alt={vendor.business_name} />
+          <img src={vendor.image_url} alt={vendor.business_name} loading="lazy" />
         ) : (
           <div className="homepage-vendor-card__placeholder">
             {vendor.business_name?.charAt(0) || '?'}
@@ -105,7 +105,7 @@ const VendorCard = ({ vendor, onPartialClick, isPartial }) => {
 const NewsCard = ({ article }) => (
   <Link to={article.link || '/'} className="news-card">
     <div className="news-card__img">
-      <img src={article.image} alt="" />
+      <img src={article.image} alt="" loading="lazy" />
     </div>
     {article.tag && <p className="news-card__tag">{article.tag}</p>}
     <h4 className="news-card__title">{article.title}</h4>
@@ -528,7 +528,7 @@ const TestHome4 = () => {
             <div className="news-section__grid">
               <div className="news-section__featured">
                 <div className="news-section__featured-img">
-                  <img src="/images/market/IMG_9954.jpeg" alt="" />
+                  <img src="/images/market/IMG_9954.jpeg" alt="" loading="lazy" />
                 </div>
               </div>
 
@@ -624,7 +624,7 @@ const TestHome4 = () => {
 
               {/* Right Column - Image */}
               <div className="music-section__right">
-                <img src="/images/live-music.png" className="music-section__decor" alt="" />
+                <img src="/images/live-music.png" className="music-section__decor" alt="" loading="lazy" />
               </div>
             </div>
           </div>
@@ -646,7 +646,7 @@ const TestHome4 = () => {
                   rel="noopener noreferrer"
                   className={`sponsors-section__logo ${sponsor.dark ? 'sponsors-section__logo--dark' : ''}`}
                 >
-                  <img src={sponsor.image} alt={sponsor.name} />
+                  <img src={sponsor.image} alt={sponsor.name} loading="lazy" />
                 </a>
               ))}
             </div>
@@ -718,7 +718,7 @@ const TestHome4 = () => {
                   '/images/market/IMG_9970.jpeg',
                 ].map((src, i) => (
                   <div key={i} className="location-section__img">
-                    <img src={src} alt="" />
+                    <img src={src} alt="" loading="lazy" />
                   </div>
                 ))}
               </div>
