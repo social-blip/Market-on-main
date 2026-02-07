@@ -109,7 +109,7 @@ const VendorSchedule = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', paddingBottom: selectedIds.length > 0 ? '80px' : '0' }}>
           {Object.entries(groupedByMonth).map(([month, monthDates]) => (
             <div key={month}>
-              <h2 className="vendor-card__title" style={{ marginBottom: '16px', fontSize: '24px' }}>
+              <h2 className="vendor-card__title" style={{ marginBottom: '16px', fontSize: '32px' }}>
                 {month}
               </h2>
 
@@ -124,23 +124,23 @@ const VendorSchedule = () => {
                   let clickable = false;
 
                   if (md.is_cancelled) {
-                    badge = <span className="vendor-badge vendor-badge--danger" style={{ marginTop: '6px', display: 'inline-block', fontSize: '9px', padding: '3px 6px' }}>Cancelled</span>;
+                    badge = <span className="vendor-badge vendor-badge--danger" style={{ marginTop: '10px', display: 'inline-block', fontSize: '12px', padding: '4px 10px' }}>Cancelled</span>;
                   } else if (booking && booking.status === 'confirmed') {
-                    badge = <span className="vendor-badge vendor-badge--success" style={{ marginTop: '6px', display: 'inline-block', fontSize: '9px', padding: '3px 6px' }}>Confirmed</span>;
+                    badge = <span className="vendor-badge vendor-badge--success" style={{ marginTop: '10px', display: 'inline-block', fontSize: '12px', padding: '4px 10px' }}>Confirmed</span>;
                   } else if (booking && booking.status === 'requested') {
-                    badge = <span className="vendor-badge vendor-badge--warning" style={{ marginTop: '6px', display: 'inline-block', fontSize: '9px', padding: '3px 6px' }}>Requested</span>;
+                    badge = <span className="vendor-badge vendor-badge--warning" style={{ marginTop: '10px', display: 'inline-block', fontSize: '12px', padding: '4px 10px' }}>Requested</span>;
                   } else {
                     clickable = true;
                     if (isSelected) {
-                      badge = <span className="vendor-badge vendor-badge--success" style={{ marginTop: '6px', display: 'inline-block', fontSize: '9px', padding: '3px 6px' }}>Selected ✓</span>;
+                      badge = <span className="vendor-badge vendor-badge--success" style={{ marginTop: '10px', display: 'inline-block', fontSize: '12px', padding: '4px 10px' }}>Selected ✓</span>;
                     } else {
                       badge = (
                         <button
                           style={{
-                            marginTop: '6px',
+                            marginTop: '10px',
                             display: 'inline-block',
-                            fontSize: '9px',
-                            padding: '3px 6px',
+                            fontSize: '12px',
+                            padding: '4px 10px',
                             background: 'var(--maroon)',
                             color: '#fff',
                             border: 'none',
@@ -160,10 +160,10 @@ const VendorSchedule = () => {
                       key={md.id}
                       onClick={clickable ? () => toggleSelect(md.id) : undefined}
                       style={{
-                        padding: '10px 16px',
+                        padding: '20px 32px',
                         textAlign: 'center',
                         flex: '0 0 auto',
-                        minWidth: '70px',
+                        minWidth: '140px',
                         background: isSelected ? '#f0fdf4' : 'var(--white)',
                         borderRadius: '12px',
                         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
@@ -174,7 +174,7 @@ const VendorSchedule = () => {
                       <div style={{
                         fontFamily: 'var(--font-display)',
                         fontWeight: 700,
-                        fontSize: '18px',
+                        fontSize: '36px',
                         color: 'var(--black)',
                         lineHeight: 1
                       }}>
