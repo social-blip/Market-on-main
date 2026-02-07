@@ -35,6 +35,9 @@ const AdminVendorDetail = () => {
     manual_due_date: ''
   });
   const [invoiceSubmitting, setInvoiceSubmitting] = useState(false);
+  const [markingPaid, setMarkingPaid] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState('');
+  const [memo, setMemo] = useState('');
 
   useEffect(() => {
     fetchVendor();
@@ -147,6 +150,24 @@ const AdminVendorDetail = () => {
       setMessage({ type: 'success', text: 'Invoice deleted.' });
     } catch (err) {
       setMessage({ type: 'error', text: 'Failed to delete invoice.' });
+    }
+  };
+
+  const openMarkPaid = (paymentId) => {
+    setMarkingPaid(paymentId);
+    setPaymentMethod('');
+    setMemo('');
+  };
+
+  const markAsPaid = async () => {
+    if (!paymentMethod) return;
+    try {
+      await api.post(`/payments/${markingPaid}/mark-paid`, { payment_method: paymentMethod, memo });
+      setMarkingPaid(null);
+      fetchVendor();
+      setMessage({ type: 'success', text: 'Payment marked as paid!' });
+    } catch (err) {
+      setMessage({ type: 'error', text: 'Failed to update payment.' });
     }
   };
 
@@ -511,6 +532,7 @@ const AdminVendorDetail = () => {
                 <th>Description</th>
                 <th>Amount</th>
                 <th>Status</th>
+                <th>Notes</th>
                 <th></th>
               </tr>
             </thead>
@@ -525,7 +547,20 @@ const AdminVendorDetail = () => {
                       {payment.status}
                     </span>
                   </td>
-                  <td>
+                  <td style={{ fontSize: '12px', color: '#666' }}>
+                    {payment.payment_method && <div>{payment.payment_method}</div>}
+                    {payment.memo && <div style={{ fontStyle: 'italic' }}>{payment.memo}</div>}
+                  </td>
+                  <td style={{ whiteSpace: 'nowrap' }}>
+                    {payment.status === 'pending' && (
+                      <button
+                        onClick={() => openMarkPaid(payment.id)}
+                        className="btn btn-primary"
+                        style={{ fontSize: '12px', padding: '4px 10px', marginRight: '8px' }}
+                      >
+                        Mark Paid
+                      </button>
+                    )}
                     <button
                       onClick={() => deletePayment(payment.id)}
                       style={{ background: 'none', border: 'none', color: '#dc3545', cursor: 'pointer', fontSize: '13px' }}
@@ -539,6 +574,58 @@ const AdminVendorDetail = () => {
           </table>
         )}
       </div>
+
+      {/* Mark Paid Modal */}
+      {markingPaid && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
+        }} onClick={() => setMarkingPaid(null)}>
+          <div className="card" style={{ width: '400px', margin: '20px' }} onClick={e => e.stopPropagation()}>
+            <h3 style={{ margin: '0 0 16px 0' }}>Mark as Paid</h3>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontWeight: 600, marginBottom: '4px', fontSize: '14px' }}>
+                Payment Method *
+              </label>
+              <select
+                value={paymentMethod}
+                onChange={e => setPaymentMethod(e.target.value)}
+                className="form-control"
+              >
+                <option value="">Select...</option>
+                <option value="Cash">Cash</option>
+                <option value="Check">Check</option>
+                <option value="Venmo">Venmo</option>
+                <option value="Zelle">Zelle</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', fontWeight: 600, marginBottom: '4px', fontSize: '14px' }}>
+                Memo (optional)
+              </label>
+              <input
+                type="text"
+                value={memo}
+                onChange={e => setMemo(e.target.value)}
+                placeholder="e.g. Check #1234"
+                className="form-control"
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button onClick={markAsPaid} disabled={!paymentMethod} className="btn btn-primary" style={{ fontSize: '13px', opacity: !paymentMethod ? 0.5 : 1 }}>
+                Confirm Paid
+              </button>
+              <button onClick={() => setMarkingPaid(null)} className="btn" style={{ fontSize: '13px' }}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Invoice Modal */}
       {showInvoiceModal && (

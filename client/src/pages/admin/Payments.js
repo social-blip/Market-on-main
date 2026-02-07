@@ -7,6 +7,9 @@ const AdminPayments = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [markingPaid, setMarkingPaid] = useState(null); // payment id being marked
+  const [paymentMethod, setPaymentMethod] = useState('');
+  const [memo, setMemo] = useState('');
 
   useEffect(() => {
     fetchPayments();
@@ -23,9 +26,17 @@ const AdminPayments = () => {
     }
   };
 
-  const markAsPaid = async (id) => {
+  const openMarkPaid = (id) => {
+    setMarkingPaid(id);
+    setPaymentMethod('');
+    setMemo('');
+  };
+
+  const markAsPaid = async () => {
+    if (!paymentMethod) return;
     try {
-      await api.post(`/payments/${id}/mark-paid`);
+      await api.post(`/payments/${markingPaid}/mark-paid`, { payment_method: paymentMethod, memo });
+      setMarkingPaid(null);
       fetchPayments();
       setMessage({ type: 'success', text: 'Payment marked as paid!' });
     } catch (err) {
@@ -115,13 +126,14 @@ const AdminPayments = () => {
               <th>Description</th>
               <th>Amount</th>
               <th>Status</th>
+              <th>Notes</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             {filteredPayments.length === 0 ? (
               <tr>
-                <td colSpan="6" className="text-center" style={{ padding: '40px', color: 'var(--gray)' }}>
+                <td colSpan="7" className="text-center" style={{ padding: '40px', color: 'var(--gray)' }}>
                   No payments found.
                 </td>
               </tr>
@@ -146,10 +158,14 @@ const AdminPayments = () => {
                       <span className="badge badge-warning">Pending</span>
                     )}
                   </td>
+                  <td style={{ fontSize: '12px', color: 'var(--gray)' }}>
+                    {payment.payment_method && <div>{payment.payment_method}</div>}
+                    {payment.memo && <div style={{ fontStyle: 'italic' }}>{payment.memo}</div>}
+                  </td>
                   <td>
                     {payment.status === 'pending' && (
                       <button
-                        onClick={() => markAsPaid(payment.id)}
+                        onClick={() => openMarkPaid(payment.id)}
                         className="btn btn-primary"
                         style={{ fontSize: '12px', padding: '6px 12px' }}
                       >
@@ -163,6 +179,58 @@ const AdminPayments = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Mark Paid Modal */}
+      {markingPaid && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000
+        }} onClick={() => setMarkingPaid(null)}>
+          <div className="card" style={{ width: '400px', margin: '20px' }} onClick={e => e.stopPropagation()}>
+            <h3 style={{ margin: '0 0 16px 0' }}>Mark as Paid</h3>
+
+            <div style={{ marginBottom: '12px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--gray-dark)', marginBottom: '4px' }}>
+                Payment Method *
+              </label>
+              <select
+                value={paymentMethod}
+                onChange={e => setPaymentMethod(e.target.value)}
+                style={{ width: '100%', padding: '8px', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '14px' }}
+              >
+                <option value="">Select...</option>
+                <option value="Cash">Cash</option>
+                <option value="Check">Check</option>
+                <option value="Venmo">Venmo</option>
+                <option value="Zelle">Zelle</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: 'var(--gray-dark)', marginBottom: '4px' }}>
+                Memo (optional)
+              </label>
+              <input
+                type="text"
+                value={memo}
+                onChange={e => setMemo(e.target.value)}
+                placeholder="e.g. Check #1234"
+                style={{ width: '100%', padding: '8px', border: '1px solid var(--border)', borderRadius: '6px', fontSize: '14px' }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button onClick={markAsPaid} disabled={!paymentMethod} className="btn btn-primary" style={{ fontSize: '13px', opacity: !paymentMethod ? 0.5 : 1 }}>
+                Confirm Paid
+              </button>
+              <button onClick={() => setMarkingPaid(null)} className="btn btn-secondary" style={{ fontSize: '13px' }}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

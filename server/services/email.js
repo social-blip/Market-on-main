@@ -63,7 +63,7 @@ const sendWelcomeEmail = async (vendor) => {
 
           <p style="text-align: center; margin: 30px 0;">
             <a href="${setupUrl}"
-               style="background-color: #FFD700; color: #000; padding: 12px 24px; text-decoration: none; border: 3px solid #000; display: inline-block; font-weight: bold;">
+               style="background-color: #5c1e3d; color: #ffffff; padding: 14px 32px; text-decoration: none; border: none; display: inline-block; font-weight: 600; border-radius: 100px; font-family: Arial, sans-serif; font-size: 14px;">
               Set Up Your Account
             </a>
           </p>
@@ -194,7 +194,7 @@ const sendPaymentConfirmation = async (vendor, payment) => {
 
           <p style="text-align: center; margin: 30px 0;">
             <a href="${process.env.FRONTEND_URL}/vendor/login"
-               style="background-color: #FFD700; color: #000; padding: 12px 24px; text-decoration: none; border: 3px solid #000; display: inline-block; font-weight: bold;">
+               style="background-color: #5c1e3d; color: #ffffff; padding: 14px 32px; text-decoration: none; border: none; display: inline-block; font-weight: 600; border-radius: 100px; font-family: Arial, sans-serif; font-size: 14px;">
               View My Dashboard
             </a>
           </p>
@@ -239,7 +239,7 @@ const sendAnnouncementEmail = async (vendor, announcement) => {
 
           <p style="text-align: center; margin: 30px 0;">
             <a href="${process.env.FRONTEND_URL}/vendor/login"
-               style="background-color: #FFD700; color: #000; padding: 12px 24px; text-decoration: none; border: 3px solid #000; display: inline-block; font-weight: bold;">
+               style="background-color: #5c1e3d; color: #ffffff; padding: 14px 32px; text-decoration: none; border: none; display: inline-block; font-weight: 600; border-radius: 100px; font-family: Arial, sans-serif; font-size: 14px;">
               View Dashboard
             </a>
           </p>
@@ -306,7 +306,7 @@ const sendMarketReminder = async (vendor, marketDate) => {
 
           <p style="text-align: center; margin: 30px 0;">
             <a href="${process.env.FRONTEND_URL}/vendor/dashboard"
-               style="background-color: #FFD700; color: #000; padding: 12px 24px; text-decoration: none; border: 3px solid #000; display: inline-block; font-weight: bold;">
+               style="background-color: #5c1e3d; color: #ffffff; padding: 14px 32px; text-decoration: none; border: none; display: inline-block; font-weight: 600; border-radius: 100px; font-family: Arial, sans-serif; font-size: 14px;">
               View Market Map
             </a>
           </p>

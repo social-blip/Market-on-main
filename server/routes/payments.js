@@ -72,15 +72,18 @@ router.put('/:id', verifyToken, isAdmin, async (req, res) => {
 
 // Mark payment as paid (admin - manual)
 router.post('/:id/mark-paid', verifyToken, isAdmin, async (req, res) => {
+  const { payment_method, memo } = req.body;
   try {
     const result = await db.query(
       `UPDATE payments
        SET status = 'paid',
            paid_date = CURRENT_DATE,
+           payment_method = $2,
+           memo = $3,
            updated_at = CURRENT_TIMESTAMP
        WHERE id = $1
        RETURNING *`,
-      [req.params.id]
+      [req.params.id, payment_method || null, memo || null]
     );
 
     if (result.rows.length === 0) {
@@ -185,15 +188,29 @@ router.post('/webhook', async (req, res) => {
       const paymentIntent = event.data.object;
 
       if (paymentIntent.metadata.payment_id) {
-        await db.query(
+        const updateResult = await db.query(
           `UPDATE payments
            SET status = 'paid',
                paid_date = CURRENT_DATE,
                stripe_payment_id = $1,
+               payment_method = 'Stripe',
                updated_at = CURRENT_TIMESTAMP
-           WHERE id = $2`,
+           WHERE id = $2
+           RETURNING *`,
           [paymentIntent.id, paymentIntent.metadata.payment_id]
         );
+
+        // Send confirmation email
+        if (updateResult.rows.length > 0) {
+          const payment = updateResult.rows[0];
+          const vendor = await db.query(
+            'SELECT * FROM vendors WHERE id = $1',
+            [payment.vendor_id]
+          );
+          if (vendor.rows.length > 0) {
+            await emailService.sendPaymentConfirmation(vendor.rows[0], payment);
+          }
+        }
       }
     }
 
