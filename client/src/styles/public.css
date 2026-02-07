@@ -3,22 +3,7 @@
    Public site components only
    ========================================== */
 
-/* Keyframe Animations */
-@keyframes scroll-up {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-33.33%); }
-}
-
-@keyframes scroll-down {
-  0% { transform: translateY(-33.33%); }
-  100% { transform: translateY(0); }
-}
-
-@keyframes scroll-left {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-33.33%); }
-}
-
+/* Keyframe Animation - per-item infinite marquee */
 @keyframes slide {
   0% { translate: var(--origin-x) var(--origin-y); }
   100% { translate: var(--destination-x) var(--destination-y); }
@@ -218,14 +203,10 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-}
-
-.image-column--up {
-  animation: scroll-up 60s linear infinite;
-}
-
-.image-column--down {
-  animation: scroll-down 60s linear infinite;
+  overflow: visible;
+  --speed: 40;
+  --inset: -1;
+  --outset: 0;
 }
 
 .image-column__item {
@@ -236,6 +217,24 @@
   overflow: hidden;
   border: 5px solid var(--yellow);
   box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+
+  /* Per-item infinite scroll (vertical by default) */
+  --slot: calc(100% + 20px);
+  --origin-x: 0;
+  --origin-y: calc((var(--count) - var(--index) + var(--inset, 0)) * var(--slot));
+  --destination-x: 0;
+  --destination-y: calc((var(--index) + 1 + var(--outset, 0)) * var(--slot) * -1);
+  --duration: calc(var(--speed) * 1s);
+  --delay: calc(var(--duration) / var(--count) * (var(--index, 0) - var(--count) / 0.5));
+
+  translate: var(--origin-x) var(--origin-y);
+  animation: slide var(--duration) calc(var(--delay) - var(--count) * 0.5s) infinite linear;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.image-column--down .image-column__item {
+  animation-direction: reverse;
 }
 
 .image-column__item--purple { border-color: var(--purple); }
@@ -1501,6 +1500,10 @@
 }
 
 @media (max-width: 768px) {
+  .hero {
+    background-attachment: scroll;
+  }
+
   .hero__content {
     padding: 60px 24px 32px;
   }
@@ -1550,7 +1553,6 @@
     flex-direction: row;
     gap: 12px;
     overflow: visible;
-    animation: scroll-left 30s linear infinite !important;
   }
 
   .hero__image-col .image-column__item {
@@ -1560,6 +1562,13 @@
     border-radius: 14px;
     border-width: 4px;
     flex-shrink: 0;
+
+    /* Switch to horizontal scrolling on mobile */
+    --slot: calc(100% + 12px);
+    --origin-x: calc((var(--count) - var(--index) + var(--inset, 0)) * var(--slot));
+    --origin-y: 0;
+    --destination-x: calc((var(--index) + 1 + var(--outset, 0)) * var(--slot) * -1);
+    --destination-y: 0;
   }
 
   .floating-header {

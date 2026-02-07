@@ -3,10 +3,9 @@ import { Link, NavLink } from 'react-router-dom';
 import api from '../../api/client';
 import '../../styles/public.css';
 
-// Vertical scrolling image column component
+// Vertical scrolling image column component (per-item infinite marquee)
 const VerticalImageColumn = ({ images, direction = 'up', borderColors = ['yellow', 'purple', 'cyan', 'pink'] }) => {
-  const duplicatedImages = [...images, ...images, ...images];
-  const count = duplicatedImages.length;
+  const count = images.length;
   const colorMap = {
     yellow: 'image-column__item--yellow',
     purple: 'image-column__item--purple',
@@ -16,8 +15,8 @@ const VerticalImageColumn = ({ images, direction = 'up', borderColors = ['yellow
 
   return (
     <div className={`image-column image-column--${direction}`} style={{ '--count': count }}>
-      {duplicatedImages.map((src, i) => (
-        <div key={i} className={`image-column__item ${colorMap[borderColors[i % borderColors.length]]}`} style={{ '--index': i }}>
+      {images.map((src, i) => (
+        <div key={i} className={`image-column__item ${colorMap[borderColors[i % borderColors.length]]}`} style={{ '--index': i + 1 }}>
           <img src={src} alt="" className="image-column__img" />
         </div>
       ))}
