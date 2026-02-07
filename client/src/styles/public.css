@@ -902,7 +902,7 @@
 }
 
 .vendors-section__mobile-cta {
-  display: none;
+  display: none !important;
 }
 
 .vendors-section__title {
