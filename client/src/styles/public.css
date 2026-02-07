@@ -1613,7 +1613,7 @@
   }
 
   .vendors-section__mobile-cta {
-    display: inline-flex;
+    display: inline-flex !important;
     font-size: 12px;
     padding: 8px 16px;
   }
