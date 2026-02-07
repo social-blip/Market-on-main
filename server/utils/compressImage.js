@@ -33,24 +33,33 @@ async function compressImage(filePath) {
   let outputPath = filePath;
 
   try {
-    let pipeline = sharp(filePath)
+    let inputBuffer;
+
+    if (isHeic) {
+      // Use heic-convert to decode HEIC to JPEG buffer, then pass to sharp
+      const heicConvert = require('heic-convert');
+      const heicBuffer = fs.readFileSync(filePath);
+      inputBuffer = await heicConvert({
+        buffer: heicBuffer,
+        format: 'JPEG',
+        quality: 0.9
+      });
+      outputPath = filePath.replace(/\.heic$/i, '.jpg').replace(/\.heif$/i, '.jpg');
+    }
+
+    let pipeline = sharp(inputBuffer || filePath)
       .rotate() // auto-rotate from EXIF
       .resize(MAX_WIDTH, MAX_HEIGHT, {
         fit: 'inside',
         withoutEnlargement: true
       });
 
-    if (isHeic) {
-      // Convert HEIC to JPEG
-      outputPath = filePath.replace(/\.heic$/i, '.jpg').replace(/\.heif$/i, '.jpg');
+    if (isHeic || isJpeg) {
       pipeline = pipeline.jpeg({ quality: JPEG_QUALITY });
     } else if (isPng) {
       pipeline = pipeline.png({ quality: PNG_QUALITY });
     } else if (isWebp) {
       pipeline = pipeline.webp({ quality: JPEG_QUALITY });
-    } else {
-      // JPEG
-      pipeline = pipeline.jpeg({ quality: JPEG_QUALITY });
     }
 
     await pipeline.toFile(tempPath);
