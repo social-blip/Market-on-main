@@ -72,11 +72,15 @@ async function updateDbPaths(oldPath, newPath) {
     [newUrl, oldUrl]
   );
 
-  // Update music_applications.photo_url
-  await db.query(
-    'UPDATE music_applications SET photo_url = $1 WHERE photo_url = $2',
-    [newUrl, oldUrl]
-  );
+  // Update music_applications.photo_url (if column exists)
+  try {
+    await db.query(
+      'UPDATE music_applications SET photo_url = $1 WHERE photo_url = $2',
+      [newUrl, oldUrl]
+    );
+  } catch (e) {
+    // Column may not exist, ignore
+  }
 }
 
 async function main() {
