@@ -18,9 +18,15 @@
   background-color: var(--maroon);
   background-size: cover;
   background-position: center top;
-  background-attachment: fixed;
+  background-attachment: scroll;
   position: relative;
   overflow: hidden;
+}
+
+@media (min-width: 769px) {
+  .hero {
+    background-attachment: fixed;
+  }
 }
 
 .hero__container {
