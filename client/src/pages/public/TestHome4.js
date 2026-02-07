@@ -255,6 +255,38 @@ const TestHome4 = () => {
     scrollToIndex(newIndex);
   };
 
+  // Update dots on swipe scroll for vendors
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    let timeout;
+    const handleScroll = () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        const index = Math.round(el.scrollLeft / (CARD_WIDTH * 3));
+        setCurrentIndex(Math.min(index, totalDots - 1));
+      }, 100);
+    };
+    el.addEventListener('scroll', handleScroll, { passive: true });
+    return () => el.removeEventListener('scroll', handleScroll);
+  }, [totalDots]);
+
+  // Update dots on swipe scroll for music
+  useEffect(() => {
+    const el = musicScrollRef.current;
+    if (!el) return;
+    let timeout;
+    const handleScroll = () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        const index = Math.round(el.scrollLeft / (CARD_WIDTH * 3));
+        setMusicIndex(Math.min(index, totalMusicDots - 1));
+      }, 100);
+    };
+    el.addEventListener('scroll', handleScroll, { passive: true });
+    return () => el.removeEventListener('scroll', handleScroll);
+  }, [totalMusicDots]);
+
   // Default news items as fallback
   const defaultNews = [
     { title: 'Live Music Lineup Announced', description: "Check out who's playing every Saturday this summer.", image: '/images/market/live-band.jpg', tag: 'Music', link: '/' },

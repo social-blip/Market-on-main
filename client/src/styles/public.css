@@ -1658,6 +1658,36 @@
     padding-right: 16px;
   }
 
+  .music-section__inner {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .music-section__left {
+    padding: 24px 16px 16px;
+    overflow: hidden;
+  }
+
+  .music-section__right {
+    display: none;
+  }
+
+  .music-section__controls {
+    display: none;
+  }
+
+  .music-card {
+    width: 70vw;
+  }
+
+  .music-section__scroll {
+    gap: 12px;
+  }
+
+  .sponsors-section__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .news-section__featured {
     display: none;
   }
