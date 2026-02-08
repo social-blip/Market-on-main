@@ -40,6 +40,8 @@ const AdminVendorDetail = () => {
   const [memo, setMemo] = useState('');
   const [reviewDecisions, setReviewDecisions] = useState({});
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editData, setEditData] = useState({});
 
   useEffect(() => {
     fetchVendor();
@@ -208,6 +210,58 @@ const AdminVendorDetail = () => {
     }
   };
 
+  const startEditing = () => {
+    let handles = {};
+    try {
+      const raw = data.vendor.social_handles;
+      if (raw) handles = typeof raw === 'string' ? JSON.parse(raw) : raw;
+    } catch {
+      if (data.vendor.social_handles) handles = { instagram: data.vendor.social_handles };
+    }
+    setEditData({
+      business_name: data.vendor.business_name || '',
+      contact_name: data.vendor.contact_name || '',
+      email: data.vendor.email || '',
+      phone: data.vendor.phone || '',
+      website: data.vendor.website || '',
+      facebook: handles.facebook || '',
+      instagram: handles.instagram || '',
+      x: handles.x || '',
+      description: data.vendor.description || '',
+      booth_size: data.vendor.booth_size || 'single',
+      needs_power: !!data.vendor.needs_power,
+      is_nonprofit: !!data.vendor.is_nonprofit
+    });
+    setEditing(true);
+  };
+
+  const saveEdit = async () => {
+    try {
+      const payload = {
+        business_name: editData.business_name,
+        contact_name: editData.contact_name,
+        email: editData.email,
+        phone: editData.phone,
+        website: editData.website,
+        social_handles: JSON.stringify({
+          facebook: editData.facebook,
+          instagram: editData.instagram,
+          x: editData.x
+        }),
+        description: editData.description,
+        booth_size: editData.booth_size,
+        needs_power: editData.needs_power,
+        is_nonprofit: editData.is_nonprofit
+      };
+      await api.put(`/admin/vendors/${id}`, payload);
+      setEditing(false);
+      fetchVendor();
+      setMessage({ type: 'success', text: 'Vendor information updated.' });
+    } catch (err) {
+      setMessage({ type: 'error', text: 'Failed to update vendor.' });
+    }
+  };
+
   const openInvoiceModal = () => {
     setInvoiceForm({
       booth_size: data.vendor.booth_size || 'single',
@@ -316,95 +370,167 @@ const AdminVendorDetail = () => {
       <div className="grid grid-2">
         {/* Vendor Info */}
         <div className="card">
-          <h3 style={{ marginBottom: '16px' }}>Vendor Information</h3>
-
-          <div style={{ marginBottom: '12px' }}>
-            <strong>Email</strong>
-            <p style={{ color: '#666' }}>{vendor.email}</p>
+          <div className="flex-between" style={{ marginBottom: '16px' }}>
+            <h3 style={{ margin: 0 }}>Vendor Information</h3>
+            {!editing && (
+              <button onClick={startEditing} className="btn" style={{ fontSize: '13px', padding: '6px 14px' }}>
+                Edit
+              </button>
+            )}
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <strong>Phone</strong>
-            <p style={{ color: '#666' }}>{vendor.phone || 'Not provided'}</p>
-          </div>
+          {editing ? (
+            <>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontWeight: 600, marginBottom: '4px', fontSize: '14px' }}>Business Name</label>
+                <input type="text" className="form-control" value={editData.business_name} onChange={e => setEditData(prev => ({ ...prev, business_name: e.target.value }))} />
+              </div>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontWeight: 600, marginBottom: '4px', fontSize: '14px' }}>Contact Name</label>
+                <input type="text" className="form-control" value={editData.contact_name} onChange={e => setEditData(prev => ({ ...prev, contact_name: e.target.value }))} />
+              </div>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontWeight: 600, marginBottom: '4px', fontSize: '14px' }}>Email</label>
+                <input type="email" className="form-control" value={editData.email} onChange={e => setEditData(prev => ({ ...prev, email: e.target.value }))} />
+              </div>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontWeight: 600, marginBottom: '4px', fontSize: '14px' }}>Phone</label>
+                <input type="tel" className="form-control" value={editData.phone} onChange={e => setEditData(prev => ({ ...prev, phone: e.target.value }))} />
+              </div>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontWeight: 600, marginBottom: '4px', fontSize: '14px' }}>Website</label>
+                <input type="text" className="form-control" value={editData.website} onChange={e => setEditData(prev => ({ ...prev, website: e.target.value }))} />
+              </div>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontWeight: 600, marginBottom: '4px', fontSize: '14px' }}>Facebook</label>
+                <input type="text" className="form-control" value={editData.facebook} onChange={e => setEditData(prev => ({ ...prev, facebook: e.target.value }))} />
+              </div>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontWeight: 600, marginBottom: '4px', fontSize: '14px' }}>Instagram</label>
+                <input type="text" className="form-control" value={editData.instagram} onChange={e => setEditData(prev => ({ ...prev, instagram: e.target.value }))} />
+              </div>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontWeight: 600, marginBottom: '4px', fontSize: '14px' }}>X / Twitter</label>
+                <input type="text" className="form-control" value={editData.x} onChange={e => setEditData(prev => ({ ...prev, x: e.target.value }))} />
+              </div>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontWeight: 600, marginBottom: '4px', fontSize: '14px' }}>Description</label>
+                <textarea className="form-control" rows={3} value={editData.description} onChange={e => setEditData(prev => ({ ...prev, description: e.target.value }))} />
+              </div>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontWeight: 600, marginBottom: '4px', fontSize: '14px' }}>Booth Size</label>
+                <select className="form-control" style={{ maxWidth: '200px' }} value={editData.booth_size} onChange={e => setEditData(prev => ({ ...prev, booth_size: e.target.value }))}>
+                  <option value="single">Single (10x10)</option>
+                  <option value="double">Double (20x10)</option>
+                </select>
+              </div>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input type="checkbox" checked={editData.needs_power} onChange={e => setEditData(prev => ({ ...prev, needs_power: e.target.checked }))} style={{ width: '16px', height: '16px' }} />
+                  <span style={{ fontWeight: 600, fontSize: '14px' }}>Needs Power</span>
+                </label>
+              </div>
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                  <input type="checkbox" checked={editData.is_nonprofit} onChange={e => setEditData(prev => ({ ...prev, is_nonprofit: e.target.checked }))} style={{ width: '16px', height: '16px' }} />
+                  <span style={{ fontWeight: 600, fontSize: '14px' }}>Nonprofit</span>
+                </label>
+              </div>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button onClick={saveEdit} className="btn btn-primary" style={{ fontSize: '13px' }}>Save</button>
+                <button onClick={() => setEditing(false)} className="btn" style={{ fontSize: '13px' }}>Cancel</button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div style={{ marginBottom: '12px' }}>
+                <strong>Email</strong>
+                <p style={{ color: '#666' }}>{vendor.email}</p>
+              </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <strong>Booth Size</strong>
-            <p style={{ color: '#666' }}>{vendor.booth_size === 'double' ? '20x10 Double Booth' : '10x10 Single Booth'}</p>
-          </div>
+              <div style={{ marginBottom: '12px' }}>
+                <strong>Phone</strong>
+                <p style={{ color: '#666' }}>{vendor.phone || 'Not provided'}</p>
+              </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <strong>Needs Power</strong>
-            <p style={{ color: '#666' }}>{vendor.needs_power ? 'Yes' : 'No'}</p>
-          </div>
+              <div style={{ marginBottom: '12px' }}>
+                <strong>Booth Size</strong>
+                <p style={{ color: '#666' }}>{vendor.booth_size === 'double' ? '20x10 Double Booth' : '10x10 Single Booth'}</p>
+              </div>
 
-          {vendor.website && (
-            <div style={{ marginBottom: '12px' }}>
-              <strong>Website</strong>
-              <p style={{ color: '#666' }}>
-                <a href={vendor.website} target="_blank" rel="noopener noreferrer">{vendor.website}</a>
-              </p>
-            </div>
-          )}
+              <div style={{ marginBottom: '12px' }}>
+                <strong>Needs Power</strong>
+                <p style={{ color: '#666' }}>{vendor.needs_power ? 'Yes' : 'No'}</p>
+              </div>
 
-          {(() => {
-            let handles = {};
-            try {
-              const raw = vendor.social_handles;
-              if (raw) handles = typeof raw === 'string' ? JSON.parse(raw) : raw;
-            } catch {
-              // Plain string — treat as instagram handle
-              if (vendor.social_handles) handles = { instagram: vendor.social_handles };
-            }
-            return (
-              <>
+              {vendor.website && (
                 <div style={{ marginBottom: '12px' }}>
-                  <strong>Facebook</strong>
-                  <p style={{ color: '#666' }}>{handles.facebook || 'Not provided'}</p>
+                  <strong>Website</strong>
+                  <p style={{ color: '#666' }}>
+                    <a href={vendor.website} target="_blank" rel="noopener noreferrer">{vendor.website}</a>
+                  </p>
                 </div>
-                <div style={{ marginBottom: '12px' }}>
-                  <strong>Instagram</strong>
-                  <p style={{ color: '#666' }}>{handles.instagram || 'Not provided'}</p>
+              )}
+
+              {(() => {
+                let handles = {};
+                try {
+                  const raw = vendor.social_handles;
+                  if (raw) handles = typeof raw === 'string' ? JSON.parse(raw) : raw;
+                } catch {
+                  if (vendor.social_handles) handles = { instagram: vendor.social_handles };
+                }
+                return (
+                  <>
+                    <div style={{ marginBottom: '12px' }}>
+                      <strong>Facebook</strong>
+                      <p style={{ color: '#666' }}>{handles.facebook || 'Not provided'}</p>
+                    </div>
+                    <div style={{ marginBottom: '12px' }}>
+                      <strong>Instagram</strong>
+                      <p style={{ color: '#666' }}>{handles.instagram || 'Not provided'}</p>
+                    </div>
+                    <div style={{ marginBottom: '12px' }}>
+                      <strong>X / Twitter</strong>
+                      <p style={{ color: '#666' }}>{handles.x || 'Not provided'}</p>
+                    </div>
+                  </>
+                );
+              })()}
+
+              <div style={{ marginBottom: '12px' }}>
+                <strong>Category</strong>
+                <p>
+                  <select
+                    value={vendor.category || 'makers'}
+                    onChange={(e) => updateCategory(e.target.value)}
+                    className="form-control"
+                    style={{ maxWidth: '200px' }}
+                  >
+                    {CATEGORIES.map(cat => (
+                      <option key={cat.value} value={cat.value}>{cat.label}</option>
+                    ))}
+                  </select>
+                </p>
+              </div>
+
+              <div style={{ marginBottom: '12px' }}>
+                <strong>Status</strong>
+                <p>
+                  <span className={`badge badge-${vendor.is_active ? 'success' : 'danger'}`}>
+                    {vendor.is_active ? 'Active' : 'Inactive'}
+                  </span>
+                  {vendor.is_nonprofit && <span className="badge badge-info" style={{ marginLeft: '8px' }}>Nonprofit</span>}
+                </p>
+              </div>
+
+              {vendor.description && (
+                <div>
+                  <strong>Description</strong>
+                  <p style={{ color: '#666' }}>{vendor.description}</p>
                 </div>
-                <div style={{ marginBottom: '12px' }}>
-                  <strong>X / Twitter</strong>
-                  <p style={{ color: '#666' }}>{handles.x || 'Not provided'}</p>
-                </div>
-              </>
-            );
-          })()}
-
-          <div style={{ marginBottom: '12px' }}>
-            <strong>Category</strong>
-            <p>
-              <select
-                value={vendor.category || 'makers'}
-                onChange={(e) => updateCategory(e.target.value)}
-                className="form-control"
-                style={{ maxWidth: '200px' }}
-              >
-                {CATEGORIES.map(cat => (
-                  <option key={cat.value} value={cat.value}>{cat.label}</option>
-                ))}
-              </select>
-            </p>
-          </div>
-
-          <div style={{ marginBottom: '12px' }}>
-            <strong>Status</strong>
-            <p>
-              <span className={`badge badge-${vendor.is_active ? 'success' : 'danger'}`}>
-                {vendor.is_active ? 'Active' : 'Inactive'}
-              </span>
-              {vendor.is_nonprofit && <span className="badge badge-info" style={{ marginLeft: '8px' }}>Nonprofit</span>}
-            </p>
-          </div>
-
-          {vendor.description && (
-            <div>
-              <strong>Description</strong>
-              <p style={{ color: '#666' }}>{vendor.description}</p>
-            </div>
+              )}
+            </>
           )}
         </div>
 
