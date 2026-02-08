@@ -419,11 +419,9 @@ const TestHome4 = () => {
         </div>
       )}
 
-      <div className="hero__bg" style={{ backgroundImage: "url('/images/hero-mom.jpg')" }} />
-
       <main>
         {/* Hero Section */}
-        <section className="hero">
+        <section className="hero" style={{ backgroundImage: "url('/images/hero-mom.jpg')" }}>
           <div className="hero__overlay" />
           <div className="hero__container">
             {/* Left Column - Text */}

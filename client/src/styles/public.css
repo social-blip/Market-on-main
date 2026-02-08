@@ -16,19 +16,17 @@
 .hero {
   height: 850px;
   background-color: var(--maroon);
+  background-size: cover;
+  background-position: center top;
+  background-attachment: scroll;
   position: relative;
   overflow: hidden;
 }
 
-.hero__bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  background-size: cover;
-  background-position: center top;
-  z-index: -1;
+@media (min-width: 769px) {
+  .hero {
+    background-attachment: fixed;
+  }
 }
 
 .hero__container {
@@ -359,7 +357,6 @@
 
 .news-section {
   padding: 60px var(--container-padding);
-  background: var(--cream);
 }
 
 .news-section__grid {
@@ -1238,7 +1235,6 @@
 
 .cta-section {
   padding: 60px var(--container-padding);
-  background: var(--cream);
 }
 
 .cta-section__grid {
@@ -1336,7 +1332,6 @@
 
 .location-section {
   padding: 60px var(--container-padding);
-  background: var(--cream);
 }
 
 .location-section__grid {
