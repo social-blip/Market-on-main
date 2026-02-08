@@ -116,7 +116,7 @@ const VendorApplication = () => {
   };
 
   const validateStep1 = () => {
-    const required = ['contact_name', 'business_name', 'email', 'phone', 'website', 'description'];
+    const required = ['contact_name', 'business_name', 'email', 'phone', 'description'];
     return required.every(field => formData[field]?.trim());
   };
 
@@ -378,7 +378,7 @@ const VendorApplication = () => {
                 </div>
 
                 <div>
-                  <label style={labelStyle}>Website *</label>
+                  <label style={labelStyle}>Website</label>
                   <input
                     type="url"
                     name="website"
@@ -386,17 +386,7 @@ const VendorApplication = () => {
                     onChange={handleChange}
                     placeholder="E.g. http://www.example.com"
                     style={inputStyle}
-                    required
                   />
-                  <small style={{
-                    color: 'var(--gray-dark)',
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '13px',
-                    marginTop: '6px',
-                    display: 'block'
-                  }}>
-                    If you don't have one, use www.idonthaveone.com
-                  </small>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px' }}>
