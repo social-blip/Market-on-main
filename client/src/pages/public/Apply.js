@@ -730,7 +730,7 @@ const VendorApplication = () => {
                         </div>
                       )}
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontStyle: 'italic', color: 'var(--gray-dark)' }}>
-                        <span>CC Processing Fee (3%)</span>
+                        <span>CC Processing Fee (3%) — waived if paid by cash or check</span>
                         <span>${pricing.ccFee.toFixed(2)}</span>
                       </div>
                       <div style={{
