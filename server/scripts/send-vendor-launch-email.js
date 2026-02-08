@@ -10,7 +10,8 @@ const db = require('../models/db');
 const resend = new Resend(process.env.RESEND_API_KEY);
 const EMAIL_FROM = process.env.EMAIL_FROM || 'Market on Main <info@tfmarketonmain.com>';
 
-const buildEmail = (contactName) => {
+const buildEmail = (contactName, vendorId) => {
+  const vendorPageUrl = `https://tfmarketonmain.com/vendors/${vendorId}`;
   return `<!DOCTYPE html>
 <html>
 <head>
@@ -50,6 +51,13 @@ const buildEmail = (contactName) => {
     <p><strong>Your vendor page is already up.</strong> We used the description and photos from your vendor application to get you started. It's live, it's public, and customers can find you today.</p>
 
     <p>When you filled out that application, you may not have been thinking about it as your public-facing profile. Now's the time to take a look and make sure it represents you the way you want.</p>
+
+    <p style="text-align: center; margin: 24px 0;">
+      <a href="${vendorPageUrl}"
+         style="background-color: #5c1e3d; color: #ffffff; padding: 14px 32px; text-decoration: none; border: none; display: inline-block; font-weight: 600; border-radius: 100px; font-family: Arial, sans-serif; font-size: 14px;">
+        See Your Profile
+      </a>
+    </p>
 
     <div style="background-color: #FFF3CD; padding: 20px; border-radius: 8px; margin: 24px 0;">
       <h3 style="margin-top: 0; color: #856404;">How to log in for the first time</h3>
@@ -116,15 +124,16 @@ async function main() {
   if (mode === 'test') {
     // Send test email to info@ as if it were Stevie Ray's (vendor 10)
     const contactName = 'Stefani Fries';
+    const vendorId = 10;
     const toEmail = 'info@tfmarketonmain.com';
 
-    console.log(`Sending TEST email to ${toEmail} as "${contactName}"...`);
+    console.log(`Sending TEST email to ${toEmail} as "${contactName}" (vendor ${vendorId})...`);
 
     const result = await resend.emails.send({
       from: EMAIL_FROM,
       to: toEmail,
       subject: SUBJECT,
-      html: buildEmail(contactName),
+      html: buildEmail(contactName, vendorId),
     });
 
     console.log('Sent! Result:', JSON.stringify(result, null, 2));
@@ -143,7 +152,7 @@ async function main() {
           from: EMAIL_FROM,
           to: vendor.email,
           subject: SUBJECT,
-          html: buildEmail(vendor.contact_name),
+          html: buildEmail(vendor.contact_name, vendor.id),
         });
         console.log(`  ✓ ${vendor.contact_name} (${vendor.email}) - ${result.data?.id || 'sent'}`);
 
