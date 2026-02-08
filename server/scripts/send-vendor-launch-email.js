@@ -151,6 +151,7 @@ async function main() {
         const result = await resend.emails.send({
           from: EMAIL_FROM,
           to: vendor.email,
+          bcc: 'info@tfmarketonmain.com',
           subject: SUBJECT,
           html: buildEmail(vendor.contact_name, vendor.id),
         });
