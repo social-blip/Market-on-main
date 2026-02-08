@@ -143,7 +143,19 @@ const TestHome4 = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const scrollRef = useRef(null);
   const musicScrollRef = useRef(null);
+  const heroBgRef = useRef(null);
   const CARD_WIDTH = 260; // card width (240) + gap (20)
+
+  // Parallax scroll for hero background
+  useEffect(() => {
+    const handleScroll = () => {
+      if (heroBgRef.current) {
+        heroBgRef.current.style.transform = `translateY(${window.scrollY * 0.4}px)`;
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Fetch vendors from API
   useEffect(() => {
@@ -422,7 +434,7 @@ const TestHome4 = () => {
       <main>
         {/* Hero Section */}
         <section className="hero">
-          <div className="hero__bg" style={{ backgroundImage: "url('/images/hero-mom.jpg')" }} />
+          <div ref={heroBgRef} className="hero__bg" style={{ backgroundImage: "url('/images/hero-mom.jpg')" }} />
           <div className="hero__overlay" />
           <div className="hero__container">
             {/* Left Column - Text */}
