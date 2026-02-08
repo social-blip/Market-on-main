@@ -6,7 +6,7 @@ import api from '../../api/client';
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
 // Checkout form component
-const CheckoutForm = ({ payment, onSuccess, onCancel }) => {
+const CheckoutForm = ({ payment, feeInfo, onSuccess, onCancel }) => {
   const stripe = useStripe();
   const elements = useElements();
   const [processing, setProcessing] = useState(false);
@@ -67,7 +67,7 @@ const CheckoutForm = ({ payment, onSuccess, onCancel }) => {
               Processing...
             </>
           ) : (
-            `Pay $${parseFloat(payment.amount).toFixed(2)}`
+            `Pay $${feeInfo ? feeInfo.total.toFixed(2) : parseFloat(payment.amount).toFixed(2)}`
           )}
         </button>
         <button
@@ -88,6 +88,7 @@ const VendorPayments = () => {
   const [loading, setLoading] = useState(true);
   const [payingInvoice, setPayingInvoice] = useState(null);
   const [clientSecret, setClientSecret] = useState(null);
+  const [feeInfo, setFeeInfo] = useState(null);
   const [loadingPayment, setLoadingPayment] = useState(false);
   const [successMessage, setSuccessMessage] = useState(null);
 
@@ -113,6 +114,7 @@ const VendorPayments = () => {
     try {
       const response = await api.post(`/vendors/payments/${payment.id}/create-payment-intent`);
       setClientSecret(response.data.clientSecret);
+      setFeeInfo({ invoiceAmount: response.data.invoiceAmount, ccFee: response.data.ccFee, total: response.data.total });
     } catch (err) {
       console.error('Error creating payment intent:', err);
       alert(err.response?.data?.error || 'Failed to initialize payment');
@@ -125,6 +127,7 @@ const VendorPayments = () => {
   const handlePaymentSuccess = async () => {
     setPayingInvoice(null);
     setClientSecret(null);
+    setFeeInfo(null);
     setSuccessMessage('Payment successful! Thank you.');
 
     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -136,6 +139,7 @@ const VendorPayments = () => {
   const handlePaymentCancel = () => {
     setPayingInvoice(null);
     setClientSecret(null);
+    setFeeInfo(null);
   };
 
   const pendingPayments = payments.filter(p => p.status === 'pending' || p.status === 'overdue');
@@ -241,22 +245,31 @@ const VendorPayments = () => {
               marginBottom: '24px',
               borderRadius: '8px'
             }}>
-              <div style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: '14px',
-                color: 'var(--gray-medium)',
-                marginBottom: '4px'
-              }}>
-                Amount to Pay
-              </div>
-              <div style={{
-                fontFamily: 'var(--font-display)',
-                fontWeight: 700,
-                fontSize: '32px',
-                color: 'var(--black)'
-              }}>
-                ${parseFloat(payingInvoice.amount).toFixed(2)}
-              </div>
+              {feeInfo ? (
+                <>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-body)', fontSize: '14px', marginBottom: '6px' }}>
+                    <span style={{ color: 'var(--gray-medium)' }}>Invoice Amount</span>
+                    <span>${feeInfo.invoiceAmount.toFixed(2)}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'var(--font-body)', fontSize: '14px', marginBottom: '8px', color: 'var(--gray-medium)' }}>
+                    <span>CC Processing Fee (3%)</span>
+                    <span>${feeInfo.ccFee.toFixed(2)}</span>
+                  </div>
+                  <div style={{ borderTop: '1px solid #ddd', paddingTop: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                    <span style={{ fontFamily: 'var(--font-body)', fontSize: '14px', color: 'var(--gray-medium)' }}>Total</span>
+                    <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '28px', color: 'var(--black)' }}>${feeInfo.total.toFixed(2)}</span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div style={{ fontFamily: 'var(--font-body)', fontSize: '14px', color: 'var(--gray-medium)', marginBottom: '4px' }}>
+                    Amount to Pay
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '32px', color: 'var(--black)' }}>
+                    ${parseFloat(payingInvoice.amount).toFixed(2)}
+                  </div>
+                </>
+              )}
             </div>
 
             {loadingPayment ? (
@@ -280,6 +293,7 @@ const VendorPayments = () => {
               >
                 <CheckoutForm
                   payment={payingInvoice}
+                  feeInfo={feeInfo}
                   onSuccess={handlePaymentSuccess}
                   onCancel={handlePaymentCancel}
                 />

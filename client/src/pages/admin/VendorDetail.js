@@ -364,10 +364,8 @@ const AdminVendorDetail = () => {
   const calculateInvoice = () => {
     const base = PRICING[invoiceForm.booth_size]?.[parseInt(invoiceForm.markets)] || 0;
     const power = invoiceForm.power ? POWER_FEE : 0;
-    const subtotal = base + power;
-    const ccFee = Math.round(subtotal * 0.03 * 100) / 100;
-    const total = subtotal + ccFee;
-    return { base, power, ccFee, total };
+    const total = base + power;
+    return { base, power, total };
   };
 
   const submitInvoice = async () => {
@@ -1193,8 +1191,7 @@ const AdminVendorDetail = () => {
                       </div>
                     )}
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', color: '#888', fontStyle: 'italic' }}>
-                      <span>CC Fee (3%)</span>
-                      <span>${calc.ccFee.toFixed(2)}</span>
+                      <span>3% CC fee added at checkout</span>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #ddd', paddingTop: '8px', marginTop: '8px', fontWeight: 700, fontSize: '16px' }}>
                       <span>Total</span>

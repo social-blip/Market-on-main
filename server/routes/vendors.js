@@ -258,8 +258,11 @@ router.post('/payments/:id/create-payment-intent', verifyToken, isVendor, async 
       return res.status(400).json({ error: 'This invoice has already been paid' });
     }
 
-    // Create PaymentIntent for exact invoice amount (no fee added)
-    const amountInCents = Math.round(parseFloat(payment.amount) * 100);
+    // Add 3% CC processing fee at payment time
+    const invoiceAmount = parseFloat(payment.amount);
+    const ccFee = Math.round(invoiceAmount * 0.03 * 100) / 100;
+    const totalWithFee = invoiceAmount + ccFee;
+    const amountInCents = Math.round(totalWithFee * 100);
 
     // Create or retrieve Stripe customer for tracking
     let customer;
@@ -294,7 +297,7 @@ router.post('/payments/:id/create-payment-intent', verifyToken, isVendor, async 
       }
     });
 
-    res.json({ clientSecret: paymentIntent.client_secret });
+    res.json({ clientSecret: paymentIntent.client_secret, invoiceAmount, ccFee, total: totalWithFee });
   } catch (err) {
     console.error('Error creating payment intent:', err);
     res.status(500).json({ error: 'Failed to create payment intent' });
