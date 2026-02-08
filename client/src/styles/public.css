@@ -1464,11 +1464,11 @@
   }
 
   .hero__images {
-    height: 50vh;
+    height: 350px;
   }
 
   .hero__image-col {
-    height: 50vh;
+    height: 350px;
   }
 
   .news-section__grid,
@@ -1482,6 +1482,7 @@
 
   .vendors-section__inner {
     grid-template-columns: 1fr;
+    height: auto;
   }
 
   .vendors-section__left {
@@ -1498,6 +1499,10 @@
 
   .vendors-section__right {
     padding: 24px;
+  }
+
+  .news-section__featured {
+    display: none;
   }
 
   .footer__grid {
