@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api/client';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001';
 
 const VendorProfile = () => {
   const { user } = useAuth();
@@ -488,7 +487,7 @@ const VendorProfile = () => {
                 }}
               >
                 <img
-                  src={`${API_URL}${photo}`}
+                  src={photo}
                   alt={`Vendor photo ${index + 1}`}
                   style={{
                     width: '100%',
