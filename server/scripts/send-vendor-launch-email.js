@@ -10,9 +10,7 @@ const db = require('../models/db');
 const resend = new Resend(process.env.RESEND_API_KEY);
 const EMAIL_FROM = process.env.EMAIL_FROM || 'Market on Main <info@tfmarketonmain.com>';
 
-const buildEmail = (contactName, vendorId) => {
-  const vendorPageUrl = `https://tfmarketonmain.com/vendors/${vendorId}`;
-
+const buildEmail = (contactName) => {
   return `<!DOCTYPE html>
 <html>
 <head>
@@ -22,61 +20,89 @@ const buildEmail = (contactName, vendorId) => {
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
 
-  <p>Hi ${contactName},</p>
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
 
-  <p>The new Market on Main website is live. Right now. And you're on it.</p>
+    <p>Hi ${contactName},</p>
 
-  <p>You told us you wanted more marketing, more visibility, more customers showing up on Saturday already knowing who you are. We listened, and we built something for you.</p>
+    <p>The new Market on Main website is live. Right now. And you're on it.</p>
 
-  <p><strong>Your vendor page is already up.</strong> We used the description and photos from your vendor application to get you started. It's live, it's public, and customers can find you today.</p>
+    <p style="text-align: center; margin: 24px 0;">
+      <a href="https://tfmarketonmain.com"
+         style="background-color: #5c1e3d; color: #ffffff; padding: 14px 32px; text-decoration: none; border: none; display: inline-block; font-weight: 600; border-radius: 100px; font-family: Arial, sans-serif; font-size: 14px;">
+        Visit tfmarketonmain.com
+      </a>
+    </p>
 
-  <p>When you filled out that application, you may not have been thinking about it as your public-facing profile. Now's the time to take a look and make sure it represents you the way you want.</p>
+    <p>You told us you wanted more marketing, more visibility, more customers showing up on Saturday already knowing who you are. We listened.</p>
 
-  <p><strong>How to log in for the first time:</strong></p>
+    <p>We built a full market management platform from scratch specifically for Market on Main. This isn't just a website update. It's a complete system designed to make the market better for everyone.</p>
 
-  <ol>
-    <li>Go to <a href="https://tfmarketonmain.com/vendor/login">tfmarketonmain.com/vendor/login</a></li>
-    <li>Click "Reset Password"</li>
-    <li>Enter the email address this message was sent to</li>
-    <li>Check your inbox for the reset link and click it (check your spam folder if you don't see it)</li>
-    <li>Create your password</li>
-    <li>Log in with your new password</li>
-  </ol>
+    <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="margin-top: 0; color: #5c1e3d;">For you, the vendors</h3>
+      <p style="margin-bottom: 0;">You now have your own vendor portal where you can manage your account, update your profile, request market dates, and pay invoices. No more back-and-forth emails. No more checks in the mail (unless you want to). Everything in one place, on your schedule.</p>
+    </div>
 
-  <p>Once you're in, click <strong>Profile</strong> at the top. From there you can edit your contact details, update your description, upload photos, and add your social links.</p>
+    <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <h3 style="margin-top: 0; color: #5c1e3d;">For our customers</h3>
+      <p style="margin-bottom: 0;">They now have a real destination to explore the market before they show up on Saturday. They can see who's going to be there, when they're going to be there, browse vendor profiles and photos, check out the live music schedule, and stay up to date on news and happenings. The better your profile looks, the more likely they are to seek you out.</p>
+    </div>
 
-  <p>This takes about 5 minutes.</p>
+    <p><strong>Your vendor page is already up.</strong> We used the description and photos from your vendor application to get you started. It's live, it's public, and customers can find you today.</p>
 
-  <p><strong>Your portal also lets you:</strong></p>
+    <p>When you filled out that application, you may not have been thinking about it as your public-facing profile. Now's the time to take a look and make sure it represents you the way you want.</p>
 
-  <ul>
-    <li>See your upcoming market dates at a glance</li>
-    <li>Request additional market dates with one click (no more emails)</li>
-    <li>View and pay invoices online</li>
-  </ul>
+    <div style="background-color: #FFF3CD; padding: 20px; border-radius: 8px; margin: 24px 0;">
+      <h3 style="margin-top: 0; color: #856404;">How to log in for the first time</h3>
+      <ol style="margin-bottom: 0; padding-left: 20px;">
+        <li>Go to <a href="https://tfmarketonmain.com/vendor/login" style="color: #5c1e3d; font-weight: 600;">tfmarketonmain.com/vendor/login</a></li>
+        <li>Click "Reset Password"</li>
+        <li>Enter the email address this message was sent to</li>
+        <li>Check your inbox for the reset link and click it (check your spam folder if you don't see it)</li>
+        <li>Create your password</li>
+        <li>Log in with your new password</li>
+      </ol>
+    </div>
 
-  <p><strong>Speaking of invoices:</strong> Some of you have already paid for the season, and your account reflects that. For those who haven't, your invoice is now visible in your portal.</p>
+    <p>Once you're in, click <strong>Profile</strong> at the top. From there you can edit your contact details, update your description, upload photos, and add your social links.</p>
 
-  <p>If you want to pay by credit card, you can do it right from the portal in about 30 seconds. If you prefer to pay by check, no problem. Mail it to:</p>
+    <p>This takes about 5 minutes.</p>
 
-  <p>
-    Market on Main<br>
-    588 Addison Avenue W<br>
-    Twin Falls, ID 83301
-  </p>
+    <p><strong>Your portal also lets you:</strong></p>
 
-  <p>Your account will be updated when we receive it.</p>
+    <ul>
+      <li>See your upcoming market dates at a glance</li>
+      <li>Request additional market dates with one click (no more emails)</li>
+      <li>View and pay invoices online</li>
+    </ul>
 
-  <p><strong>On February 21st at the vendor meeting, we'll do a full walkthrough together.</strong> I'll show you the portal, answer questions, and make sure everyone's comfortable. But don't wait. Log in today and see what customers are already seeing.</p>
+    <p><strong>Speaking of invoices:</strong> If you've paid already, great! Thank you so much. If you haven't, your invoice is waiting for you in your vendor portal. Please pay as soon as you can so we can lock you in for the season. If you don't pay, unfortunately we will have to give up your spot.</p>
 
-  <p><strong>Here's your page:</strong> <a href="${vendorPageUrl}">${vendorPageUrl}</a></p>
+    <p>If you want to pay by credit card, you can do it right from the portal in about 30 seconds. If you prefer to pay by check, no problem. Mail it to:</p>
 
-  <p>Questions? Reply to this email.</p>
+    <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
+      <p style="margin: 0;">
+        <strong>Market on Main</strong><br>
+        588 Addison Avenue W<br>
+        Twin Falls, ID 83301
+      </p>
+    </div>
 
-  <p>
-    Jared<br>
-    Market on Main
-  </p>
+    <p>Your account will be updated when we receive it.</p>
+
+    <p><strong>On February 21st at the vendor meeting, we'll do a full walkthrough together.</strong> I'll show you the portal, answer questions, and make sure everyone's comfortable. But don't wait. Log in today and see what customers are already seeing.</p>
+
+    <p>Questions? Reply to this email.</p>
+
+    <p>
+      Jared<br>
+      <strong>Market on Main</strong>
+    </p>
+
+    <hr style="margin-top: 30px; border: none; border-top: 1px solid #eee;">
+    <p style="color: #999; font-size: 12px;">
+      Market on Main &bull; Downtown Twin Falls &bull; Every Saturday, June &ndash; August
+    </p>
+  </div>
 
 </body>
 </html>`;
@@ -90,16 +116,15 @@ async function main() {
   if (mode === 'test') {
     // Send test email to info@ as if it were Stevie Ray's (vendor 10)
     const contactName = 'Stefani Fries';
-    const vendorId = 10;
     const toEmail = 'info@tfmarketonmain.com';
 
-    console.log(`Sending TEST email to ${toEmail} as "${contactName}" (vendor ${vendorId})...`);
+    console.log(`Sending TEST email to ${toEmail} as "${contactName}"...`);
 
     const result = await resend.emails.send({
       from: EMAIL_FROM,
       to: toEmail,
       subject: SUBJECT,
-      html: buildEmail(contactName, vendorId),
+      html: buildEmail(contactName),
     });
 
     console.log('Sent! Result:', JSON.stringify(result, null, 2));
@@ -118,7 +143,7 @@ async function main() {
           from: EMAIL_FROM,
           to: vendor.email,
           subject: SUBJECT,
-          html: buildEmail(vendor.contact_name, vendor.id),
+          html: buildEmail(vendor.contact_name),
         });
         console.log(`  ✓ ${vendor.contact_name} (${vendor.email}) - ${result.data?.id || 'sent'}`);
 
