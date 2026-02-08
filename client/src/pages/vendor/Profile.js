@@ -246,7 +246,7 @@ const VendorProfile = () => {
         {/* Editable Info */}
         <div className="vendor-card">
           <div className="vendor-card__header">
-            <h3 className="vendor-card__title">Contact Details</h3>
+            <h3 className="vendor-card__title">Details</h3>
             {!editing && (
               <button
                 onClick={() => setEditing(true)}

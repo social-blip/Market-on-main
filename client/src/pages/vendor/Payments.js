@@ -176,87 +176,29 @@ const VendorPayments = () => {
       )}
 
       {/* Summary Cards */}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-        gap: '20px',
-        marginBottom: '40px'
-      }}>
+      <div className="vendor-payments__summary">
         {/* Amount Due */}
-        <div className="vendor-card" style={{
-          textAlign: 'center',
-        }}>
-          <div style={{
-            fontFamily: 'var(--font-display)',
-            fontWeight: 700,
-            fontSize: '40px',
-            color: totalDue > 0 ? '#991b1b' : 'var(--black)',
-            lineHeight: 1
-          }}>
+        <div className="vendor-payments__summary-card">
+          <div className="vendor-payments__summary-value" style={{ color: totalDue > 0 ? '#991b1b' : 'var(--black)' }}>
             ${totalDue.toFixed(2)}
           </div>
-          <div style={{
-            fontFamily: 'var(--font-body)',
-            fontWeight: 600,
-            fontSize: '14px',
-            color: 'var(--gray-medium)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            marginTop: '8px'
-          }}>
-            Amount Due
-          </div>
+          <div className="vendor-payments__summary-label">Amount Due</div>
         </div>
 
         {/* Total Paid */}
-        <div className="vendor-card" style={{
-          textAlign: 'center',
-          background: 'var(--cta-green)'
-        }}>
-          <div style={{
-            fontFamily: 'var(--font-display)',
-            fontWeight: 700,
-            fontSize: '40px',
-            color: 'var(--black)',
-            lineHeight: 1
-          }}>
+        <div className="vendor-payments__summary-card vendor-payments__summary-card--green">
+          <div className="vendor-payments__summary-value">
             ${totalPaid.toFixed(2)}
           </div>
-          <div style={{
-            fontFamily: 'var(--font-body)',
-            fontWeight: 600,
-            fontSize: '14px',
-            color: 'var(--black)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            marginTop: '8px'
-          }}>
-            Total Paid
-          </div>
+          <div className="vendor-payments__summary-label">Total Paid</div>
         </div>
 
         {/* Transactions */}
-        <div className="vendor-card" style={{ textAlign: 'center' }}>
-          <div style={{
-            fontFamily: 'var(--font-display)',
-            fontWeight: 700,
-            fontSize: '40px',
-            color: 'var(--black)',
-            lineHeight: 1
-          }}>
+        <div className="vendor-payments__summary-card">
+          <div className="vendor-payments__summary-value">
             {payments.length}
           </div>
-          <div style={{
-            fontFamily: 'var(--font-body)',
-            fontWeight: 600,
-            fontSize: '14px',
-            color: 'var(--gray-medium)',
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            marginTop: '8px'
-          }}>
-            Transactions
-          </div>
+          <div className="vendor-payments__summary-label">Transactions</div>
         </div>
       </div>
 
@@ -402,7 +344,7 @@ const VendorPayments = () => {
       )}
 
       {/* Payment History */}
-      <div className="vendor-card">
+      <div className="vendor-payments__history">
         <div className="vendor-card__header">
           <h3 className="vendor-card__title">Payment History</h3>
         </div>

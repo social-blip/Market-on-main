@@ -106,17 +106,18 @@ const VendorSchedule = () => {
           </p>
         </div>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px', paddingBottom: selectedIds.length > 0 ? '80px' : '0' }}>
+        <div className="vendor-schedule__months" style={{ paddingBottom: selectedIds.length > 0 ? '80px' : '0' }}>
           {Object.entries(groupedByMonth).map(([month, monthDates]) => (
-            <div key={month}>
-              <h2 className="vendor-card__title" style={{ marginBottom: '16px', fontSize: '32px' }}>
+            <div key={month} className="vendor-schedule__month">
+              <h2 className="vendor-schedule__month-title">
                 {month}
               </h2>
 
-              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <div className="vendor-schedule__dates">
                 {monthDates.map(md => {
                   const date = new Date(md.date);
                   const day = date.getDate();
+                  const fullDate = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
                   const booking = bookingMap[md.id];
                   const isSelected = selectedIds.includes(md.id);
 
@@ -124,61 +125,32 @@ const VendorSchedule = () => {
                   let clickable = false;
 
                   if (md.is_cancelled) {
-                    badge = <span className="vendor-badge vendor-badge--danger" style={{ marginTop: '10px', display: 'inline-block', fontSize: '12px', padding: '4px 10px' }}>Cancelled</span>;
+                    badge = <span className="vendor-badge vendor-badge--danger vendor-schedule__badge">Cancelled</span>;
                   } else if (booking && booking.status === 'confirmed') {
-                    badge = <span className="vendor-badge vendor-badge--success" style={{ marginTop: '10px', display: 'inline-block', fontSize: '12px', padding: '4px 10px' }}>Confirmed</span>;
+                    badge = <span className="vendor-badge vendor-badge--success vendor-schedule__badge">Confirmed</span>;
                   } else if (booking && booking.status === 'requested') {
-                    badge = <span className="vendor-badge vendor-badge--warning" style={{ marginTop: '10px', display: 'inline-block', fontSize: '12px', padding: '4px 10px' }}>Requested</span>;
+                    badge = <span className="vendor-badge vendor-badge--warning vendor-schedule__badge">Requested</span>;
                   } else {
                     clickable = true;
                     if (isSelected) {
-                      badge = <span className="vendor-badge vendor-badge--success" style={{ marginTop: '10px', display: 'inline-block', fontSize: '12px', padding: '4px 10px' }}>Selected ✓</span>;
+                      badge = <span className="vendor-badge vendor-badge--success vendor-schedule__badge">Selected ✓</span>;
                     } else {
-                      badge = (
-                        <button
-                          style={{
-                            marginTop: '10px',
-                            display: 'inline-block',
-                            fontSize: '12px',
-                            padding: '4px 10px',
-                            background: 'var(--maroon)',
-                            color: '#fff',
-                            border: 'none',
-                            borderRadius: '100px',
-                            cursor: 'pointer',
-                            fontWeight: 600
-                          }}
-                        >
-                          Request
-                        </button>
-                      );
+                      badge = <button className="vendor-schedule__request-btn">Request</button>;
                     }
                   }
 
                   return (
                     <div
                       key={md.id}
+                      className={`vendor-schedule__date-card ${isSelected ? 'vendor-schedule__date-card--selected' : ''}`}
                       onClick={clickable ? () => toggleSelect(md.id) : undefined}
-                      style={{
-                        padding: '20px 32px',
-                        textAlign: 'center',
-                        flex: '0 0 auto',
-                        minWidth: '140px',
-                        background: isSelected ? '#f0fdf4' : 'var(--white)',
-                        borderRadius: '12px',
-                        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.06)',
-                        cursor: clickable ? 'pointer' : 'default',
-                        border: isSelected ? '2px solid #16a34a' : '2px solid transparent'
-                      }}
+                      style={{ cursor: clickable ? 'pointer' : 'default' }}
                     >
-                      <div style={{
-                        fontFamily: 'var(--font-display)',
-                        fontWeight: 700,
-                        fontSize: '36px',
-                        color: 'var(--black)',
-                        lineHeight: 1
-                      }}>
+                      <div className="vendor-schedule__day">
                         {day}
+                      </div>
+                      <div className="vendor-schedule__full-date">
+                        {fullDate}
                       </div>
                       {badge}
                     </div>
