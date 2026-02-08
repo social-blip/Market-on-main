@@ -51,12 +51,7 @@ const VendorCard = ({ vendor, onPartialClick, isPartial }) => {
     return text.substring(0, maxLength).trim() + '...';
   };
 
-  // Format date for display
-  const formatDate = (dateStr) => {
-    if (!dateStr) return null;
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  };
+  const formatDate = (dateStr) => dateStr || null;
 
   // Pick a consistent greeting based on vendor id
   const greeting = GREETINGS[vendor.id % GREETINGS.length];
@@ -207,13 +202,7 @@ const TestHome4 = () => {
     scrollMusicToIndex(newIndex);
   };
 
-  // Format date for music cards (no weekday - market is always Saturday)
-  const formatMusicDate = (dateStr) => {
-    if (!dateStr) return '';
-    const date = new Date(dateStr);
-    if (isNaN(date.getTime())) return '';
-    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
-  };
+  const formatMusicDate = (dateStr) => dateStr || '';
 
   // Filter vendors
   const vendors = useMemo(() => {

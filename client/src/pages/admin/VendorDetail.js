@@ -9,17 +9,10 @@ const CATEGORIES = [
   { value: 'finds', label: 'Finds' }
 ];
 
-const MARKET_DATES = [
-  { date: '2026-06-06', label: 'June 6' },
-  { date: '2026-06-13', label: 'June 13' },
-  { date: '2026-06-20', label: 'June 20' },
-  { date: '2026-06-27', label: 'June 27' },
-  { date: '2026-07-04', label: 'July 4' },
-  { date: '2026-07-11', label: 'July 11' },
-  { date: '2026-07-18', label: 'July 18' },
-  { date: '2026-07-25', label: 'July 25' },
-  { date: '2026-08-01', label: 'August 1' },
-  { date: '2026-08-08', label: 'August 8' }
+const MARKET_DATE_LABELS = [
+  'June 6', 'June 13', 'June 20', 'June 27',
+  'July 4', 'July 11', 'July 18', 'July 25',
+  'August 1', 'August 8'
 ];
 
 const PRICING = {
@@ -171,20 +164,7 @@ const AdminVendorDetail = () => {
     try {
       const dates = typeof raw === 'string' ? JSON.parse(raw) : raw;
       if (!Array.isArray(dates)) return [];
-      // Convert human-readable dates like "June 13" to ISO "2026-06-13"
-      // by matching against allDates
-      return dates.map(d => {
-        // If already ISO format, use as-is
-        if (/^\d{4}-\d{2}-\d{2}/.test(d)) return d.split('T')[0];
-        // Try to match "Month Day" against market dates by parsing ISO string directly
-        const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-        const match = allDates.find(md => {
-          const parts = md.date.split('T')[0].split('-');
-          const formatted = `${months[parseInt(parts[1]) - 1]} ${parseInt(parts[2])}`;
-          return formatted === d;
-        });
-        return match ? match.date.split('T')[0] : null;
-      }).filter(Boolean);
+      return dates;
     } catch {
       return [];
     }
@@ -307,8 +287,8 @@ const AdminVendorDetail = () => {
     } catch { /* ignore */ }
     setAppEditData({
       markets_requested: String(vendor.markets_requested || '10'),
-      requested_dates: reqDates.map(d => d.split('T')[0]),
-      alternate_dates: altDates.map(d => d.split('T')[0])
+      requested_dates: reqDates,
+      alternate_dates: altDates
     });
     setEditingApp(true);
   };
@@ -425,7 +405,7 @@ const AdminVendorDetail = () => {
     try {
       const raw = data.vendor.alternate_dates;
       const current = raw ? (typeof raw === 'string' ? JSON.parse(raw) : raw) : [];
-      const updated = current.filter(d => d.split('T')[0] !== dateStr);
+      const updated = current.filter(d => d !== dateStr);
       await api.put(`/admin/vendors/${id}`, { alternate_dates: JSON.stringify(updated) });
       fetchVendor();
     } catch (err) {
@@ -433,14 +413,7 @@ const AdminVendorDetail = () => {
     }
   };
 
-  const formatDate = (dateStr) => {
-    const d = dateStr.split('T')[0];
-    return new Date(d + 'T12:00:00').toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
+  const formatDate = (dateStr) => dateStr;
 
   if (loading) {
     return (
@@ -678,13 +651,13 @@ const AdminVendorDetail = () => {
                   Requested Dates ({appEditData.requested_dates.length} primary, {appEditData.alternate_dates.length} alternate)
                 </label>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px' }}>
-                  {MARKET_DATES.map(({ date, label }) => {
-                    const isPrimary = appEditData.requested_dates.includes(date);
-                    const isAlternate = appEditData.alternate_dates.includes(date);
+                  {MARKET_DATE_LABELS.map(label => {
+                    const isPrimary = appEditData.requested_dates.includes(label);
+                    const isAlternate = appEditData.alternate_dates.includes(label);
                     return (
                       <div
-                        key={date}
-                        onClick={() => toggleAppDate(date)}
+                        key={label}
+                        onClick={() => toggleAppDate(label)}
                         style={{
                           display: 'flex',
                           alignItems: 'center',
@@ -757,7 +730,7 @@ const AdminVendorDetail = () => {
                               borderRadius: '4px',
                               fontSize: '13px'
                             }}>
-                              {new Date(date.split('T')[0] + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                              {date}
                             </span>
                           )) : <span>{vendor.requested_dates}</span>;
                         } catch {
@@ -790,7 +763,7 @@ const AdminVendorDetail = () => {
                               border: '1px dashed #999',
                               color: '#666'
                             }}>
-                              {new Date(date.split('T')[0] + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                              {date}
                             </span>
                           ))}
                         </div>
@@ -943,14 +916,13 @@ const AdminVendorDetail = () => {
               try {
                 const raw = vendor.alternate_dates;
                 const parsed = raw ? (typeof raw === 'string' ? JSON.parse(raw) : raw) : [];
-                if (Array.isArray(parsed)) adminAltDates = new Set(parsed.map(d => d.split('T')[0]));
+                if (Array.isArray(parsed)) adminAltDates = new Set(parsed);
               } catch { /* ignore */ }
               return allDates.map(md => {
               const booking = bookings.find(b => b.market_date_id === md.id);
               const isBooked = booking && booking.status === 'confirmed';
               const isRequested = booking && booking.status === 'requested';
-              const mdDateStr = md.date.split('T')[0];
-              const isAlt = adminAltDates.has(mdDateStr);
+              const isAlt = adminAltDates.has(md.date);
               return (
                 <div
                   key={md.id}
@@ -958,35 +930,29 @@ const AdminVendorDetail = () => {
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '8px',
+                    justifyContent: 'space-between',
                     padding: '8px 12px',
-                    border: '1px solid #ddd',
+                    border: isBooked ? '1px solid #800000' : isRequested ? '1px solid #d4a017' : '1px solid #ddd',
                     borderRadius: '6px',
                     cursor: isRequested ? 'default' : 'pointer',
-                    background: isRequested ? '#fffbeb' : isBooked ? '#f0fdf4' : '#fff',
-                    opacity: isRequested ? 0.6 : 1
+                    background: isRequested ? '#fffbeb' : isBooked ? '#800000' : '#fff',
+                    color: isBooked && !isRequested ? '#fff' : '#333',
+                    userSelect: 'none'
                   }}
                 >
-                  <input
-                    type="checkbox"
-                    checked={isBooked}
-                    disabled={isRequested}
-                    readOnly
-                    style={{ width: '16px', height: '16px', pointerEvents: 'none' }}
-                  />
-                  <span style={{ fontSize: '14px' }}>{formatDate(md.date)}</span>
+                  <span style={{ fontSize: '14px', fontWeight: isBooked ? 600 : 400 }}>{formatDate(md.date)}</span>
                   {isAlt && (
                     <span
                       title="Click to promote to regular booking"
-                      onClick={(e) => { e.stopPropagation(); removeAlternateDate(mdDateStr); }}
-                      style={{ fontSize: '10px', background: '#999', color: '#fff', padding: '1px 5px', borderRadius: '3px', fontWeight: 600, cursor: 'pointer' }}
+                      onClick={(e) => { e.stopPropagation(); removeAlternateDate(md.date); }}
+                      style={{ fontSize: '10px', background: isBooked ? 'rgba(255,255,255,0.3)' : '#999', color: '#fff', padding: '1px 5px', borderRadius: '3px', fontWeight: 600, cursor: 'pointer' }}
                     >Alt ✕</span>
                   )}
                   {isBooked && !isAlt && (
-                    <span className="badge badge-success" style={{ marginLeft: 'auto', fontSize: '11px' }}>Booked</span>
+                    <span style={{ fontSize: '11px', background: 'rgba(255,255,255,0.2)', padding: '2px 8px', borderRadius: '3px', fontWeight: 600 }}>Booked</span>
                   )}
                   {isRequested && (
-                    <span className="badge badge-warning" style={{ marginLeft: 'auto', fontSize: '11px' }}>Pending</span>
+                    <span style={{ fontSize: '11px', background: '#d4a017', color: '#fff', padding: '2px 8px', borderRadius: '3px', fontWeight: 600 }}>Pending</span>
                   )}
                 </div>
               );
@@ -1295,7 +1261,7 @@ const AdminVendorDetail = () => {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
               {allDates.map(md => {
-                const dateStr = md.date.split('T')[0];
+                const dateStr = md.date;
                 const isChecked = approvalDates.includes(dateStr);
                 const isAlt = alternateDateSet.has(dateStr);
                 return (

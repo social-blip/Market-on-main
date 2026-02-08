@@ -42,14 +42,10 @@ const MusicScheduleBuilder = () => {
     }
   };
 
-  const formatDate = (dateStr) => {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-  };
+  const formatDate = (dateStr) => dateStr;
 
   const getSlotData = (dateStr, slot) => {
-    const dateKey = new Date(dateStr).toISOString().split('T')[0];
-    return schedule[dateKey]?.[slot] || null;
+    return schedule[dateStr]?.[slot] || null;
   };
 
   if (loading) {
@@ -73,7 +69,7 @@ const MusicScheduleBuilder = () => {
         {dates.map(d => {
           const slot1 = getSlotData(d.date, 'slot1');
           const slot2 = getSlotData(d.date, 'slot2');
-          const dateKey = new Date(d.date).toISOString().split('T')[0];
+          const dateKey = d.date;
 
           return (
             <div key={d.id} className="card" style={{ padding: 0, overflow: 'hidden' }}>

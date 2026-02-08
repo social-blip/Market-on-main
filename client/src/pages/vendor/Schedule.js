@@ -29,7 +29,7 @@ const VendorSchedule = () => {
         const raw = profileRes.data.alternate_dates;
         const altDates = raw ? (typeof raw === 'string' ? JSON.parse(raw) : raw) : [];
         if (Array.isArray(altDates)) {
-          setAlternateDateSet(new Set(altDates.map(d => d.split('T')[0])));
+          setAlternateDateSet(new Set(altDates));
         }
       } catch { /* ignore */ }
     } catch (err) {
@@ -64,15 +64,12 @@ const VendorSchedule = () => {
     }
   };
 
-  // Only show future dates
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const futureDates = allDates.filter(d => new Date(d.date.split('T')[0] + 'T12:00:00') >= today);
+  // Show all non-cancelled dates
+  const futureDates = allDates.filter(d => !d.is_cancelled);
 
-  // Group by month
+  // Group by month (parse from label like "June 6" → "June")
   const groupedByMonth = futureDates.reduce((acc, md) => {
-    const date = new Date(md.date.split('T')[0] + 'T12:00:00');
-    const monthKey = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    const monthKey = md.date.split(' ')[0];
     if (!acc[monthKey]) acc[monthKey] = [];
     acc[monthKey].push(md);
     return acc;
@@ -126,12 +123,11 @@ const VendorSchedule = () => {
 
               <div className="vendor-schedule__dates">
                 {monthDates.map(md => {
-                  const date = new Date(md.date.split('T')[0] + 'T12:00:00');
-                  const day = date.getDate();
-                  const fullDate = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                  const day = md.date.split(' ')[1];
+                  const fullDate = md.date;
                   const booking = bookingMap[md.id];
                   const isSelected = selectedIds.includes(md.id);
-                  const isAlt = alternateDateSet.has(md.date.split('T')[0]);
+                  const isAlt = alternateDateSet.has(md.date);
 
                   let badge = null;
                   let clickable = false;

@@ -3,16 +3,9 @@ import api from '../../api/client';
 
 // 2026 Market Dates
 const MARKET_DATES = [
-  { date: '2026-06-06', label: 'June 6' },
-  { date: '2026-06-13', label: 'June 13' },
-  { date: '2026-06-20', label: 'June 20' },
-  { date: '2026-06-27', label: 'June 27' },
-  { date: '2026-07-04', label: 'July 4' },
-  { date: '2026-07-11', label: 'July 11' },
-  { date: '2026-07-18', label: 'July 18' },
-  { date: '2026-07-25', label: 'July 25' },
-  { date: '2026-08-01', label: 'August 1' },
-  { date: '2026-08-08', label: 'August 8' }
+  'June 6', 'June 13', 'June 20', 'June 27',
+  'July 4', 'July 11', 'July 18', 'July 25',
+  'August 1', 'August 8'
 ];
 
 // Pricing
@@ -615,11 +608,11 @@ const VendorApplication = () => {
                     These dates are not guaranteed. We will email you the final schedule April 2026. If you choose a date that is full, you will be added to the waitlist.
                   </small>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
-                    {MARKET_DATES.map(({ date, label }) => {
-                      const isPrimary = formData.requested_dates.includes(date);
-                      const isAlternate = formData.alternate_dates.includes(date);
+                    {MARKET_DATES.map(label => {
+                      const isPrimary = formData.requested_dates.includes(label);
+                      const isAlternate = formData.alternate_dates.includes(label);
                       return (
-                        <label key={date} style={{
+                        <label key={label} style={{
                           display: 'flex',
                           alignItems: 'center',
                           padding: '12px 16px',
@@ -634,7 +627,7 @@ const VendorApplication = () => {
                           <input
                             type="checkbox"
                             checked={isPrimary || isAlternate}
-                            onChange={() => handleDateToggle(date)}
+                            onChange={() => handleDateToggle(label)}
                             style={{ marginRight: '10px' }}
                           />
                           {label}

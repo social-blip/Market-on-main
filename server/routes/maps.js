@@ -38,8 +38,7 @@ router.get('/builder/dates/list', verifyToken, isAdmin, async (req, res) => {
     const result = await db.query(
       `SELECT id, date, is_cancelled
        FROM market_dates
-       WHERE date >= CURRENT_DATE - INTERVAL '30 days'
-       ORDER BY date ASC`
+       ORDER BY id ASC`
     );
     res.json(result.rows);
   } catch (err) {

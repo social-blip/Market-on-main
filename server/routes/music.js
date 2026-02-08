@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require('../models/db');
 const { verifyToken, isAdmin } = require('../middleware/auth');
 
+
 // ===================
 // PUBLIC ROUTES
 // ===================
@@ -11,9 +12,9 @@ const { verifyToken, isAdmin } = require('../middleware/auth');
 router.get('/schedule', async (req, res) => {
   try {
     const result = await db.query(
-      `SELECT * FROM music_schedule
-       WHERE performance_date >= CURRENT_DATE
-       ORDER BY performance_date ASC, time_slot ASC`
+      `SELECT ms.*, md.id as sort_order FROM music_schedule ms
+       LEFT JOIN market_dates md ON md.date = ms.performance_date
+       ORDER BY md.id ASC, ms.time_slot ASC`
     );
 
     // Group by date
@@ -53,14 +54,14 @@ router.get('/schedule/upcoming', async (req, res) => {
               ma.website
        FROM music_schedule ms
        LEFT JOIN music_applications ma ON ms.application_id = ma.id
-       WHERE ms.performance_date >= CURRENT_DATE
-       ORDER BY ms.performance_date ASC`
+       LEFT JOIN market_dates md ON md.date = ms.performance_date
+       ORDER BY md.id ASC`
     );
 
     // Group by date
     const grouped = {};
     result.rows.forEach(row => {
-      const dateKey = row.performance_date.toISOString().split('T')[0];
+      const dateKey = row.performance_date;
       if (!grouped[dateKey]) {
         grouped[dateKey] = {
           date: row.performance_date,
@@ -99,7 +100,7 @@ router.get('/admin/schedule-builder', verifyToken, isAdmin, async (req, res) => 
   try {
     // Get all market dates
     const datesResult = await db.query(
-      `SELECT id, date FROM market_dates WHERE is_cancelled = false ORDER BY date ASC`
+      `SELECT id, date FROM market_dates WHERE is_cancelled = false ORDER BY id ASC`
     );
 
     // Get all schedule entries with musician info
@@ -109,7 +110,8 @@ router.get('/admin/schedule-builder', verifyToken, isAdmin, async (req, res) => 
               ma.name as musician_name, ma.email as musician_email
        FROM music_schedule ms
        LEFT JOIN music_applications ma ON ms.application_id = ma.id
-       ORDER BY ms.performance_date ASC`
+       LEFT JOIN market_dates md ON md.date = ms.performance_date
+       ORDER BY md.id ASC`
     );
 
     // Get booked musicians (available to assign)
@@ -117,10 +119,10 @@ router.get('/admin/schedule-builder', verifyToken, isAdmin, async (req, res) => 
       `SELECT id, name, email, phone FROM music_applications ORDER BY name ASC`
     );
 
-    // Build schedule map
+    // Build schedule map keyed by date label
     const scheduleMap = {};
     scheduleResult.rows.forEach(row => {
-      const dateKey = row.performance_date.toISOString().split('T')[0];
+      const dateKey = row.performance_date;
       if (!scheduleMap[dateKey]) {
         scheduleMap[dateKey] = {};
       }
@@ -170,7 +172,9 @@ router.post('/admin/schedule/assign', verifyToken, isAdmin, async (req, res) => 
 router.get('/admin/schedule', verifyToken, isAdmin, async (req, res) => {
   try {
     const result = await db.query(
-      `SELECT * FROM music_schedule ORDER BY performance_date ASC, time_slot ASC`
+      `SELECT ms.* FROM music_schedule ms
+       LEFT JOIN market_dates md ON md.date = ms.performance_date
+       ORDER BY md.id ASC, ms.time_slot ASC`
     );
     res.json(result.rows);
   } catch (err) {

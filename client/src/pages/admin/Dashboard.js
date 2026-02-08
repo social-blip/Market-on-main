@@ -34,8 +34,7 @@ const AdminDashboard = () => {
       const dates = datesRes.data;
       setDateRequests(dateRequestsRes.data);
 
-      const today = new Date();
-      const upcomingMarkets = dates.filter(d => new Date(d.date) >= today && !d.is_cancelled).length;
+      const upcomingMarkets = dates.filter(d => !d.is_cancelled).length;
       const pendingPayments = payments.filter(p => p.status === 'pending').reduce((sum, p) => sum + parseFloat(p.amount), 0);
       const totalPayments = payments.filter(p => p.status === 'paid').reduce((sum, p) => sum + parseFloat(p.amount), 0);
       const pendingApps = vendors.filter(v => v.application_status === 'pending' || (!v.is_active && !v.is_approved));

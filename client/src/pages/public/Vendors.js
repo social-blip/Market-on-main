@@ -30,11 +30,7 @@ const VendorCard = ({ vendor }) => {
     return text.substring(0, maxLength).trim() + '...';
   };
 
-  const formatDate = (dateStr) => {
-    if (!dateStr) return null;
-    const d = dateStr.split('T')[0];
-    return new Date(d + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  };
+  const formatDate = (dateStr) => dateStr || null;
 
   const greeting = GREETINGS[vendor.id % GREETINGS.length];
 
@@ -109,14 +105,7 @@ const Vendors = () => {
     }
   };
 
-  const formatDateDisplay = (dateStr) => {
-    const d = dateStr.split('T')[0];
-    return new Date(d + 'T12:00:00').toLocaleDateString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
+  const formatDateDisplay = (dateStr) => dateStr;
 
   const filteredVendors = filter === 'all'
     ? vendors

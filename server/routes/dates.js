@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
         (SELECT COALESCE(SUM(array_length(string_to_array(booth_location, ','), 1)), 0) FROM vendor_bookings WHERE market_date_id = md.id AND status = 'confirmed' AND booth_location IS NOT NULL AND booth_location != '') as spots_used,
         (SELECT value->>'total_spots' FROM settings WHERE key = 'map_config')::int as total_spots
        FROM market_dates md
-       ORDER BY md.date ASC`
+       ORDER BY md.id ASC`
     );
 
     res.json(result.rows);
@@ -55,14 +55,14 @@ router.get('/:id', async (req, res) => {
 
 // Create market date (admin only)
 router.post('/', verifyToken, isAdmin, async (req, res) => {
-  const { date, start_time, end_time, notes } = req.body;
+  const { date, notes } = req.body;
 
   try {
     const result = await db.query(
-      `INSERT INTO market_dates (date, start_time, end_time, notes)
-       VALUES ($1, $2, $3, $4)
+      `INSERT INTO market_dates (date, notes)
+       VALUES ($1, $2)
        RETURNING *`,
-      [date, start_time || '09:00:00', end_time || '14:00:00', notes]
+      [date, notes]
     );
 
     res.status(201).json(result.rows[0]);
@@ -77,19 +77,17 @@ router.post('/', verifyToken, isAdmin, async (req, res) => {
 
 // Update market date (admin only)
 router.put('/:id', verifyToken, isAdmin, async (req, res) => {
-  const { date, start_time, end_time, is_cancelled, notes } = req.body;
+  const { date, is_cancelled, notes } = req.body;
 
   try {
     const result = await db.query(
       `UPDATE market_dates
        SET date = COALESCE($1, date),
-           start_time = COALESCE($2, start_time),
-           end_time = COALESCE($3, end_time),
-           is_cancelled = COALESCE($4, is_cancelled),
-           notes = COALESCE($5, notes)
-       WHERE id = $6
+           is_cancelled = COALESCE($2, is_cancelled),
+           notes = COALESCE($3, notes)
+       WHERE id = $4
        RETURNING *`,
-      [date, start_time, end_time, is_cancelled, notes, req.params.id]
+      [date, is_cancelled, notes, req.params.id]
     );
 
     if (result.rows.length === 0) {

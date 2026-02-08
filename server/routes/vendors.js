@@ -70,8 +70,8 @@ router.get('/public', async (req, res) => {
           `SELECT md.date
            FROM vendor_bookings vb
            JOIN market_dates md ON vb.market_date_id = md.id
-           WHERE vb.vendor_id = $1 AND vb.status = 'confirmed' AND md.date >= CURRENT_DATE
-           ORDER BY md.date ASC
+           WHERE vb.vendor_id = $1 AND vb.status = 'confirmed'
+           ORDER BY md.id ASC
            LIMIT 1`,
           [vendor.id]
         );
@@ -106,11 +106,11 @@ router.get('/public/:id', async (req, res) => {
 
     // Get vendor's upcoming market dates
     const datesResult = await db.query(
-      `SELECT md.date, md.start_time, md.end_time
+      `SELECT md.date
        FROM vendor_bookings vb
        JOIN market_dates md ON vb.market_date_id = md.id
-       WHERE vb.vendor_id = $1 AND vb.status = 'confirmed' AND md.date >= CURRENT_DATE
-       ORDER BY md.date ASC`,
+       WHERE vb.vendor_id = $1 AND vb.status = 'confirmed'
+       ORDER BY md.id ASC`,
       [req.params.id]
     );
 
@@ -162,11 +162,11 @@ router.put('/profile', verifyToken, isVendor, async (req, res) => {
 router.get('/bookings', verifyToken, isVendor, async (req, res) => {
   try {
     const result = await db.query(
-      `SELECT vb.*, md.date, md.start_time, md.end_time, md.is_cancelled
+      `SELECT vb.*, md.date, md.is_cancelled
        FROM vendor_bookings vb
        JOIN market_dates md ON vb.market_date_id = md.id
        WHERE vb.vendor_id = $1
-       ORDER BY md.date ASC`,
+       ORDER BY md.id ASC`,
       [req.vendor.id]
     );
 
@@ -325,7 +325,7 @@ router.post('/request-dates', verifyToken, isVendor, async (req, res) => {
     // Get vendor info and date details for notification email
     if (requested > 0) {
       const datesResult = await db.query(
-        `SELECT date FROM market_dates WHERE id = ANY($1) ORDER BY date ASC`,
+        `SELECT date FROM market_dates WHERE id = ANY($1) ORDER BY id ASC`,
         [market_date_ids]
       );
 

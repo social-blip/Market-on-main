@@ -134,10 +134,10 @@ const sendApplicationConfirmation = async (vendor) => {
             <p><strong>Markets Requested:</strong> ${vendor.markets_requested}</p>
             <p><strong>Estimated Total:</strong> $${parseFloat(vendor.total_amount).toFixed(2)}</p>
             ${vendor.requested_dates && vendor.requested_dates.length > 0 ? `
-            <p><strong>Requested Dates:</strong><br>${vendor.requested_dates.map(d => new Date(d + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })).join(', ')}</p>
+            <p><strong>Requested Dates:</strong><br>${vendor.requested_dates.join(', ')}</p>
             ` : ''}
             ${vendor.alternate_dates && vendor.alternate_dates.length > 0 ? `
-            <p><strong>Alternate Dates:</strong><br>${vendor.alternate_dates.map(d => new Date(d + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })).join(', ')}</p>
+            <p><strong>Alternate Dates:</strong><br>${vendor.alternate_dates.join(', ')}</p>
             ` : ''}
           </div>
 
@@ -281,12 +281,7 @@ const sendMarketReminder = async (vendor, marketDate) => {
     return true;
   }
 
-  const dateFormatted = new Date(marketDate.date).toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
+  const dateFormatted = marketDate.date;
 
   try {
     await resend.emails.send({
@@ -306,7 +301,7 @@ const sendMarketReminder = async (vendor, marketDate) => {
           <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <h3 style="margin-top: 0;">Market Details</h3>
             <p><strong>Date:</strong> ${dateFormatted}</p>
-            <p><strong>Time:</strong> ${marketDate.start_time} - ${marketDate.end_time}</p>
+            <p><strong>Time:</strong> 9:00 AM - 2:00 PM</p>
             <p><strong>Location:</strong> 100 Block of Main Ave N, Twin Falls, ID</p>
           </div>
 
@@ -518,14 +513,7 @@ const sendDateRequestNotification = async (vendor, dates) => {
     return true;
   }
 
-  const dateList = dates.map(d => {
-    return new Date(d.date).toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric'
-    });
-  }).join('<br>');
+  const dateList = dates.map(d => d.date).join('<br>');
 
   try {
     await resend.emails.send({
@@ -570,14 +558,7 @@ const sendDateRequestApproval = async (vendor, approvedDates = [], deniedDates =
     return true;
   }
 
-  const formatDates = (dates) => dates.map(d => {
-    return new Date(d).toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric'
-    });
-  }).join('<br>');
+  const formatDates = (dates) => dates.join('<br>');
 
   const hasApproved = approvedDates.length > 0;
   const hasDenied = deniedDates.length > 0;

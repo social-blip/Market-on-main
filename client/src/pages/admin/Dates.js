@@ -30,11 +30,8 @@ const AdminDates = () => {
     }
   };
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const upcomingDates = dates.filter(d => new Date(d.date) >= today && !d.is_cancelled);
-  const pastDates = dates.filter(d => new Date(d.date) < today && !d.is_cancelled);
+  const upcomingDates = dates.filter(d => !d.is_cancelled);
+  const pastDates = [];
   const cancelledDates = dates.filter(d => d.is_cancelled);
 
   if (loading) {
@@ -71,8 +68,6 @@ const AdminDates = () => {
       {/* Dates Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '16px' }}>
         {dates.map((date, index) => {
-          const dateObj = new Date(date.date);
-          const isPast = dateObj < today;
           const isCancelled = date.is_cancelled;
 
           return (
@@ -88,7 +83,7 @@ const AdminDates = () => {
                 style={{
                   display: 'flex',
                   padding: '16px',
-                  background: isCancelled ? 'var(--danger)' : isPast ? 'var(--gray)' : 'var(--maroon)',
+                  background: isCancelled ? 'var(--danger)' : 'var(--maroon)',
                   color: 'white',
                   justifyContent: 'space-between',
                   alignItems: 'center',
@@ -97,10 +92,10 @@ const AdminDates = () => {
               >
                 <div>
                   <div style={{ fontSize: '12px', textTransform: 'uppercase', opacity: 0.8 }}>
-                    {dateObj.toLocaleDateString('en-US', { weekday: 'long' })}
+                    Saturday
                   </div>
                   <div style={{ fontSize: '20px', fontWeight: 700 }}>
-                    {dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    {date.date}
                   </div>
                 </div>
                 <div style={{ fontSize: '24px', opacity: 0.3, fontWeight: 700 }}>#{index + 1}</div>
@@ -118,11 +113,9 @@ const AdminDates = () => {
                   <strong>{(date.total_spots || 54) - (date.spots_used || 0)}</strong> open spots
                 </div>
 
-                {isCancelled ? (
+                {isCancelled && (
                   <span className="badge badge-danger">Cancelled</span>
-                ) : isPast ? (
-                  <span className="badge" style={{ background: 'var(--light)', color: 'var(--gray)' }}>Completed</span>
-                ) : null}
+                )}
 
                 {date.notes && (
                   <div style={{ marginTop: '12px', padding: '8px', background: 'var(--light)', borderRadius: '4px', fontSize: '13px', fontStyle: 'italic', color: 'var(--gray)' }}>

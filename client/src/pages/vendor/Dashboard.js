@@ -30,13 +30,7 @@ const VendorDashboard = () => {
     }
   };
 
-  const formatDate = (dateStr) => {
-    const d = dateStr.split('T')[0];
-    return new Date(d + 'T12:00:00').toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric'
-    });
-  };
+  const formatDate = (dateStr) => dateStr;
 
   const unreadCount = announcements.filter(a => !a.is_read).length;
 
@@ -55,7 +49,7 @@ const VendorDashboard = () => {
     }
   };
 
-  const upcomingBookings = bookings.filter(b => new Date(b.date) >= new Date() && !b.is_cancelled);
+  const upcomingBookings = bookings.filter(b => !b.is_cancelled);
 
   if (loading) {
     return (

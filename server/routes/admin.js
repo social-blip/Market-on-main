@@ -36,11 +36,11 @@ router.get('/vendors/:id', verifyToken, isAdmin, async (req, res) => {
     }
 
     const bookingsResult = await db.query(
-      `SELECT vb.*, md.date, md.start_time, md.end_time
+      `SELECT vb.*, md.date
        FROM vendor_bookings vb
        JOIN market_dates md ON vb.market_date_id = md.id
        WHERE vb.vendor_id = $1
-       ORDER BY md.date ASC`,
+       ORDER BY md.id ASC`,
       [req.params.id]
     );
 
@@ -262,7 +262,7 @@ router.get('/date-requests', verifyToken, isAdmin, async (req, res) => {
        JOIN vendors v ON vb.vendor_id = v.id
        JOIN market_dates md ON vb.market_date_id = md.id
        WHERE vb.status = 'requested'
-       ORDER BY md.date ASC`
+       ORDER BY md.id ASC`
     );
     res.json(result.rows);
   } catch (err) {
@@ -297,7 +297,7 @@ router.post('/bookings/review', verifyToken, isAdmin, async (req, res) => {
         vendorId = approveResult.rows[0].vendor_id;
         const dateIds = approveResult.rows.map(r => r.market_date_id);
         const datesResult = await db.query(
-          'SELECT date FROM market_dates WHERE id = ANY($1) ORDER BY date ASC',
+          'SELECT date FROM market_dates WHERE id = ANY($1) ORDER BY id ASC',
           [dateIds]
         );
         approvedDates = datesResult.rows.map(d => d.date);

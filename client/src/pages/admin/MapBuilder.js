@@ -214,13 +214,7 @@ const MapBuilder = () => {
     }
   };
 
-  const formatDate = (dateStr) => {
-    // Handle various date formats from PostgreSQL
-    const dateOnly = dateStr.split('T')[0];
-    const [year, month, day] = dateOnly.split('-');
-    const date = new Date(year, month - 1, day);
-    return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-  };
+  const formatDate = (dateStr) => dateStr;
 
 
   if (loading) {

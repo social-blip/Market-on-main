@@ -405,48 +405,33 @@ const VendorDetail = () => {
             gap: '24px'
           }}>
             {/* Next Market Day */}
-            {(() => {
-              const now = new Date();
-              now.setHours(0, 0, 0, 0);
-              const futureDates = vendor.upcoming_dates
-                ?.filter(d => new Date(d.date.split('T')[0] + 'T12:00:00') >= now)
-                .sort((a, b) => new Date(a.date.split('T')[0] + 'T12:00:00') - new Date(b.date.split('T')[0] + 'T12:00:00'));
-              const nextDate = futureDates?.[0];
-
-              if (nextDate) {
-                return (
-                  <div style={{
-                    background: 'var(--yellow)',
-                    borderRadius: '16px',
-                    padding: '24px',
-                    textAlign: 'center'
-                  }}>
-                    <h3 style={{
-                      fontFamily: 'var(--font-display)',
-                      fontWeight: 700,
-                      fontSize: '14px',
-                      margin: '0 0 8px 0',
-                      textTransform: 'uppercase',
-                      color: 'var(--dark)'
-                    }}>
-                      Next Market Day
-                    </h3>
-                    <div style={{
-                      fontFamily: 'var(--font-display)',
-                      fontWeight: 700,
-                      fontSize: '32px',
-                      color: 'var(--dark)'
-                    }}>
-                      {new Date(nextDate.date.split('T')[0] + 'T12:00:00').toLocaleDateString('en-US', {
-                        month: 'short',
-                        day: 'numeric'
-                      })}
-                    </div>
-                  </div>
-                );
-              }
-              return null;
-            })()}
+            {vendor.upcoming_dates?.[0] && (
+              <div style={{
+                background: 'var(--yellow)',
+                borderRadius: '16px',
+                padding: '24px',
+                textAlign: 'center'
+              }}>
+                <h3 style={{
+                  fontFamily: 'var(--font-display)',
+                  fontWeight: 700,
+                  fontSize: '14px',
+                  margin: '0 0 8px 0',
+                  textTransform: 'uppercase',
+                  color: 'var(--dark)'
+                }}>
+                  Next Market Day
+                </h3>
+                <div style={{
+                  fontFamily: 'var(--font-display)',
+                  fontWeight: 700,
+                  fontSize: '32px',
+                  color: 'var(--dark)'
+                }}>
+                  {vendor.upcoming_dates[0].date}
+                </div>
+              </div>
+            )}
 
             {/* All Market Days */}
             <div style={{
@@ -474,13 +459,13 @@ const VendorDetail = () => {
                 {vendor.upcoming_dates && vendor.upcoming_dates.length > 0 ? (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     {(() => {
-                      // Group dates by month
+                      // Group dates by month (parse from label like "June 6")
                       const grouped = {};
                       vendor.upcoming_dates.forEach(d => {
-                        const date = new Date(d.date.split('T')[0] + 'T12:00:00');
-                        const month = date.toLocaleDateString('en-US', { month: 'short' });
+                        const parts = d.date.split(' ');
+                        const month = parts[0];
                         if (!grouped[month]) grouped[month] = [];
-                        grouped[month].push(date.getDate());
+                        grouped[month].push(parts[1]);
                       });
 
                       return Object.entries(grouped).map(([month, days]) => (
