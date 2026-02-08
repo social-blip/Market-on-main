@@ -59,7 +59,7 @@ router.get('/public', async (req, res) => {
                 (SELECT COUNT(*) FROM vendor_bookings WHERE vendor_id = vendors.id AND status = 'confirmed') as market_count
          FROM vendors
          WHERE is_active = true AND is_approved = true
-         ORDER BY business_name ASC`
+         ORDER BY RANDOM()`
       );
     }
 
