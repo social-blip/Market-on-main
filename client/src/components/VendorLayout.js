@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import '../styles/vendor.css';
 
 const VendorLayout = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, returnToAdmin, isImpersonating } = useAuth();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -13,8 +13,41 @@ const VendorLayout = () => {
     navigate('/vendor/login');
   };
 
+  const handleReturnToAdmin = async () => {
+    await returnToAdmin();
+    navigate('/admin');
+  };
+
   return (
     <div className="vendor-layout">
+      {/* Impersonation banner */}
+      {isImpersonating && (
+        <div style={{
+          background: '#2563eb',
+          color: '#fff',
+          textAlign: 'center',
+          padding: '8px 16px',
+          fontSize: '14px',
+          fontWeight: 500
+        }}>
+          Viewing as {user?.businessName || user?.business_name} —{' '}
+          <button
+            onClick={handleReturnToAdmin}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#fff',
+              textDecoration: 'underline',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: 700
+            }}
+          >
+            Return to Admin
+          </button>
+        </div>
+      )}
+
       {/* Navbar */}
       <nav className="vendor-nav">
         <div className="vendor-nav__inner">

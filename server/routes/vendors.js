@@ -36,7 +36,7 @@ const upload = multer({
 // Get all active vendors (public)
 router.get('/public', async (req, res) => {
   try {
-    const { date } = req.query;
+    const { date, shuffle } = req.query;
     let result;
 
     if (date) {
@@ -59,7 +59,7 @@ router.get('/public', async (req, res) => {
                 (SELECT COUNT(*) FROM vendor_bookings WHERE vendor_id = vendors.id AND status = 'confirmed') as market_count
          FROM vendors
          WHERE is_active = true AND is_approved = true
-         ORDER BY RANDOM()`
+         ORDER BY ${shuffle === 'true' ? 'RANDOM()' : 'business_name ASC'}`
       );
     }
 

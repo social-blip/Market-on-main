@@ -46,14 +46,38 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('adminToken');
     setUser(null);
   };
+
+  const loginAsVendor = async (vendorId) => {
+    const currentToken = localStorage.getItem('token');
+    localStorage.setItem('adminToken', currentToken);
+    const response = await api.post(`/auth/admin/impersonate/${vendorId}`);
+    const { token, user: vendorUser } = response.data;
+    localStorage.setItem('token', token);
+    setUser(vendorUser);
+  };
+
+  const returnToAdmin = async () => {
+    const adminToken = localStorage.getItem('adminToken');
+    if (!adminToken) return;
+    localStorage.setItem('token', adminToken);
+    localStorage.removeItem('adminToken');
+    const response = await api.get('/auth/me');
+    setUser(response.data);
+  };
+
+  const isImpersonating = !!localStorage.getItem('adminToken');
 
   const value = {
     user,
     loading,
     login,
     logout,
+    loginAsVendor,
+    returnToAdmin,
+    isImpersonating,
     isAuthenticated: !!user,
     isVendor: user?.role === 'vendor',
     isAdmin: user?.role === 'admin'

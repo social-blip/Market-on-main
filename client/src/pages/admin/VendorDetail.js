@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../../api/client';
+import { useAuth } from '../../context/AuthContext';
 
 const CATEGORIES = [
   { value: 'growers', label: 'Growers' },
@@ -24,6 +25,7 @@ const POWER_FEE = 15;
 const AdminVendorDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { loginAsVendor } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ type: '', text: '' });
@@ -444,6 +446,20 @@ const AdminVendorDetail = () => {
           <p className="page-subtitle">{vendor.contact_name}</p>
         </div>
         <div className="flex gap-2">
+          <button
+            onClick={async () => {
+              try {
+                await loginAsVendor(id);
+                navigate('/vendor/dashboard');
+              } catch (err) {
+                setMessage({ type: 'error', text: 'Failed to login as vendor.' });
+              }
+            }}
+            className="btn"
+            style={{ background: '#2563eb', color: '#fff' }}
+          >
+            Login as Vendor
+          </button>
           <button onClick={toggleActive} className={`btn ${vendor.is_active ? 'btn-danger' : 'btn-primary'}`}>
             {vendor.is_active ? 'Deactivate' : 'Approve'}
           </button>

@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const db = require('../models/db');
-const { verifyToken } = require('../middleware/auth');
+const { verifyToken, isAdmin } = require('../middleware/auth');
 const { sendPasswordResetEmail } = require('../services/email');
 
 // Generate JWT token
@@ -225,6 +225,37 @@ router.get('/me', verifyToken, async (req, res) => {
 
       res.json({ ...result.rows[0], role: 'admin' });
     }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Admin impersonate vendor
+router.post('/admin/impersonate/:vendorId', verifyToken, isAdmin, async (req, res) => {
+  try {
+    const result = await db.query(
+      'SELECT * FROM vendors WHERE id = $1',
+      [req.params.vendorId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Vendor not found' });
+    }
+
+    const vendor = result.rows[0];
+    const token = generateToken(vendor, 'vendor');
+
+    res.json({
+      token,
+      user: {
+        id: vendor.id,
+        email: vendor.email,
+        businessName: vendor.business_name,
+        contactName: vendor.contact_name,
+        role: 'vendor'
+      }
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
