@@ -85,7 +85,7 @@ const BecomeVendor = () => {
           fontSize: '18px',
           lineHeight: '1.7',
           color: 'var(--cream)',
-          maxWidth: '700px',
+          maxWidth: '780px',
           margin: '0 auto 16px',
           opacity: 0.95
         }}>
