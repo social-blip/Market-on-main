@@ -493,11 +493,10 @@ const TestHome4 = () => {
         <section className="vendors-section">
           <div className="vendors-section__card">
             <div className="vendors-section__inner">
-              {/* Left Column */}
+              {/* Left Column - Content */}
               <div className="vendors-section__left">
-                <div className="vendors-section__title-row">
+                <div className="vendors-section__header">
                   <h2 className="vendors-section__title">VENDORS</h2>
-                  <Link to="/vendors" className="vendors-section__calendar-btn vendors-section__mobile-cta">See All Vendors</Link>
                 </div>
                 <div className="vendors-section__filters">
                   <button
@@ -520,14 +519,6 @@ const TestHome4 = () => {
                     className={`pill-link ${vendorFilter === 'finds' ? 'pill-link--active' : ''}`}
                     onClick={() => setVendorFilter('finds')}
                   >Finds</button>
-                </div>
-                <img src="/images/peace.png" className="vendors-section__decor" alt="" />
-              </div>
-
-              {/* Right Column */}
-              <div className="vendors-section__right">
-                <div className="vendors-section__right-header">
-                  <Link to="/vendors" className="vendors-section__calendar-btn">See All Vendors</Link>
                 </div>
                 <div className="vendors-section__scroll" ref={scrollRef}>
                   {vendors.map((vendor, index) => (
@@ -571,6 +562,11 @@ const TestHome4 = () => {
                     </button>
                   </div>
                 </div>
+              </div>
+
+              {/* Right Column - Image */}
+              <div className="vendors-section__right">
+                <img src="/images/peace.png" className="vendors-section__decor" alt="" loading="lazy" />
               </div>
             </div>
           </div>

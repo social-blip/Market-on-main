@@ -887,18 +887,18 @@
 
 .vendors-section__inner {
   display: grid;
-  grid-template-columns: 320px 1fr;
-  height: 680px;
+  grid-template-columns: 1fr;
+  height: auto;
   position: relative;
   z-index: 1;
 }
 
-/* Left Column */
+/* Left Column - Content */
 .vendors-section__left {
-  padding: 48px 40px;
+  padding: 48px 24px 32px 48px;
   display: flex;
   flex-direction: column;
-  position: relative;
+  overflow: hidden;
 }
 
 .vendors-section__title-row {
@@ -948,27 +948,18 @@
 }
 
 .vendors-section__decor {
-  position: absolute;
-  bottom: -20px;
-  left: 0;
-  width: 280px;
-  height: auto;
-  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: bottom center;
 }
 
-/* Right Column */
+/* Left Column - Image */
 .vendors-section__right {
-  padding: 48px 48px 32px 24px;
-  display: flex;
-  flex-direction: column;
+  position: relative;
   overflow: hidden;
-}
-
-.vendors-section__right-header {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin-bottom: 24px;
+  order: -1;
+  display: none;
 }
 
 .vendors-section__calendar-btn {
@@ -1460,11 +1451,11 @@
   }
 
   .hero__content {
-    padding: 60px 24px 32px;
+    padding: 120px 24px 32px;
   }
 
   .hero__images {
-    height: 260px;
+    height: auto;
     overflow: hidden;
     margin-bottom: 24px;
     padding-bottom: 8px;
@@ -1690,7 +1681,7 @@
   }
 
   .homepage-vendor-card {
-    width: 70vw;
+    width: 220px;
     height: 420px;
   }
 
@@ -1722,7 +1713,7 @@
   }
 
   .music-card {
-    width: 70vw;
+    width: calc(50% - 6px);
   }
 
   .music-section__scroll {
