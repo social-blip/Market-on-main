@@ -29,16 +29,8 @@ const Blog = () => {
     });
   };
 
-  if (loading) {
-    return (
-      <div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <span className="spinner"></span>
-      </div>
-    );
-  }
-
   return (
-    <div style={{ background: 'var(--light)', minHeight: '100vh' }}>
+    <div style={{ background: 'var(--cream)', minHeight: '100vh' }}>
       {/* Hero */}
       <section className="vendors-page__hero">
         <h1 className="vendors-page__title">Market News</h1>
@@ -49,7 +41,11 @@ const Blog = () => {
 
       {/* Posts Grid */}
       <div className="container" style={{ padding: '60px 20px 100px' }}>
-        {posts.length === 0 ? (
+        {loading ? (
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '60px 20px' }}>
+            <span className="spinner"></span>
+          </div>
+        ) : posts.length === 0 ? (
           <div className="text-center" style={{ padding: '60px 20px' }}>
             <p style={{ fontSize: '18px', color: 'var(--gray)' }}>
               No posts yet. Check back soon!
@@ -91,9 +87,6 @@ const Blog = () => {
           </div>
         )}
 
-        <div className="text-center mt-4">
-          <Link to="/" className="btn-pill btn-pill-yellow">Back to Home</Link>
-        </div>
       </div>
     </div>
   );

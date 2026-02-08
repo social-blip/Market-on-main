@@ -55,7 +55,7 @@ const BlogPost = () => {
   };
 
   return (
-    <div style={{ background: 'var(--light)', minHeight: '100vh' }}>
+    <div style={{ background: 'var(--cream)', minHeight: '100vh' }}>
       {/* Hero */}
       <section className="vendors-page__hero">
         {post.tag && (
