@@ -144,7 +144,7 @@ const TestHome4 = () => {
   useEffect(() => {
     const fetchVendors = async () => {
       try {
-        const response = await api.get('/vendors/public');
+        const response = await api.get('/vendors/public?shuffle=true');
         setAllVendors(response.data);
       } catch (err) {
         console.error('Error fetching vendors:', err);
