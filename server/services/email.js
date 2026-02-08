@@ -439,6 +439,64 @@ const sendContactFormNotification = async (data) => {
   }
 };
 
+// Send password reset email
+const sendPasswordResetEmail = async (vendor) => {
+  if (!isEmailConfigured()) {
+    console.log('[DEV] Would send password reset email to:', vendor.email);
+    return true;
+  }
+
+  const jwt = require('jsonwebtoken');
+
+  const resetToken = jwt.sign(
+    { email: vendor.email, purpose: 'reset' },
+    process.env.JWT_SECRET,
+    { expiresIn: '1h' }
+  );
+
+  const resetUrl = `${process.env.FRONTEND_URL}/setup-password?token=${resetToken}&email=${encodeURIComponent(vendor.email)}`;
+
+  try {
+    await resend.emails.send({
+      from: EMAIL_FROM,
+      to: vendor.email,
+      subject: 'Reset your password — Market on Main',
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h1 style="color: #333;">Reset Your Password</h1>
+
+          <p>Hi ${vendor.contact_name},</p>
+
+          <p>We received a request to reset the password for your Market on Main vendor account. Click the button below to set a new password:</p>
+
+          <p style="text-align: center; margin: 30px 0;">
+            <a href="${resetUrl}"
+               style="background-color: #5c1e3d; color: #ffffff; padding: 14px 32px; text-decoration: none; border: none; display: inline-block; font-weight: 600; border-radius: 100px; font-family: Arial, sans-serif; font-size: 14px;">
+              Reset Password
+            </a>
+          </p>
+
+          <p>This link expires in 1 hour. If you didn't request a password reset, you can safely ignore this email.</p>
+
+          <p><strong>MoM Crew</strong></p>
+
+          <hr style="margin-top: 30px; border: none; border-top: 1px solid #eee;">
+          <p style="color: #999; font-size: 12px;">
+            If the button doesn't work, copy and paste this link into your browser:<br>
+            <a href="${resetUrl}" style="color: #999;">${resetUrl}</a>
+          </p>
+        </div>
+      `
+    });
+    await logEmail(vendor.id, 'password_reset', 'Reset your password — Market on Main', vendor.email, 'sent');
+    return true;
+  } catch (err) {
+    console.error('Failed to send password reset email:', err);
+    await logEmail(vendor.id, 'password_reset', 'Reset your password — Market on Main', vendor.email, 'failed');
+    return false;
+  }
+};
+
 // Send date request notification to admin
 const sendDateRequestNotification = async (vendor, dates) => {
   if (!isEmailConfigured()) {
@@ -585,6 +643,7 @@ const sendDateRequestApproval = async (vendor, approvedDates = [], deniedDates =
 
 module.exports = {
   sendWelcomeEmail,
+  sendPasswordResetEmail,
   sendPaymentConfirmation,
   sendAnnouncementEmail,
   sendMarketReminder,

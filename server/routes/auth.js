@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const db = require('../models/db');
 const { verifyToken } = require('../middleware/auth');
+const { sendPasswordResetEmail } = require('../services/email');
 
 // Generate JWT token
 const generateToken = (user, role) => {
@@ -66,6 +67,36 @@ router.post('/vendor/login', [
     });
   } catch (err) {
     console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Vendor Forgot Password
+router.post('/vendor/forgot-password', [
+  body('email').isEmail().normalizeEmail()
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const { email } = req.body;
+
+  try {
+    const result = await db.query(
+      'SELECT id, email, contact_name, business_name FROM vendors WHERE email = $1',
+      [email]
+    );
+
+    // Always return 200 — don't reveal whether the email exists
+    if (result.rows.length > 0) {
+      const vendor = result.rows[0];
+      await sendPasswordResetEmail(vendor);
+    }
+
+    res.json({ message: 'If that email is associated with a vendor account, we sent a password reset link.' });
+  } catch (err) {
+    console.error('Forgot password error:', err);
     res.status(500).json({ error: 'Server error' });
   }
 });
@@ -133,8 +164,8 @@ router.post('/vendor/setup-password', [
     // Verify setup token (simple implementation - in production use a proper token system)
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    if (decoded.email !== email || decoded.purpose !== 'setup') {
-      return res.status(400).json({ error: 'Invalid setup token' });
+    if (decoded.email !== email || (decoded.purpose !== 'setup' && decoded.purpose !== 'reset')) {
+      return res.status(400).json({ error: 'Invalid or expired token' });
     }
 
     const salt = await bcrypt.genSalt(10);
