@@ -186,11 +186,7 @@ const VendorProfile = () => {
         </div>
       )}
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-        gap: '24px'
-      }}>
+      <div className="vendor-profile__columns">
         {/* Business Info (Read Only) */}
         <div className="vendor-card">
           <div className="vendor-card__header">
@@ -419,7 +415,7 @@ const VendorProfile = () => {
       </div>
 
       {/* Photos Section */}
-      <div className="vendor-card" style={{ marginTop: '24px' }}>
+      <div className="vendor-profile__photos">
         <div className="vendor-card__header">
           <div>
             <h3 className="vendor-card__title">Photos</h3>
@@ -477,11 +473,7 @@ const VendorProfile = () => {
             </p>
           </div>
         ) : (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
-            gap: '16px'
-          }}>
+          <div className="vendor-profile__photo-grid">
             {photos.map((photo, index) => (
               <div
                 key={index}

@@ -611,6 +611,40 @@
 }
 
 /* ==========================================
+   PROFILE LAYOUT
+   ========================================== */
+
+.vendor-profile__columns {
+  display: flex;
+  gap: 24px;
+}
+
+.vendor-profile__columns .vendor-card {
+  flex: 1;
+}
+
+.vendor-profile__photos {
+  flex: 1;
+  background: var(--white);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+  margin-top: 24px;
+}
+
+.vendor-profile__photo-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.vendor-profile__photo-grid .vendor-photo {
+  flex: 1;
+  min-width: 180px;
+}
+
+/* ==========================================
    SCHEDULE
    ========================================== */
 
@@ -904,6 +938,10 @@
     font-weight: 600;
     color: var(--black);
     flex: 1;
+  }
+
+  .vendor-profile__columns {
+    flex-direction: column;
   }
 
   .vendor-main {
