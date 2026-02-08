@@ -434,7 +434,8 @@ const AdminVendorDetail = () => {
   };
 
   const formatDate = (dateStr) => {
-    return new Date(dateStr).toLocaleDateString('en-US', {
+    const d = dateStr.split('T')[0];
+    return new Date(d + 'T12:00:00').toLocaleDateString('en-US', {
       weekday: 'short',
       month: 'short',
       day: 'numeric'
@@ -756,7 +757,7 @@ const AdminVendorDetail = () => {
                               borderRadius: '4px',
                               fontSize: '13px'
                             }}>
-                              {new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                              {new Date(date.split('T')[0] + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                             </span>
                           )) : <span>{vendor.requested_dates}</span>;
                         } catch {
@@ -789,7 +790,7 @@ const AdminVendorDetail = () => {
                               border: '1px dashed #999',
                               color: '#666'
                             }}>
-                              {new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                              {new Date(date.split('T')[0] + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                             </span>
                           ))}
                         </div>

@@ -409,8 +409,8 @@ const VendorDetail = () => {
               const now = new Date();
               now.setHours(0, 0, 0, 0);
               const futureDates = vendor.upcoming_dates
-                ?.filter(d => new Date(d.date) >= now)
-                .sort((a, b) => new Date(a.date) - new Date(b.date));
+                ?.filter(d => new Date(d.date.split('T')[0] + 'T12:00:00') >= now)
+                .sort((a, b) => new Date(a.date.split('T')[0] + 'T12:00:00') - new Date(b.date.split('T')[0] + 'T12:00:00'));
               const nextDate = futureDates?.[0];
 
               if (nextDate) {
@@ -437,7 +437,7 @@ const VendorDetail = () => {
                       fontSize: '32px',
                       color: 'var(--dark)'
                     }}>
-                      {new Date(nextDate.date).toLocaleDateString('en-US', {
+                      {new Date(nextDate.date.split('T')[0] + 'T12:00:00').toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric'
                       })}
@@ -477,7 +477,7 @@ const VendorDetail = () => {
                       // Group dates by month
                       const grouped = {};
                       vendor.upcoming_dates.forEach(d => {
-                        const date = new Date(d.date);
+                        const date = new Date(d.date.split('T')[0] + 'T12:00:00');
                         const month = date.toLocaleDateString('en-US', { month: 'short' });
                         if (!grouped[month]) grouped[month] = [];
                         grouped[month].push(date.getDate());

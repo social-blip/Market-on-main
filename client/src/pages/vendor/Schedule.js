@@ -67,11 +67,11 @@ const VendorSchedule = () => {
   // Only show future dates
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const futureDates = allDates.filter(d => new Date(d.date) >= today);
+  const futureDates = allDates.filter(d => new Date(d.date.split('T')[0] + 'T12:00:00') >= today);
 
   // Group by month
   const groupedByMonth = futureDates.reduce((acc, md) => {
-    const date = new Date(md.date);
+    const date = new Date(md.date.split('T')[0] + 'T12:00:00');
     const monthKey = date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
     if (!acc[monthKey]) acc[monthKey] = [];
     acc[monthKey].push(md);
@@ -126,7 +126,7 @@ const VendorSchedule = () => {
 
               <div className="vendor-schedule__dates">
                 {monthDates.map(md => {
-                  const date = new Date(md.date);
+                  const date = new Date(md.date.split('T')[0] + 'T12:00:00');
                   const day = date.getDate();
                   const fullDate = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
                   const booking = bookingMap[md.id];
