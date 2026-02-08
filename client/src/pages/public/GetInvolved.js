@@ -20,7 +20,7 @@ const GetInvolved = () => {
             <img src="/images/market/vendor-booth.jpg" alt="Vendors at Market on Main" />
           </div>
           <div className="involved-page__content">
-            <span className="involved-page__tag involved-page__tag--maroon">Sell With Us</span>
+            <Link to="/become-vendor" className="involved-page__tag involved-page__tag--maroon">Sell With Us</Link>
             <h2 className="involved-page__heading">Become a Vendor</h2>
             <p className="involved-page__text">
               Got something handmade, homegrown, or homemade? We want you at Market on Main. Join our community of local makers and growers.
@@ -47,7 +47,7 @@ const GetInvolved = () => {
             <img src="/images/market/Live-Music.jpg" alt="Live music at Market on Main" />
           </div>
           <div className="involved-page__content">
-            <span className="involved-page__tag involved-page__tag--dark">Play Live</span>
+            <Link to="/contact?reason=Performing at the Market" className="involved-page__tag involved-page__tag--dark">Play Live</Link>
             <h2 className="involved-page__heading involved-page__heading--light">Perform at the Market</h2>
             <p className="involved-page__text involved-page__text--light">
               Bring your sound to Market on Main. We feature live music every market day and we're always looking for local artists to share the stage.
@@ -74,7 +74,7 @@ const GetInvolved = () => {
             <img src="/images/market/jae-foundation.jpg" alt="Volunteers at Market on Main" />
           </div>
           <div className="involved-page__content">
-            <span className="involved-page__tag involved-page__tag--maroon">Join The Crew</span>
+            <Link to="/contact?reason=Volunteering" className="involved-page__tag involved-page__tag--maroon">Join The Crew</Link>
             <h2 className="involved-page__heading">Volunteer</h2>
             <p className="involved-page__text">
               Help us set up, welcome neighbors, and keep the good vibes going. Our volunteers are the heart of Market on Main.
@@ -101,7 +101,7 @@ const GetInvolved = () => {
             <img src="/images/market/firefighters-community.jpg" alt="Community sponsors" />
           </div>
           <div className="involved-page__content">
-            <span className="involved-page__tag involved-page__tag--dark">Support Local</span>
+            <Link to="/contact?reason=Sponsoring" className="involved-page__tag involved-page__tag--dark">Support Local</Link>
             <h2 className="involved-page__heading involved-page__heading--light">Sponsor</h2>
             <p className="involved-page__text involved-page__text--light">
               Get your business in front of the community. Sponsoring Market on Main connects you with hundreds of engaged neighbors every market day.
@@ -128,7 +128,7 @@ const GetInvolved = () => {
             <img src="/images/market/community-card.jpg" alt="Community at Market on Main" />
           </div>
           <div className="involved-page__content">
-            <span className="involved-page__tag involved-page__tag--maroon">Your Market</span>
+            <Link to="/contact" className="involved-page__tag involved-page__tag--maroon">Your Market</Link>
             <h2 className="involved-page__heading">Community</h2>
             <p className="involved-page__text">
               This is your market. Come hang, shop, and connect. Market on Main is a place where neighbors become friends and local makers find their people.
@@ -141,6 +141,9 @@ const GetInvolved = () => {
                 <li>A place to call your own</li>
               </ul>
             </div>
+            <Link to="/contact" className="involved-page__btn">
+              Get In Touch
+            </Link>
           </div>
         </div>
       </section>

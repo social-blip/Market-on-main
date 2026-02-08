@@ -87,6 +87,8 @@
   text-transform: uppercase;
   letter-spacing: 1px;
   margin-bottom: 16px;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .involved-page__tag--maroon {
