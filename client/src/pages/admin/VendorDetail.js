@@ -158,10 +158,11 @@ const AdminVendorDetail = () => {
       return dates.map(d => {
         // If already ISO format, use as-is
         if (/^\d{4}-\d{2}-\d{2}/.test(d)) return d.split('T')[0];
-        // Try to match "Month Day" against market dates
+        // Try to match "Month Day" against market dates by parsing ISO string directly
+        const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
         const match = allDates.find(md => {
-          const mdDate = new Date(md.date);
-          const formatted = mdDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+          const parts = md.date.split('T')[0].split('-');
+          const formatted = `${months[parseInt(parts[1]) - 1]} ${parseInt(parts[2])}`;
           return formatted === d;
         });
         return match ? match.date.split('T')[0] : null;
