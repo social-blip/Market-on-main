@@ -791,8 +791,9 @@ const AdminVendorDetail = () => {
               const mdDateStr = md.date.split('T')[0];
               const isAlt = adminAltDates.has(mdDateStr);
               return (
-                <label
+                <div
                   key={md.id}
+                  onClick={() => !isRequested && toggleBooking(md)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -809,14 +810,14 @@ const AdminVendorDetail = () => {
                     type="checkbox"
                     checked={isBooked}
                     disabled={isRequested}
-                    onChange={() => !isRequested && toggleBooking(md)}
-                    style={{ width: '16px', height: '16px' }}
+                    readOnly
+                    style={{ width: '16px', height: '16px', pointerEvents: 'none' }}
                   />
                   <span style={{ fontSize: '14px' }}>{formatDate(md.date)}</span>
                   {isAlt && (
                     <span
                       title="Click to promote to regular booking"
-                      onClick={(e) => { e.preventDefault(); removeAlternateDate(mdDateStr); }}
+                      onClick={(e) => { e.stopPropagation(); removeAlternateDate(mdDateStr); }}
                       style={{ fontSize: '10px', background: '#999', color: '#fff', padding: '1px 5px', borderRadius: '3px', fontWeight: 600, cursor: 'pointer' }}
                     >Alt ✕</span>
                   )}
@@ -826,7 +827,7 @@ const AdminVendorDetail = () => {
                   {isRequested && (
                     <span className="badge badge-warning" style={{ marginLeft: 'auto', fontSize: '11px' }}>Pending</span>
                   )}
-                </label>
+                </div>
               );
             });
             })()}
