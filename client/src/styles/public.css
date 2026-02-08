@@ -21,15 +21,14 @@
 }
 
 .hero__bg {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 150%;
+  height: 100vh;
   background-size: cover;
   background-position: center top;
-  z-index: 0;
-  will-change: transform;
+  z-index: -1;
 }
 
 .hero__container {
@@ -360,6 +359,7 @@
 
 .news-section {
   padding: 60px var(--container-padding);
+  background: var(--cream);
 }
 
 .news-section__grid {
@@ -1238,6 +1238,7 @@
 
 .cta-section {
   padding: 60px var(--container-padding);
+  background: var(--cream);
 }
 
 .cta-section__grid {
@@ -1335,6 +1336,7 @@
 
 .location-section {
   padding: 60px var(--container-padding);
+  background: var(--cream);
 }
 
 .location-section__grid {
