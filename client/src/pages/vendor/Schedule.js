@@ -8,6 +8,7 @@ const VendorSchedule = () => {
   const [submitting, setSubmitting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
+  const [alternateDateSet, setAlternateDateSet] = useState(new Set());
 
   useEffect(() => {
     fetchData();
@@ -15,12 +16,22 @@ const VendorSchedule = () => {
 
   const fetchData = async () => {
     try {
-      const [datesRes, bookingsRes] = await Promise.all([
+      const [datesRes, bookingsRes, profileRes] = await Promise.all([
         api.get('/dates'),
-        api.get('/vendors/bookings')
+        api.get('/vendors/bookings'),
+        api.get('/vendors/profile')
       ]);
       setAllDates(datesRes.data);
       setBookings(bookingsRes.data);
+
+      // Parse alternate_dates from profile
+      try {
+        const raw = profileRes.data.alternate_dates;
+        const altDates = raw ? (typeof raw === 'string' ? JSON.parse(raw) : raw) : [];
+        if (Array.isArray(altDates)) {
+          setAlternateDateSet(new Set(altDates.map(d => d.split('T')[0])));
+        }
+      } catch { /* ignore */ }
     } catch (err) {
       console.error('Error fetching schedule data:', err);
     } finally {
@@ -120,6 +131,7 @@ const VendorSchedule = () => {
                   const fullDate = date.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
                   const booking = bookingMap[md.id];
                   const isSelected = selectedIds.includes(md.id);
+                  const isAlt = alternateDateSet.has(md.date.split('T')[0]);
 
                   let badge = null;
                   let clickable = false;
@@ -127,7 +139,9 @@ const VendorSchedule = () => {
                   if (md.is_cancelled) {
                     badge = <span className="vendor-badge vendor-badge--danger vendor-schedule__badge">Cancelled</span>;
                   } else if (booking && booking.status === 'confirmed') {
-                    badge = <span className="vendor-badge vendor-badge--success vendor-schedule__badge">Confirmed</span>;
+                    badge = isAlt
+                      ? <span className="vendor-badge vendor-schedule__badge" style={{ background: '#999', color: '#fff' }}>Alt</span>
+                      : <span className="vendor-badge vendor-badge--success vendor-schedule__badge">Confirmed</span>;
                   } else if (booking && booking.status === 'requested') {
                     badge = <span className="vendor-badge vendor-badge--warning vendor-schedule__badge">Requested</span>;
                   } else {

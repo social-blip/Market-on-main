@@ -133,6 +133,12 @@ const sendApplicationConfirmation = async (vendor) => {
             <p><strong>Booth Size:</strong> ${vendor.booth_size === 'double' ? 'Double (20\'x10\')' : 'Single (10\'x10\')'}</p>
             <p><strong>Markets Requested:</strong> ${vendor.markets_requested}</p>
             <p><strong>Estimated Total:</strong> $${parseFloat(vendor.total_amount).toFixed(2)}</p>
+            ${vendor.requested_dates && vendor.requested_dates.length > 0 ? `
+            <p><strong>Requested Dates:</strong><br>${vendor.requested_dates.map(d => new Date(d + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })).join(', ')}</p>
+            ` : ''}
+            ${vendor.alternate_dates && vendor.alternate_dates.length > 0 ? `
+            <p><strong>Alternate Dates:</strong><br>${vendor.alternate_dates.map(d => new Date(d + 'T12:00:00').toLocaleDateString('en-US', { month: 'long', day: 'numeric' })).join(', ')}</p>
+            ` : ''}
           </div>
 
           <p>Once approved, you'll receive an email with instructions to set up your vendor portal account where you can:</p>

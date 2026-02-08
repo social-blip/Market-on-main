@@ -96,6 +96,7 @@ router.post('/submit',
       booth_size,
       markets_requested,
       requested_dates,
+      alternate_dates,
       needs_power,
       is_nonprofit,
       agreements
@@ -126,17 +127,18 @@ router.post('/submit',
 
       // Parse JSON fields
       const parsedDates = typeof requested_dates === 'string' ? JSON.parse(requested_dates) : requested_dates;
+      const parsedAlternateDates = alternate_dates ? (typeof alternate_dates === 'string' ? JSON.parse(alternate_dates) : alternate_dates) : [];
       const parsedAgreements = typeof agreements === 'string' ? JSON.parse(agreements) : agreements;
 
       // Insert application
       const result = await db.query(
         `INSERT INTO vendors (
           contact_name, business_name, email, phone, website, social_handles,
-          description, booth_size, markets_requested, requested_dates,
+          description, booth_size, markets_requested, requested_dates, alternate_dates,
           needs_power, is_nonprofit,
           base_amount, power_fee, total_amount,
           agreements, images, application_status, is_active, is_approved
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20)
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)
         RETURNING id, business_name, email, total_amount, application_status`,
         [
           contact_name,
@@ -149,6 +151,7 @@ router.post('/submit',
           booth_size,
           parseInt(markets_requested),
           JSON.stringify(parsedDates),
+          JSON.stringify(parsedAlternateDates),
           needs_power === 'true' || needs_power === true,
           is_nonprofit === 'true' || is_nonprofit === true,
           pricing.baseAmount,
@@ -170,7 +173,9 @@ router.post('/submit',
         business_name,
         booth_size,
         markets_requested: parseInt(markets_requested),
-        total_amount: pricing.totalAmount
+        total_amount: pricing.totalAmount,
+        requested_dates: parsedDates,
+        alternate_dates: parsedAlternateDates
       };
       await emailService.sendApplicationConfirmation(vendorData);
 

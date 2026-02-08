@@ -42,6 +42,7 @@ const VendorApplication = () => {
     booth_size: '',
     markets_requested: '',
     requested_dates: [],
+    alternate_dates: [],
     needs_power: false,
     is_nonprofit: false,
     images: [],
@@ -82,19 +83,50 @@ const VendorApplication = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
+    setFormData(prev => {
+      const updated = { ...prev, [name]: type === 'checkbox' ? checked : value };
+
+      // Rebalance dates when markets_requested changes
+      if (name === 'markets_requested') {
+        const N = parseInt(value) || 0;
+        const allSelected = [...prev.requested_dates, ...prev.alternate_dates];
+        updated.requested_dates = allSelected.slice(0, N);
+        updated.alternate_dates = allSelected.slice(N);
+      }
+
+      return updated;
+    });
   };
 
   const handleDateToggle = (date) => {
-    setFormData(prev => ({
-      ...prev,
-      requested_dates: prev.requested_dates.includes(date)
-        ? prev.requested_dates.filter(d => d !== date)
-        : [...prev.requested_dates, date]
-    }));
+    setFormData(prev => {
+      const N = parseInt(prev.markets_requested) || 0;
+      const inPrimary = prev.requested_dates.includes(date);
+      const inAlternate = prev.alternate_dates.includes(date);
+
+      // Removing a date
+      if (inPrimary) {
+        const newPrimary = prev.requested_dates.filter(d => d !== date);
+        // Promote first alternate to primary
+        if (prev.alternate_dates.length > 0) {
+          return {
+            ...prev,
+            requested_dates: [...newPrimary, prev.alternate_dates[0]],
+            alternate_dates: prev.alternate_dates.slice(1)
+          };
+        }
+        return { ...prev, requested_dates: newPrimary };
+      }
+      if (inAlternate) {
+        return { ...prev, alternate_dates: prev.alternate_dates.filter(d => d !== date) };
+      }
+
+      // Adding a date
+      if (prev.requested_dates.length < N) {
+        return { ...prev, requested_dates: [...prev.requested_dates, date] };
+      }
+      return { ...prev, alternate_dates: [...prev.alternate_dates, date] };
+    });
   };
 
   const handleAgreementChange = (key) => {
@@ -147,7 +179,7 @@ const VendorApplication = () => {
           formData.images.forEach(file => {
             submitData.append('images', file);
           });
-        } else if (key === 'agreements' || key === 'requested_dates') {
+        } else if (key === 'agreements' || key === 'requested_dates' || key === 'alternate_dates') {
           submitData.append(key, JSON.stringify(formData[key]));
         } else if (key === 'facebook' || key === 'instagram' || key === 'x_handle') {
           // Skip individual social fields - we'll send combined
@@ -583,29 +615,56 @@ const VendorApplication = () => {
                     These dates are not guaranteed. We will email you the final schedule April 2026. If you choose a date that is full, you will be added to the waitlist.
                   </small>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
-                    {MARKET_DATES.map(({ date, label }) => (
-                      <label key={date} style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        padding: '12px 16px',
-                        borderRadius: '8px',
-                        border: formData.requested_dates.includes(date) ? '2px solid var(--maroon)' : '1px solid var(--gray-medium)',
-                        background: formData.requested_dates.includes(date) ? 'var(--yellow)' : 'white',
-                        cursor: 'pointer',
-                        fontFamily: 'var(--font-body)',
-                        fontWeight: formData.requested_dates.includes(date) ? 600 : 400,
-                        transition: 'all 0.15s ease'
-                      }}>
-                        <input
-                          type="checkbox"
-                          checked={formData.requested_dates.includes(date)}
-                          onChange={() => handleDateToggle(date)}
-                          style={{ marginRight: '10px' }}
-                        />
-                        {label}
-                      </label>
-                    ))}
+                    {MARKET_DATES.map(({ date, label }) => {
+                      const isPrimary = formData.requested_dates.includes(date);
+                      const isAlternate = formData.alternate_dates.includes(date);
+                      return (
+                        <label key={date} style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          padding: '12px 16px',
+                          borderRadius: '8px',
+                          border: isPrimary ? '2px solid var(--maroon)' : isAlternate ? '2px dashed var(--gray-dark)' : '2px solid var(--gray-medium)',
+                          background: isPrimary ? 'var(--yellow)' : isAlternate ? '#f0f0f0' : 'white',
+                          cursor: 'pointer',
+                          fontFamily: 'var(--font-body)',
+                          fontWeight: (isPrimary || isAlternate) ? 600 : 400,
+                          transition: 'all 0.15s ease'
+                        }}>
+                          <input
+                            type="checkbox"
+                            checked={isPrimary || isAlternate}
+                            onChange={() => handleDateToggle(date)}
+                            style={{ marginRight: '10px' }}
+                          />
+                          {label}
+                          {isAlternate && (
+                            <span style={{
+                              marginLeft: 'auto',
+                              fontSize: '11px',
+                              background: 'var(--gray-dark)',
+                              color: 'white',
+                              padding: '2px 6px',
+                              borderRadius: '4px',
+                              fontWeight: 600
+                            }}>Alternate</span>
+                          )}
+                        </label>
+                      );
+                    })}
                   </div>
+                  {formData.alternate_dates.length > 0 && (
+                    <p style={{
+                      fontFamily: 'var(--font-body)',
+                      fontSize: '13px',
+                      color: 'var(--gray-dark)',
+                      marginTop: '10px',
+                      lineHeight: 1.5,
+                      fontStyle: 'italic'
+                    }}>
+                      You've selected your {formData.markets_requested} dates. Additional selections will be submitted as alternates.
+                    </p>
+                  )}
                 </div>
 
                 {/* Power */}
@@ -880,7 +939,7 @@ const radioCardStyle = (selected) => ({
   alignItems: 'center',
   padding: '16px',
   borderRadius: '12px',
-  border: selected ? '2px solid var(--maroon)' : '1px solid var(--gray-medium)',
+  border: selected ? '2px solid var(--maroon)' : '2px solid var(--gray-medium)',
   background: selected ? 'var(--yellow)' : 'white',
   cursor: 'pointer',
   fontFamily: 'var(--font-body)',

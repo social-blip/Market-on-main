@@ -92,7 +92,7 @@ router.post('/vendors', verifyToken, isAdmin, async (req, res) => {
 router.put('/vendors/:id', verifyToken, isAdmin, async (req, res) => {
   const {
     email, business_name, contact_name, phone, website,
-    social_handles, description, booth_size, needs_power, is_nonprofit, is_active, is_approved, category
+    social_handles, description, booth_size, needs_power, is_nonprofit, is_active, is_approved, category, alternate_dates
   } = req.body;
 
   try {
@@ -111,10 +111,11 @@ router.put('/vendors/:id', verifyToken, isAdmin, async (req, res) => {
            is_active = COALESCE($11, is_active),
            is_approved = COALESCE($12, is_approved),
            category = COALESCE($13, category),
+           alternate_dates = COALESCE($14, alternate_dates),
            updated_at = CURRENT_TIMESTAMP
-       WHERE id = $14
+       WHERE id = $15
        RETURNING *`,
-      [email, business_name, contact_name, phone, website, social_handles, description, booth_size, needs_power, is_nonprofit, is_active, is_approved, category, req.params.id]
+      [email, business_name, contact_name, phone, website, social_handles, description, booth_size, needs_power, is_nonprofit, is_active, is_approved, category, alternate_dates, req.params.id]
     );
 
     if (result.rows.length === 0) {
