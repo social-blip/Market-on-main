@@ -9,6 +9,19 @@ const CATEGORIES = [
   { value: 'finds', label: 'Finds' }
 ];
 
+const MARKET_DATES = [
+  { date: '2026-06-06', label: 'June 6' },
+  { date: '2026-06-13', label: 'June 13' },
+  { date: '2026-06-20', label: 'June 20' },
+  { date: '2026-06-27', label: 'June 27' },
+  { date: '2026-07-04', label: 'July 4' },
+  { date: '2026-07-11', label: 'July 11' },
+  { date: '2026-07-18', label: 'July 18' },
+  { date: '2026-07-25', label: 'July 25' },
+  { date: '2026-08-01', label: 'August 1' },
+  { date: '2026-08-08', label: 'August 8' }
+];
+
 const PRICING = {
   single: { 10: 500, 6: 350, 3: 195 },
   double: { 10: 750, 6: 550, 3: 290 }
@@ -43,6 +56,8 @@ const AdminVendorDetail = () => {
   const [reviewSubmitting, setReviewSubmitting] = useState(false);
   const [editing, setEditing] = useState(false);
   const [editData, setEditData] = useState({});
+  const [editingApp, setEditingApp] = useState(false);
+  const [appEditData, setAppEditData] = useState({});
 
   useEffect(() => {
     fetchVendor();
@@ -276,6 +291,78 @@ const AdminVendorDetail = () => {
       setMessage({ type: 'success', text: 'Vendor information updated.' });
     } catch (err) {
       setMessage({ type: 'error', text: 'Failed to update vendor.' });
+    }
+  };
+
+  const startEditingApp = () => {
+    let reqDates = [];
+    let altDates = [];
+    try {
+      const raw = vendor.requested_dates;
+      reqDates = raw ? (typeof raw === 'string' ? JSON.parse(raw) : raw) : [];
+    } catch { /* ignore */ }
+    try {
+      const raw = vendor.alternate_dates;
+      altDates = raw ? (typeof raw === 'string' ? JSON.parse(raw) : raw) : [];
+    } catch { /* ignore */ }
+    setAppEditData({
+      markets_requested: String(vendor.markets_requested || '10'),
+      requested_dates: reqDates.map(d => d.split('T')[0]),
+      alternate_dates: altDates.map(d => d.split('T')[0])
+    });
+    setEditingApp(true);
+  };
+
+  const toggleAppDate = (date) => {
+    setAppEditData(prev => {
+      const N = parseInt(prev.markets_requested) || 0;
+      const inPrimary = prev.requested_dates.includes(date);
+      const inAlternate = prev.alternate_dates.includes(date);
+      if (inPrimary) {
+        const newPrimary = prev.requested_dates.filter(d => d !== date);
+        if (prev.alternate_dates.length > 0) {
+          return { ...prev, requested_dates: [...newPrimary, prev.alternate_dates[0]], alternate_dates: prev.alternate_dates.slice(1) };
+        }
+        return { ...prev, requested_dates: newPrimary };
+      }
+      if (inAlternate) {
+        return { ...prev, alternate_dates: prev.alternate_dates.filter(d => d !== date) };
+      }
+      if (prev.requested_dates.length < N) {
+        return { ...prev, requested_dates: [...prev.requested_dates, date] };
+      }
+      return { ...prev, alternate_dates: [...prev.alternate_dates, date] };
+    });
+  };
+
+  const handleAppMarketsChange = (value) => {
+    setAppEditData(prev => {
+      const N = parseInt(value) || 0;
+      const all = [...prev.requested_dates, ...prev.alternate_dates];
+      return { ...prev, markets_requested: value, requested_dates: all.slice(0, N), alternate_dates: all.slice(N) };
+    });
+  };
+
+  const saveAppEdit = async () => {
+    try {
+      const boothSize = vendor.booth_size || 'single';
+      const mkts = parseInt(appEditData.markets_requested);
+      const baseAmount = PRICING[boothSize]?.[mkts] || 0;
+      const powerFee = vendor.needs_power ? POWER_FEE : 0;
+      const totalAmount = baseAmount + powerFee;
+      await api.put(`/admin/vendors/${id}`, {
+        markets_requested: mkts,
+        requested_dates: JSON.stringify(appEditData.requested_dates),
+        alternate_dates: JSON.stringify(appEditData.alternate_dates),
+        base_amount: baseAmount,
+        power_fee: powerFee,
+        total_amount: totalAmount
+      });
+      setEditingApp(false);
+      fetchVendor();
+      setMessage({ type: 'success', text: 'Application details updated.' });
+    } catch (err) {
+      setMessage({ type: 'error', text: 'Failed to update application details.' });
     }
   };
 
@@ -565,93 +652,166 @@ const AdminVendorDetail = () => {
 
         {/* Application Details */}
         <div className="card">
-          <h3 style={{ marginBottom: '16px' }}>Application Details</h3>
-
-          <div style={{ marginBottom: '12px' }}>
-            <strong>Application Status</strong>
-            <p>
-              <span className={`badge badge-${vendor.application_status === 'approved' ? 'success' : vendor.application_status === 'rejected' ? 'danger' : 'warning'}`}>
-                {vendor.application_status || 'pending'}
-              </span>
-            </p>
+          <div className="flex-between" style={{ marginBottom: '16px' }}>
+            <h3 style={{ margin: 0 }}>Application Details</h3>
+            {!editingApp && (
+              <button onClick={startEditingApp} className="btn" style={{ fontSize: '13px', padding: '6px 14px' }}>
+                Edit
+              </button>
+            )}
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <strong>Markets Requested</strong>
-            <p style={{ color: '#666' }}>{vendor.markets_requested || 'N/A'} markets</p>
-          </div>
+          {editingApp ? (
+            <>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontWeight: 600, marginBottom: '4px', fontSize: '14px' }}>Markets Requested</label>
+                <select className="form-control" style={{ maxWidth: '200px' }} value={appEditData.markets_requested} onChange={e => handleAppMarketsChange(e.target.value)}>
+                  <option value="10">10 (Full Season)</option>
+                  <option value="6">6 markets</option>
+                  <option value="3">3 markets</option>
+                </select>
+              </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <strong>Requested Dates</strong>
-            <div style={{ color: '#666' }}>
-              {vendor.requested_dates ? (
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '4px' }}>
-                  {(() => {
-                    try {
-                      const dates = typeof vendor.requested_dates === 'string'
-                        ? JSON.parse(vendor.requested_dates)
-                        : vendor.requested_dates;
-                      return Array.isArray(dates) ? dates.map((date, idx) => (
-                        <span key={idx} style={{
-                          background: '#f0f0f0',
-                          padding: '4px 8px',
-                          borderRadius: '4px',
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontWeight: 600, marginBottom: '4px', fontSize: '14px' }}>
+                  Requested Dates ({appEditData.requested_dates.length} primary, {appEditData.alternate_dates.length} alternate)
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px' }}>
+                  {MARKET_DATES.map(({ date, label }) => {
+                    const isPrimary = appEditData.requested_dates.includes(date);
+                    const isAlternate = appEditData.alternate_dates.includes(date);
+                    return (
+                      <div
+                        key={date}
+                        onClick={() => toggleAppDate(date)}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          padding: '6px 10px',
+                          borderRadius: '6px',
+                          border: isPrimary ? '2px solid var(--maroon, #5c1e3d)' : isAlternate ? '2px dashed #999' : '2px solid #ddd',
+                          background: isPrimary ? '#f0fdf4' : isAlternate ? '#f5f5f5' : '#fff',
+                          cursor: 'pointer',
                           fontSize: '13px'
-                        }}>
-                          {new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                        </span>
-                      )) : <span>{vendor.requested_dates}</span>;
-                    } catch {
-                      return <span>{vendor.requested_dates}</span>;
-                    }
+                        }}
+                      >
+                        <input type="checkbox" checked={isPrimary || isAlternate} readOnly style={{ pointerEvents: 'none' }} />
+                        <span>{label}</span>
+                        {isAlternate && <span style={{ marginLeft: 'auto', fontSize: '10px', background: '#999', color: '#fff', padding: '1px 5px', borderRadius: '3px', fontWeight: 600 }}>Alt</span>}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ display: 'block', fontWeight: 600, marginBottom: '4px', fontSize: '14px' }}>Pricing (auto-calculated)</label>
+                <div style={{ color: '#666', fontSize: '14px' }}>
+                  {(() => {
+                    const boothSize = vendor.booth_size || 'single';
+                    const mkts = parseInt(appEditData.markets_requested);
+                    const base = PRICING[boothSize]?.[mkts] || 0;
+                    const power = vendor.needs_power ? POWER_FEE : 0;
+                    return <span>${(base + power).toFixed(2)} ({boothSize}, {mkts} markets{vendor.needs_power ? ' + power' : ''})</span>;
                   })()}
                 </div>
-              ) : (
-                <p>No dates specified</p>
-              )}
-            </div>
-          </div>
-
-          {vendor.alternate_dates && (() => {
-            try {
-              const altDates = typeof vendor.alternate_dates === 'string'
-                ? JSON.parse(vendor.alternate_dates)
-                : vendor.alternate_dates;
-              if (Array.isArray(altDates) && altDates.length > 0) {
-                return (
-                  <div style={{ marginBottom: '12px' }}>
-                    <strong>Alternate Dates</strong>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '4px' }}>
-                      {altDates.map((date, idx) => (
-                        <span key={idx} style={{
-                          background: '#e8e8e8',
-                          padding: '4px 8px',
-                          borderRadius: '4px',
-                          fontSize: '13px',
-                          border: '1px dashed #999',
-                          color: '#666'
-                        }}>
-                          {new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                );
-              }
-            } catch { /* ignore */ }
-            return null;
-          })()}
-
-          <div style={{ marginBottom: '12px' }}>
-            <strong>Pricing</strong>
-            <div style={{ color: '#666', marginTop: '4px' }}>
-              <div>Base Amount: ${parseFloat(vendor.base_amount || 0).toFixed(2)}</div>
-              {vendor.power_fee > 0 && <div>Power Fee: ${parseFloat(vendor.power_fee).toFixed(2)}</div>}
-              <div style={{ fontWeight: 'bold', marginTop: '4px' }}>
-                Total: ${parseFloat(vendor.total_amount || 0).toFixed(2)}
               </div>
-            </div>
-          </div>
+
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button onClick={saveAppEdit} className="btn btn-primary" style={{ fontSize: '13px' }}>Save</button>
+                <button onClick={() => setEditingApp(false)} className="btn" style={{ fontSize: '13px' }}>Cancel</button>
+              </div>
+            </>
+          ) : (
+            <>
+              <div style={{ marginBottom: '12px' }}>
+                <strong>Application Status</strong>
+                <p>
+                  <span className={`badge badge-${vendor.application_status === 'approved' ? 'success' : vendor.application_status === 'rejected' ? 'danger' : 'warning'}`}>
+                    {vendor.application_status || 'pending'}
+                  </span>
+                </p>
+              </div>
+
+              <div style={{ marginBottom: '12px' }}>
+                <strong>Markets Requested</strong>
+                <p style={{ color: '#666' }}>{vendor.markets_requested || 'N/A'} markets</p>
+              </div>
+
+              <div style={{ marginBottom: '12px' }}>
+                <strong>Requested Dates</strong>
+                <div style={{ color: '#666' }}>
+                  {vendor.requested_dates ? (
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '4px' }}>
+                      {(() => {
+                        try {
+                          const dates = typeof vendor.requested_dates === 'string'
+                            ? JSON.parse(vendor.requested_dates)
+                            : vendor.requested_dates;
+                          return Array.isArray(dates) ? dates.map((date, idx) => (
+                            <span key={idx} style={{
+                              background: '#f0f0f0',
+                              padding: '4px 8px',
+                              borderRadius: '4px',
+                              fontSize: '13px'
+                            }}>
+                              {new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                            </span>
+                          )) : <span>{vendor.requested_dates}</span>;
+                        } catch {
+                          return <span>{vendor.requested_dates}</span>;
+                        }
+                      })()}
+                    </div>
+                  ) : (
+                    <p>No dates specified</p>
+                  )}
+                </div>
+              </div>
+
+              {vendor.alternate_dates && (() => {
+                try {
+                  const altDates = typeof vendor.alternate_dates === 'string'
+                    ? JSON.parse(vendor.alternate_dates)
+                    : vendor.alternate_dates;
+                  if (Array.isArray(altDates) && altDates.length > 0) {
+                    return (
+                      <div style={{ marginBottom: '12px' }}>
+                        <strong>Alternate Dates</strong>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '4px' }}>
+                          {altDates.map((date, idx) => (
+                            <span key={idx} style={{
+                              background: '#e8e8e8',
+                              padding: '4px 8px',
+                              borderRadius: '4px',
+                              fontSize: '13px',
+                              border: '1px dashed #999',
+                              color: '#666'
+                            }}>
+                              {new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  }
+                } catch { /* ignore */ }
+                return null;
+              })()}
+
+              <div style={{ marginBottom: '12px' }}>
+                <strong>Pricing</strong>
+                <div style={{ color: '#666', marginTop: '4px' }}>
+                  <div>Base Amount: ${parseFloat(vendor.base_amount || 0).toFixed(2)}</div>
+                  {vendor.power_fee > 0 && <div>Power Fee: ${parseFloat(vendor.power_fee).toFixed(2)}</div>}
+                  <div style={{ fontWeight: 'bold', marginTop: '4px' }}>
+                    Total: ${parseFloat(vendor.total_amount || 0).toFixed(2)}
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
 
           {vendor.images && vendor.images.length > 0 && (
             <div>

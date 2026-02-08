@@ -92,7 +92,8 @@ router.post('/vendors', verifyToken, isAdmin, async (req, res) => {
 router.put('/vendors/:id', verifyToken, isAdmin, async (req, res) => {
   const {
     email, business_name, contact_name, phone, website,
-    social_handles, description, booth_size, needs_power, is_nonprofit, is_active, is_approved, category, alternate_dates
+    social_handles, description, booth_size, needs_power, is_nonprofit, is_active, is_approved, category,
+    alternate_dates, markets_requested, requested_dates, base_amount, power_fee, total_amount
   } = req.body;
 
   try {
@@ -112,10 +113,15 @@ router.put('/vendors/:id', verifyToken, isAdmin, async (req, res) => {
            is_approved = COALESCE($12, is_approved),
            category = COALESCE($13, category),
            alternate_dates = COALESCE($14, alternate_dates),
+           markets_requested = COALESCE($15, markets_requested),
+           requested_dates = COALESCE($16, requested_dates),
+           base_amount = COALESCE($17, base_amount),
+           power_fee = COALESCE($18, power_fee),
+           total_amount = COALESCE($19, total_amount),
            updated_at = CURRENT_TIMESTAMP
-       WHERE id = $15
+       WHERE id = $20
        RETURNING *`,
-      [email, business_name, contact_name, phone, website, social_handles, description, booth_size, needs_power, is_nonprofit, is_active, is_approved, category, alternate_dates, req.params.id]
+      [email, business_name, contact_name, phone, website, social_handles, description, booth_size, needs_power, is_nonprofit, is_active, is_approved, category, alternate_dates, markets_requested, requested_dates, base_amount, power_fee, total_amount, req.params.id]
     );
 
     if (result.rows.length === 0) {
