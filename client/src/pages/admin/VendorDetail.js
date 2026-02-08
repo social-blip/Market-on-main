@@ -152,7 +152,20 @@ const AdminVendorDetail = () => {
     if (!raw) return [];
     try {
       const dates = typeof raw === 'string' ? JSON.parse(raw) : raw;
-      return Array.isArray(dates) ? dates : [];
+      if (!Array.isArray(dates)) return [];
+      // Convert human-readable dates like "June 13" to ISO "2026-06-13"
+      // by matching against allDates
+      return dates.map(d => {
+        // If already ISO format, use as-is
+        if (/^\d{4}-\d{2}-\d{2}/.test(d)) return d.split('T')[0];
+        // Try to match "Month Day" against market dates
+        const match = allDates.find(md => {
+          const mdDate = new Date(md.date);
+          const formatted = mdDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+          return formatted === d;
+        });
+        return match ? match.date.split('T')[0] : null;
+      }).filter(Boolean);
     } catch {
       return [];
     }
