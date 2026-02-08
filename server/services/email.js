@@ -49,6 +49,7 @@ const sendWelcomeEmail = async (vendor) => {
     await resend.emails.send({
       from: EMAIL_FROM,
       to: vendor.email,
+      bcc: 'info@tfmarketonmain.com',
       subject: 'Welcome to Market on Main 2026!',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -75,6 +76,8 @@ const sendWelcomeEmail = async (vendor) => {
             <li>See your booth location on the market map</li>
             <li>Stay updated with announcements</li>
           </ul>
+
+          <p><strong>One thing to do right away:</strong> Head to your Profile page and make sure your description and details look the way you want. This is how people will find and learn about you on our website, so take a moment to make sure it represents your business well!</p>
 
           <p>If you have any questions, email us at info@tfmarketonmain.com.</p>
 
@@ -108,7 +111,8 @@ const sendApplicationConfirmation = async (vendor) => {
     const result = await resend.emails.send({
       from: EMAIL_FROM,
       to: vendor.email,
-      cc: 'info@tfmarketonmain.com',
+      bcc: 'info@tfmarketonmain.com',
+      bcc: 'info@tfmarketonmain.com',
       subject: 'Application Received - Market on Main 2026',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -173,6 +177,7 @@ const sendPaymentConfirmation = async (vendor, payment) => {
     await resend.emails.send({
       from: EMAIL_FROM,
       to: vendor.email,
+      bcc: 'info@tfmarketonmain.com',
       subject: 'Payment Received - Market on Main',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -224,6 +229,7 @@ const sendAnnouncementEmail = async (vendor, announcement) => {
     await resend.emails.send({
       from: EMAIL_FROM,
       to: vendor.email,
+      bcc: 'info@tfmarketonmain.com',
       subject: `Market on Main: ${announcement.title}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -280,6 +286,7 @@ const sendMarketReminder = async (vendor, marketDate) => {
     await resend.emails.send({
       from: EMAIL_FROM,
       to: vendor.email,
+      bcc: 'info@tfmarketonmain.com',
       subject: `Reminder: Market on Main Tomorrow - ${dateFormatted}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -346,7 +353,7 @@ const sendMusicApplicationConfirmation = async (application) => {
     await resend.emails.send({
       from: EMAIL_FROM,
       to: application.email,
-      cc: 'info@tfmarketonmain.com',
+      bcc: 'info@tfmarketonmain.com',
       subject: 'Music Application Received - Market on Main 2026',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -402,7 +409,7 @@ const sendContactFormNotification = async (data) => {
     await resend.emails.send({
       from: EMAIL_FROM,
       to: data.email,
-      cc: 'info@tfmarketonmain.com',
+      bcc: 'info@tfmarketonmain.com',
       subject: `We Got Your Message - Market on Main`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -460,6 +467,7 @@ const sendPasswordResetEmail = async (vendor) => {
     await resend.emails.send({
       from: EMAIL_FROM,
       to: vendor.email,
+      bcc: 'info@tfmarketonmain.com',
       subject: 'Reset your password — Market on Main',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -607,6 +615,7 @@ const sendDateRequestApproval = async (vendor, approvedDates = [], deniedDates =
     await resend.emails.send({
       from: EMAIL_FROM,
       to: vendor.email,
+      bcc: 'info@tfmarketonmain.com',
       subject,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
