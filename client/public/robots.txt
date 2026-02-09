@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /vendor
+Disallow: /setup-password
+
+Sitemap: https://tfmarketonmain.com/sitemap.xml
