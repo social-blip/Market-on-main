@@ -32,6 +32,9 @@ app.use('/api/music', require('./routes/music'));
 app.use('/api/settings', require('./routes/settings'));
 app.use('/api/contact', require('./routes/contact'));
 
+// Sitemap
+app.use('/api/sitemap.xml', require('./routes/sitemap'));
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Market on Main API is running' });
