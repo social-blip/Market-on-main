@@ -33,6 +33,7 @@ import TestHome3 from './pages/public/TestHome3';
 import TestHome4 from './pages/public/TestHome4';
 import BlogPost from './pages/public/BlogPost';
 import Blog from './pages/public/Blog';
+import ApplyThankYou from './pages/public/ApplyThankYou';
 
 // Auth Pages
 import VendorLogin from './pages/vendor/Login';
@@ -102,6 +103,7 @@ function App() {
         <Route path="vendors/:id" element={<VendorDetail />} />
         <Route path="map" element={<Map />} />
         <Route path="apply" element={<Apply />} />
+        <Route path="apply/thank-you" element={<ApplyThankYou />} />
         <Route path="become-vendor" element={<BecomeVendor />} />
         <Route path="find-us" element={<FindUs />} />
         <Route path="get-involved" element={<GetInvolved />} />

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../../api/client';
 
 // 2026 Market Dates
@@ -16,9 +17,9 @@ const PRICING = {
 const POWER_FEE = 15;
 
 const VendorApplication = () => {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState(null);
   const formRef = useRef(null);
 
@@ -51,13 +52,6 @@ const VendorApplication = () => {
       formRef.current.scrollIntoView({ behavior: 'instant', block: 'start' });
     }
   }, [step]);
-
-  // Scroll to top when submitted
-  useEffect(() => {
-    if (submitted) {
-      window.scrollTo({ top: 0, behavior: 'instant' });
-    }
-  }, [submitted]);
 
   // Calculate pricing
   const calculateTotal = () => {
@@ -186,7 +180,7 @@ const VendorApplication = () => {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
-      setSubmitted(true);
+      navigate('/apply/thank-you');
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to submit application. Please try again.');
       console.error(err);
@@ -194,49 +188,6 @@ const VendorApplication = () => {
       setLoading(false);
     }
   };
-
-  if (submitted) {
-    return (
-      <div style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'var(--cream)',
-        padding: '40px 20px'
-      }}>
-        <div style={{ textAlign: 'center', maxWidth: '600px' }}>
-          <h1 style={{
-            fontFamily: 'var(--font-display)',
-            fontWeight: 700,
-            fontSize: 'clamp(36px, 8vw, 56px)',
-            color: 'var(--maroon)',
-            margin: '0 0 24px 0',
-            textTransform: 'uppercase'
-          }}>
-            Application Submitted!
-          </h1>
-          <p style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: '18px',
-            lineHeight: 1.7,
-            color: 'var(--dark)',
-            marginBottom: '24px'
-          }}>
-            Thank you for applying to Market on Main! Your application is now under review.
-          </p>
-          <p style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: '16px',
-            lineHeight: 1.7,
-            color: 'var(--gray-dark)'
-          }}>
-            Once approved, you'll receive an email with your vendor portal login. Your invoice will be available in the portal for payment.
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div style={{ background: 'var(--cream)', minHeight: '100vh' }}>
