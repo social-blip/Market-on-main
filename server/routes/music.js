@@ -47,14 +47,15 @@ router.get('/schedule/upcoming', async (req, res) => {
   const limit = parseInt(req.query.limit) || 6;
   try {
     const result = await db.query(
-      `SELECT ms.performance_date, ms.time_slot,
+      `SELECT md.date as performance_date, ms.time_slot,
               COALESCE(ma.name, ms.performer_name) as performer_name,
               COALESCE(ma.website, ms.performer_url) as performer_url,
               COALESCE(ma.bio, ms.bio) as bio,
               ma.website
-       FROM music_schedule ms
+       FROM market_dates md
+       LEFT JOIN music_schedule ms ON ms.performance_date = md.date
        LEFT JOIN music_applications ma ON ms.application_id = ma.id
-       LEFT JOIN market_dates md ON md.date = ms.performance_date
+       WHERE md.is_cancelled = false
        ORDER BY md.id ASC`
     );
 
@@ -69,6 +70,7 @@ router.get('/schedule/upcoming', async (req, res) => {
           slot2: null
         };
       }
+      if (!row.time_slot) return; // market date with no music_schedule entries
       const slotData = row.performer_name ? {
         name: row.performer_name,
         url: row.performer_url,
