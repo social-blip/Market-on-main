@@ -34,6 +34,7 @@ import TestHome4 from './pages/public/TestHome4';
 import BlogPost from './pages/public/BlogPost';
 import Blog from './pages/public/Blog';
 import ApplyThankYou from './pages/public/ApplyThankYou';
+import Sponsor from './pages/public/Sponsor';
 
 // Auth Pages
 import VendorLogin from './pages/vendor/Login';
@@ -110,6 +111,7 @@ function App() {
         <Route path="contact" element={<Contact />} />
         <Route path="blog" element={<Blog />} />
         <Route path="blog/:slug" element={<BlogPost />} />
+        <Route path="sponsor" element={<Sponsor />} />
       </Route>
 
       {/* Test Pages */}
