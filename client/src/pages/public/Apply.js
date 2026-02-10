@@ -180,7 +180,14 @@ const VendorApplication = () => {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
-      navigate('/apply/thank-you');
+      navigate('/apply/thank-you', { state: {
+        business_name: formData.business_name,
+        booth_size: formData.booth_size,
+        markets_requested: formData.markets_requested,
+        requested_dates: formData.requested_dates,
+        needs_power: formData.needs_power,
+        pricing
+      }});
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to submit application. Please try again.');
       console.error(err);
