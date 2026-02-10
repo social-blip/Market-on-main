@@ -344,7 +344,7 @@ const Sponsor = () => {
           opacity: 0.6,
           margin: '16px 0 0 0'
         }}>
-          info@tfmarketonmain.com &nbsp;|&nbsp; tfmarketonmain.com
+          info@tfmarketonmain.com
         </p>
       </section>
     </div>
