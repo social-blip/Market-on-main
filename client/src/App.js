@@ -35,6 +35,7 @@ import BlogPost from './pages/public/BlogPost';
 import Blog from './pages/public/Blog';
 import ApplyThankYou from './pages/public/ApplyThankYou';
 import Sponsor from './pages/public/Sponsor';
+import SponsorFlyer from './pages/public/SponsorFlyer';
 
 // Auth Pages
 import VendorLogin from './pages/vendor/Login';
@@ -113,6 +114,9 @@ function App() {
         <Route path="blog/:slug" element={<BlogPost />} />
         <Route path="sponsor" element={<Sponsor />} />
       </Route>
+
+      {/* Print Pages */}
+      <Route path="/sponsor/flyer" element={<SponsorFlyer />} />
 
       {/* Test Pages */}
       <Route path="/test-home" element={<TestHome />} />

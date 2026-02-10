@@ -70,7 +70,7 @@ const Sponsor = () => {
               color: 'var(--gray-dark)',
               margin: 0
             }}>
-              100% of sponsorship dollars go directly toward live music at the market. We feature local talent every Saturday — from acoustic soloists to full bands — performing from 9am to 2pm. Your support keeps Main Avenue alive with music all season long.
+              100% of sponsorship dollars go directly toward live music at the market. We feature local talent every Saturday -from acoustic soloists to full bands -performing from 9am to 2pm. Your support keeps Main Avenue alive with music all season long.
             </p>
           </div>
         </div>
@@ -125,7 +125,7 @@ const Sponsor = () => {
 
             <div style={{ marginBottom: '20px' }}>
               <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, margin: '0 0 8px 0', fontSize: '16px' }}>
-                Per Set — $250
+                Per Set -$250
               </p>
               <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', lineHeight: 1.8, margin: 0 }}>
                 Sponsor one music set (morning or afternoon).
@@ -134,7 +134,7 @@ const Sponsor = () => {
 
             <div style={{ marginBottom: '20px' }}>
               <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, margin: '0 0 8px 0', fontSize: '16px' }}>
-                Full Day — $500
+                Full Day -$500
               </p>
               <p style={{ fontFamily: 'var(--font-body)', fontSize: '14px', lineHeight: 1.8, margin: 0 }}>
                 Sponsor both the morning and afternoon sets for a full Saturday.
@@ -147,7 +147,7 @@ const Sponsor = () => {
               marginTop: '16px'
             }}>
               <p style={{ margin: '0 0 8px 0', fontFamily: 'var(--font-body)', fontSize: '14px', opacity: 0.9 }}>
-                20 sets available across 10 Saturdays — first come, first served.
+                20 sets available across 10 Saturdays -first come, first served.
               </p>
               <p style={{ margin: '0 0 8px 0', fontFamily: 'var(--font-body)', fontSize: '14px', opacity: 0.9 }}>
                 Your business name will be announced as that day's music sponsor.
@@ -182,7 +182,7 @@ const Sponsor = () => {
             {[
               {
                 title: 'Website Visibility',
-                desc: 'Your logo and link featured on our sponsor page at tfmarketonmain.com — seen by thousands of visitors planning their Saturday.'
+                desc: 'Your logo and link featured on our sponsor page at tfmarketonmain.com -seen by thousands of visitors planning their Saturday.'
               },
               {
                 title: 'Social Media',
@@ -262,7 +262,7 @@ const Sponsor = () => {
               color: 'var(--gray-dark)',
               margin: 0
             }}>
-              This isn't just advertising — it's a commitment to Downtown Twin Falls. When you sponsor music at the market, you're helping keep Main Avenue alive with energy, culture, and community every Saturday. You're supporting local musicians, local vendors, and the thousands of families who make this market part of their weekend.
+              This isn't just advertising -it's a commitment to Downtown Twin Falls. When you sponsor music at the market, you're helping keep Main Avenue alive with energy, culture, and community every Saturday. You're supporting local musicians, local vendors, and the thousands of families who make this market part of their weekend.
             </p>
           </div>
         </div>
