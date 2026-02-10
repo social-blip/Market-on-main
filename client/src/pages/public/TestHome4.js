@@ -226,8 +226,10 @@ const TestHome4 = () => {
   const scrollToIndex = (index) => {
     setCurrentIndex(index);
     if (scrollRef.current) {
+      const el = scrollRef.current;
+      const isLast = index >= totalDots - 1;
       scrollRef.current.scrollTo({
-        left: index * CARD_WIDTH * 3,
+        left: isLast ? el.scrollWidth - el.clientWidth : index * CARD_WIDTH * 3,
         behavior: 'smooth'
       });
     }
