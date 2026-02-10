@@ -4,6 +4,14 @@ import { useLocation, Link } from 'react-router-dom';
 const ApplyThankYou = () => {
   const { state } = useLocation();
 
+  const info = state || {
+    booth_size: 'single',
+    markets_requested: '10',
+    requested_dates: ['June 6', 'June 13', 'June 20', 'June 27', 'July 4', 'July 11', 'July 18', 'July 25', 'August 1', 'August 8'],
+    needs_power: false,
+    pricing: { subtotal: 500 }
+  };
+
   return (
     <div style={{
       minHeight: '80vh',
@@ -34,58 +42,56 @@ const ApplyThankYou = () => {
           Thank you for applying to Market on Main! Your application is now under review.
         </p>
 
-        {state?.pricing && (
-          <div style={{
-            background: 'white',
-            borderRadius: '12px',
-            padding: '24px',
-            marginBottom: '24px',
-            textAlign: 'left',
-            border: '1px solid var(--gray-medium)'
+        <div style={{
+          background: 'white',
+          borderRadius: '12px',
+          padding: '24px',
+          marginBottom: '24px',
+          textAlign: 'left',
+          border: '1px solid var(--gray-medium)'
+        }}>
+          <h3 style={{
+            fontFamily: 'var(--font-display)',
+            fontWeight: 700,
+            fontSize: '18px',
+            marginBottom: '16px',
+            textTransform: 'uppercase',
+            color: 'var(--dark)'
           }}>
-            <h3 style={{
-              fontFamily: 'var(--font-display)',
-              fontWeight: 700,
-              fontSize: '18px',
-              marginBottom: '16px',
-              textTransform: 'uppercase',
-              color: 'var(--dark)'
+            Your Selection
+          </h3>
+          <div style={{ fontFamily: 'var(--font-body)', fontSize: '15px', lineHeight: 2, color: 'var(--dark)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>Booth Size</span>
+              <strong>{info.booth_size === 'single' ? 'Single (10\'x10\')' : 'Double (20\'x10\')'}</strong>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>Markets</span>
+              <strong>{info.markets_requested} Saturdays</strong>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <span>Dates</span>
+              <strong>{info.requested_dates?.join(', ')}</strong>
+            </div>
+            {info.needs_power && (
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <span>Power</span>
+                <strong>Yes (+$15)</strong>
+              </div>
+            )}
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              borderTop: '1px solid var(--gray-medium)',
+              paddingTop: '12px',
+              marginTop: '8px',
+              fontSize: '18px'
             }}>
-              Your Selection
-            </h3>
-            <div style={{ fontFamily: 'var(--font-body)', fontSize: '15px', lineHeight: 2, color: 'var(--dark)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Booth Size</span>
-                <strong>{state.booth_size === 'single' ? 'Single (10\'x10\')' : 'Double (20\'x10\')'}</strong>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Markets</span>
-                <strong>{state.markets_requested} Saturdays</strong>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Dates</span>
-                <strong>{state.requested_dates?.join(', ')}</strong>
-              </div>
-              {state.needs_power && (
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                  <span>Power</span>
-                  <strong>Yes (+$15)</strong>
-                </div>
-              )}
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                borderTop: '1px solid var(--gray-medium)',
-                paddingTop: '12px',
-                marginTop: '8px',
-                fontSize: '18px'
-              }}>
-                <strong>Estimated Total</strong>
-                <strong style={{ color: 'var(--maroon)' }}>${state.pricing.subtotal.toFixed(2)}</strong>
-              </div>
+              <strong>Estimated Total</strong>
+              <strong style={{ color: 'var(--maroon)' }}>${info.pricing.subtotal.toFixed(2)}</strong>
             </div>
           </div>
-        )}
+        </div>
 
         <p style={{
           fontFamily: 'var(--font-body)',
