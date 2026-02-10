@@ -1036,6 +1036,27 @@
   margin-left: auto;
 }
 
+.vendors-section__view-all {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--black);
+  text-decoration: none;
+  padding: 10px 20px;
+  border: 2px solid var(--black);
+  border-radius: 100px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.vendors-section__view-all:hover {
+  background: var(--black);
+  color: var(--white);
+}
+
+.vendors-section__view-all--mobile {
+  display: none;
+}
+
 .vendors-section__scroll-btn {
   width: 48px;
   height: 48px;
@@ -1678,6 +1699,21 @@
 
   .vendors-section__controls {
     display: none;
+  }
+
+  .vendors-section__view-all--mobile {
+    display: inline-block;
+    margin-top: 12px;
+  }
+
+  .vendors-section__footer {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .vendors-section__dots {
+    position: static;
+    transform: none;
   }
 
   .homepage-vendor-card {

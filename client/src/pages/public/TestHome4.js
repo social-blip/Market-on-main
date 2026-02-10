@@ -536,7 +536,9 @@ const TestHome4 = () => {
                       />
                     ))}
                   </div>
+                  <Link to="/vendors" className="vendors-section__view-all vendors-section__view-all--mobile">View All Vendors →</Link>
                   <div className="vendors-section__controls">
+                    <Link to="/vendors" className="vendors-section__view-all vendors-section__view-all--desktop">View All Vendors →</Link>
                     <button
                       className={`vendors-section__scroll-btn ${currentIndex === 0 ? 'vendors-section__scroll-btn--disabled' : ''}`}
                       onClick={goToPrev}
