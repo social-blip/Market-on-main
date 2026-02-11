@@ -429,12 +429,13 @@ const VendorApplication = () => {
                 </div>
 
                 <div>
-                  <label style={labelStyle}>Booth Description *</label>
+                  <label style={labelStyle}>Business Description *</label>
+                  <p style={{ fontSize: '13px', color: 'var(--gray-dark)', margin: '0 0 8px 0' }}>This will appear on your vendor profile page if your application is approved.</p>
                   <textarea
                     name="description"
                     value={formData.description}
                     onChange={handleChange}
-                    placeholder="Describe your booth display, your handmade products, and also tell us what you would add as a vendor to the Market on Main."
+                    placeholder="Describe your business and what you sell. If approved, this will be your public profile description on the Market on Main website."
                     style={{ ...inputStyle, minHeight: '120px', resize: 'vertical' }}
                     required
                   />
