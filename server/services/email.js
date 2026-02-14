@@ -637,6 +637,53 @@ const sendDateRequestApproval = async (vendor, approvedDates = [], deniedDates =
   }
 };
 
+// Add vendor to Vendors segment in Resend (and remove from General)
+const VENDORS_SEGMENT_ID = '7499939d-defe-476f-b18b-50ea68de1d4f';
+const GENERAL_SEGMENT_ID = '255a9019-04ae-440c-9a7e-fd727d40c5ab';
+
+const addVendorToResendSegment = async (vendor) => {
+  if (!apiKey || apiKey.startsWith('re_placeholder')) {
+    console.log('[DEV] Would add vendor to Resend segment:', vendor.email);
+    return;
+  }
+
+  const nameParts = (vendor.contact_name || '').trim().split(' ');
+  const firstName = nameParts[0] || '';
+  const lastName = nameParts.slice(1).join(' ') || '';
+
+  try {
+    // Create or update contact
+    await fetch('https://api.resend.com/contacts', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + apiKey, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: vendor.email, first_name: firstName, last_name: lastName })
+    });
+
+    // Update name in case contact already existed
+    await fetch('https://api.resend.com/contacts/' + encodeURIComponent(vendor.email), {
+      method: 'PATCH',
+      headers: { 'Authorization': 'Bearer ' + apiKey, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ first_name: firstName, last_name: lastName })
+    });
+
+    // Add to Vendors segment
+    await fetch('https://api.resend.com/contacts/' + encodeURIComponent(vendor.email) + '/segments/' + VENDORS_SEGMENT_ID, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + apiKey, 'Content-Type': 'application/json' }
+    });
+
+    // Remove from General segment (ignore errors if not in it)
+    await fetch('https://api.resend.com/contacts/' + encodeURIComponent(vendor.email) + '/segments/' + GENERAL_SEGMENT_ID, {
+      method: 'DELETE',
+      headers: { 'Authorization': 'Bearer ' + apiKey }
+    });
+
+    console.log('Resend: Added', vendor.email, 'to Vendors segment');
+  } catch (err) {
+    console.error('Resend segment error for', vendor.email, ':', err.message);
+  }
+};
+
 module.exports = {
   sendWelcomeEmail,
   sendPasswordResetEmail,
@@ -647,5 +694,6 @@ module.exports = {
   sendMusicApplicationConfirmation,
   sendContactFormNotification,
   sendDateRequestNotification,
-  sendDateRequestApproval
+  sendDateRequestApproval,
+  addVendorToResendSegment
 };

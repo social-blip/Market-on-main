@@ -55,7 +55,7 @@ const AdminVendorDetail = () => {
   const [appEditData, setAppEditData] = useState({});
   const [shoutouts, setShoutouts] = useState([]);
   const [showShoutoutForm, setShowShoutoutForm] = useState(false);
-  const [shoutoutForm, setShoutoutForm] = useState({ platform: 'Instagram', posted_at: new Date().toISOString().split('T')[0], notes: '' });
+  const [shoutoutForm, setShoutoutForm] = useState({ platform: 'Social', posted_at: new Date().toISOString().split('T')[0], notes: '' });
 
   useEffect(() => {
     fetchVendor();
@@ -101,7 +101,7 @@ const AdminVendorDetail = () => {
         notes: shoutoutForm.notes || null
       });
       setShowShoutoutForm(false);
-      setShoutoutForm({ platform: 'Instagram', posted_at: new Date().toISOString().split('T')[0], notes: '' });
+      setShoutoutForm({ platform: 'Social', posted_at: new Date().toISOString().split('T')[0], notes: '' });
       fetchShoutouts();
     } catch (err) {
       setMessage({ type: 'error', text: 'Failed to add shoutout.' });
@@ -1099,9 +1099,9 @@ const AdminVendorDetail = () => {
                 className="form-control"
                 style={{ fontSize: '13px', padding: '6px 10px' }}
               >
-                <option value="Instagram">Instagram</option>
-                <option value="Facebook">Facebook</option>
-                <option value="TikTok">TikTok</option>
+                <option value="Social">Social</option>
+                <option value="Email">Email</option>
+                <option value="Other">Other</option>
               </select>
             </div>
             <div>

@@ -210,6 +210,9 @@ router.post('/vendors/:id/approve', verifyToken, isAdmin, async (req, res) => {
     // Send welcome email with password setup link
     await emailService.sendWelcomeEmail(vendor);
 
+    // Add to Vendors segment in Resend (remove from General)
+    await emailService.addVendorToResendSegment(vendor);
+
     res.json({
       message: 'Vendor approved successfully',
       vendor: { ...vendor, is_active: true, is_approved: true, application_status: 'approved' },
