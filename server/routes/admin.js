@@ -406,6 +406,56 @@ router.delete('/payments/:id', verifyToken, isAdmin, async (req, res) => {
   }
 });
 
+// Get all vendor shoutouts
+router.get('/vendor-shoutouts', verifyToken, isAdmin, async (req, res) => {
+  try {
+    const result = await db.query(
+      `SELECT vs.*, v.business_name
+       FROM vendor_shoutouts vs
+       JOIN vendors v ON vs.vendor_id = v.id
+       ORDER BY vs.posted_at DESC, vs.created_at DESC`
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Create a vendor shoutout
+router.post('/vendor-shoutouts', verifyToken, isAdmin, async (req, res) => {
+  const { vendor_id, platform, posted_at, notes } = req.body;
+  try {
+    const result = await db.query(
+      `INSERT INTO vendor_shoutouts (vendor_id, platform, posted_at, notes)
+       VALUES ($1, $2, $3, $4)
+       RETURNING *`,
+      [vendor_id, platform, posted_at || new Date(), notes || null]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// Delete a vendor shoutout
+router.delete('/vendor-shoutouts/:id', verifyToken, isAdmin, async (req, res) => {
+  try {
+    const result = await db.query(
+      'DELETE FROM vendor_shoutouts WHERE id = $1 RETURNING *',
+      [req.params.id]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Shoutout not found' });
+    }
+    res.json({ message: 'Shoutout deleted' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 // Create initial admin (one-time setup)
 router.post('/setup', async (req, res) => {
   const { email, password, name, setupKey } = req.body;

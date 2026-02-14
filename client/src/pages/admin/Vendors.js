@@ -4,6 +4,7 @@ import api from '../../api/client';
 
 const AdminVendors = () => {
   const [vendors, setVendors] = useState([]);
+  const [shoutouts, setShoutouts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -14,13 +15,23 @@ const AdminVendors = () => {
 
   const fetchVendors = async () => {
     try {
-      const response = await api.get('/admin/vendors');
-      setVendors(response.data);
+      const [vendorsRes, shoutoutsRes] = await Promise.all([
+        api.get('/admin/vendors'),
+        api.get('/admin/vendor-shoutouts')
+      ]);
+      setVendors(vendorsRes.data);
+      setShoutouts(shoutoutsRes.data);
     } catch (err) {
       console.error('Error fetching vendors:', err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const getLastShoutout = (vendorId) => {
+    const s = shoutouts.find(s => s.vendor_id === vendorId);
+    if (!s) return null;
+    return s;
   };
 
   const filteredVendors = vendors.filter(v => {
@@ -96,6 +107,7 @@ const AdminVendors = () => {
               <th>Contact</th>
               <th>Booth</th>
               <th>Markets</th>
+              <th>Last Shoutout</th>
               <th>Status</th>
               <th></th>
             </tr>
@@ -103,7 +115,7 @@ const AdminVendors = () => {
           <tbody>
             {filteredVendors.length === 0 ? (
               <tr>
-                <td colSpan="6" className="text-center" style={{ padding: '40px', color: 'var(--gray)' }}>
+                <td colSpan="7" className="text-center" style={{ padding: '40px', color: 'var(--gray)' }}>
                   No vendors found.
                 </td>
               </tr>
@@ -123,6 +135,18 @@ const AdminVendors = () => {
                     {vendor.needs_power && <span title="Needs Power"> ⚡</span>}
                   </td>
                   <td style={{ fontWeight: 600 }}>{vendor.booking_count || 0}</td>
+                  <td style={{ fontSize: '13px' }}>
+                    {(() => {
+                      const last = getLastShoutout(vendor.id);
+                      if (!last) return <span style={{ color: 'var(--gray)' }}>Never</span>;
+                      return (
+                        <span style={{ color: 'var(--gray-dark)' }}>
+                          {new Date(last.posted_at).toLocaleDateString('en-US', { timeZone: 'UTC' })}
+                          <span style={{ marginLeft: '6px', fontSize: '11px', color: 'var(--gray)' }}>{last.platform}</span>
+                        </span>
+                      );
+                    })()}
+                  </td>
                   <td>
                     {vendor.application_status === 'pending' || (!vendor.is_active && !vendor.is_approved) ? (
                       <span className="badge badge-warning">Pending</span>

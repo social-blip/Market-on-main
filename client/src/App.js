@@ -62,6 +62,7 @@ import MusicScheduleBuilder from './pages/admin/MusicScheduleBuilder';
 import AdminBlog from './pages/admin/Blog';
 import AdminBlogEditor from './pages/admin/BlogEditor';
 import AdminContactSubmissions from './pages/admin/ContactSubmissions';
+import VendorShoutouts from './pages/admin/VendorShoutouts';
 
 // Protected Route Components
 const VendorRoute = ({ children }) => {
@@ -163,6 +164,7 @@ function App() {
         <Route path="blog" element={<AdminBlog />} />
         <Route path="blog/new" element={<AdminBlogEditor />} />
         <Route path="blog/:id/edit" element={<AdminBlogEditor />} />
+        <Route path="shoutouts" element={<VendorShoutouts />} />
         <Route path="contact-submissions" element={<AdminContactSubmissions />} />
       </Route>
 

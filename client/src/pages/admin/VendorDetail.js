@@ -53,10 +53,14 @@ const AdminVendorDetail = () => {
   const [editData, setEditData] = useState({});
   const [editingApp, setEditingApp] = useState(false);
   const [appEditData, setAppEditData] = useState({});
+  const [shoutouts, setShoutouts] = useState([]);
+  const [showShoutoutForm, setShowShoutoutForm] = useState(false);
+  const [shoutoutForm, setShoutoutForm] = useState({ platform: 'Instagram', posted_at: new Date().toISOString().split('T')[0], notes: '' });
 
   useEffect(() => {
     fetchVendor();
     fetchAllDates();
+    fetchShoutouts();
   }, [id]);
 
   const fetchVendor = async () => {
@@ -76,6 +80,40 @@ const AdminVendorDetail = () => {
       setAllDates(response.data);
     } catch (err) {
       console.error('Error fetching dates:', err);
+    }
+  };
+
+  const fetchShoutouts = async () => {
+    try {
+      const response = await api.get('/admin/vendor-shoutouts');
+      setShoutouts(response.data.filter(s => s.vendor_id === parseInt(id)));
+    } catch (err) {
+      console.error('Error fetching shoutouts:', err);
+    }
+  };
+
+  const addShoutout = async () => {
+    try {
+      await api.post('/admin/vendor-shoutouts', {
+        vendor_id: parseInt(id),
+        platform: shoutoutForm.platform,
+        posted_at: shoutoutForm.posted_at,
+        notes: shoutoutForm.notes || null
+      });
+      setShowShoutoutForm(false);
+      setShoutoutForm({ platform: 'Instagram', posted_at: new Date().toISOString().split('T')[0], notes: '' });
+      fetchShoutouts();
+    } catch (err) {
+      setMessage({ type: 'error', text: 'Failed to add shoutout.' });
+    }
+  };
+
+  const deleteShoutout = async (shoutoutId) => {
+    try {
+      await api.delete(`/admin/vendor-shoutouts/${shoutoutId}`);
+      setShoutouts(shoutouts.filter(s => s.id !== shoutoutId));
+    } catch (err) {
+      setMessage({ type: 'error', text: 'Failed to delete shoutout.' });
     }
   };
 
@@ -1026,6 +1064,96 @@ const AdminVendorDetail = () => {
                     )}
                     <button
                       onClick={() => deletePayment(payment.id)}
+                      style={{ background: 'none', border: 'none', color: '#dc3545', cursor: 'pointer', fontSize: '13px' }}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+
+      {/* Shoutouts */}
+      <div className="card mt-3">
+        <div className="flex-between" style={{ marginBottom: '16px' }}>
+          <h3 style={{ margin: 0 }}>Shoutouts</h3>
+          <button
+            className="btn btn-primary"
+            style={{ fontSize: '13px', padding: '6px 14px' }}
+            onClick={() => setShowShoutoutForm(!showShoutoutForm)}
+          >
+            {showShoutoutForm ? 'Cancel' : '+ Add Shoutout'}
+          </button>
+        </div>
+
+        {showShoutoutForm && (
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-end', flexWrap: 'wrap', marginBottom: '16px', padding: '12px', background: '#f9f9f9', borderRadius: '6px' }}>
+            <div>
+              <label style={{ fontSize: '12px', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Platform</label>
+              <select
+                value={shoutoutForm.platform}
+                onChange={e => setShoutoutForm({ ...shoutoutForm, platform: e.target.value })}
+                className="form-control"
+                style={{ fontSize: '13px', padding: '6px 10px' }}
+              >
+                <option value="Instagram">Instagram</option>
+                <option value="Facebook">Facebook</option>
+                <option value="TikTok">TikTok</option>
+              </select>
+            </div>
+            <div>
+              <label style={{ fontSize: '12px', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Date</label>
+              <input
+                type="date"
+                value={shoutoutForm.posted_at}
+                onChange={e => setShoutoutForm({ ...shoutoutForm, posted_at: e.target.value })}
+                className="form-control"
+                style={{ fontSize: '13px', padding: '6px 10px' }}
+              />
+            </div>
+            <div style={{ flex: 1, minWidth: '150px' }}>
+              <label style={{ fontSize: '12px', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Notes (optional)</label>
+              <input
+                type="text"
+                value={shoutoutForm.notes}
+                onChange={e => setShoutoutForm({ ...shoutoutForm, notes: e.target.value })}
+                placeholder="e.g. Reel, Story, Collab post..."
+                className="form-control"
+                style={{ fontSize: '13px', padding: '6px 10px' }}
+              />
+            </div>
+            <button onClick={addShoutout} className="btn btn-primary" style={{ fontSize: '13px', padding: '6px 14px' }}>
+              Save
+            </button>
+          </div>
+        )}
+
+        {shoutouts.length === 0 ? (
+          <p style={{ color: '#666' }}>No shoutouts recorded.</p>
+        ) : (
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Platform</th>
+                <th>Notes</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {shoutouts.map(s => (
+                <tr key={s.id}>
+                  <td style={{ fontSize: '13px' }}>
+                    {new Date(s.posted_at).toLocaleDateString('en-US', { timeZone: 'UTC' })}
+                  </td>
+                  <td><span className="badge">{s.platform}</span></td>
+                  <td style={{ fontSize: '13px', color: '#666' }}>{s.notes || '--'}</td>
+                  <td>
+                    <button
+                      onClick={() => deleteShoutout(s.id)}
                       style={{ background: 'none', border: 'none', color: '#dc3545', cursor: 'pointer', fontSize: '13px' }}
                     >
                       Delete

@@ -21,6 +21,7 @@ const AdminLayout = () => {
     { to: '/admin/music-applications', label: 'Musicians' },
     { to: '/admin/music-schedule', label: 'Music Schedule' },
     { to: '/admin/blog', label: 'Blog' },
+    { to: '/admin/shoutouts', label: 'Shoutouts' },
     { to: '/admin/contact-submissions', label: 'Contact' },
   ];
 
