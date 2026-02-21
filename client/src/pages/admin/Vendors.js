@@ -107,6 +107,7 @@ const AdminVendors = () => {
               <th>Contact</th>
               <th>Booth</th>
               <th>Markets</th>
+              <th>Referred By</th>
               <th>Last Shoutout</th>
               <th>Status</th>
               <th></th>
@@ -115,7 +116,7 @@ const AdminVendors = () => {
           <tbody>
             {filteredVendors.length === 0 ? (
               <tr>
-                <td colSpan="7" className="text-center" style={{ padding: '40px', color: 'var(--gray)' }}>
+                <td colSpan="8" className="text-center" style={{ padding: '40px', color: 'var(--gray)' }}>
                   No vendors found.
                 </td>
               </tr>
@@ -135,6 +136,7 @@ const AdminVendors = () => {
                     {vendor.needs_power && <span title="Needs Power"> ⚡</span>}
                   </td>
                   <td style={{ fontWeight: 600 }}>{vendor.booking_count || 0}</td>
+                  <td style={{ fontSize: '13px', color: 'var(--gray-dark)' }}>{vendor.referring_vendor || ''}</td>
                   <td style={{ fontSize: '13px' }}>
                     {(() => {
                       const last = getLastShoutout(vendor.id);

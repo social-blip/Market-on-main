@@ -666,6 +666,13 @@ const AdminVendorDetail = () => {
                 </p>
               </div>
 
+              {vendor.referring_vendor && (
+                <div style={{ marginBottom: '12px' }}>
+                  <strong>Referred by</strong>
+                  <p style={{ color: '#666' }}>{vendor.referring_vendor}</p>
+                </div>
+              )}
+
               {vendor.description && (
                 <div>
                   <strong>Description</strong>

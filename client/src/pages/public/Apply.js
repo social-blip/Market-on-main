@@ -33,6 +33,7 @@ const VendorApplication = () => {
     instagram: '',
     x_handle: '',
     description: '',
+    referring_vendor: '',
     booth_size: '',
     markets_requested: '',
     requested_dates: [],
@@ -426,6 +427,18 @@ const VendorApplication = () => {
                   }}>
                     Upload up to 5 images (max 10MB each)
                   </small>
+                </div>
+
+                <div>
+                  <label style={labelStyle}>Referred by</label>
+                  <input
+                    type="text"
+                    name="referring_vendor"
+                    value={formData.referring_vendor}
+                    onChange={handleChange}
+                    placeholder="Name of vendor or person who referred you"
+                    style={inputStyle}
+                  />
                 </div>
 
                 <div>

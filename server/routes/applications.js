@@ -99,7 +99,8 @@ router.post('/submit',
       alternate_dates,
       needs_power,
       is_nonprofit,
-      agreements
+      agreements,
+      referring_vendor
     } = req.body;
 
     try {
@@ -137,8 +138,8 @@ router.post('/submit',
           description, booth_size, markets_requested, requested_dates, alternate_dates,
           needs_power, is_nonprofit,
           base_amount, power_fee, total_amount,
-          agreements, images, application_status, is_active, is_approved
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21)
+          agreements, images, application_status, is_active, is_approved, referring_vendor
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22)
         RETURNING id, business_name, email, total_amount, application_status`,
         [
           contact_name,
@@ -161,7 +162,8 @@ router.post('/submit',
           imageUrls,
           'pending',
           false,
-          false
+          false,
+          referring_vendor || null
         ]
       );
 
