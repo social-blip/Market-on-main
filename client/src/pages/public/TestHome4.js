@@ -338,6 +338,7 @@ const TestHome4 = () => {
     { name: 'IT 83 Fitness', url: 'https://it83fitness.com/', image: '/images/sponsors/it83-fitness.webp' },
     { name: "Tommy's Express Car Wash", url: 'https://tommys-express.com/locations/id53/', image: '/images/sponsors/tommys-express.svg' },
     { name: 'Majestic Aesthetics & Wellness', url: 'https://www.majesticaestheticswellness.com/', image: '/images/sponsors/majestic-aesthetics.png' },
+    { name: 'PSI Environmental', url: 'https://www.psitwinfalls.com/', image: '/images/psi/psi-logo.png' },
   ];
 
   return (
@@ -560,6 +561,35 @@ const TestHome4 = () => {
               {/* Right Column - Image */}
               <div className="vendors-section__right">
                 <img src="/images/peace.png" className="vendors-section__decor" alt="" loading="lazy" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Facilities Sponsor Section */}
+        <section className="facilities-sponsor">
+          <div className="container">
+            <div className="facilities-sponsor__inner">
+              <div className="facilities-sponsor__content">
+                <span className="facilities-sponsor__label">Facilities Sponsor</span>
+                <h2 className="facilities-sponsor__title">PSI Environmental</h2>
+                <p className="facilities-sponsor__text">
+                  A clean, comfortable market starts behind the scenes — and that's where PSI Environmental of Twin Falls comes in. Every Saturday, PSI provides the portable restrooms and trash service that keep our market running smoothly for thousands of visitors. We're grateful to have a local partner who cares about this community as much as we do.
+                </p>
+                <p className="facilities-sponsor__text">
+                  PSI Environmental serves residential and commercial customers across southern Idaho with trash collection, bulk waste pickup, recycling services, and porta potty rentals. They're a Twin Falls company through and through.
+                </p>
+                <a
+                  href="https://www.psitwinfalls.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="facilities-sponsor__link"
+                >
+                  Visit PSI Environmental →
+                </a>
+              </div>
+              <div className="facilities-sponsor__photo">
+                <img src="/images/psi/psi-bins.jpg" alt="PSI Environmental waste bins" loading="lazy" />
               </div>
             </div>
           </div>
