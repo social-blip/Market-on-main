@@ -9,10 +9,38 @@ const SetupPassword = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [expired, setExpired] = useState(false);
+  const [resent, setResent] = useState(false);
+  const [resending, setResending] = useState(false);
   const navigate = useNavigate();
 
   const token = searchParams.get('token');
   const email = searchParams.get('email');
+
+  // Check if token is expired on mount (decode without verifying)
+  useState(() => {
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload.exp && payload.exp * 1000 < Date.now()) {
+          setExpired(true);
+        }
+      } catch (e) {
+        // malformed token, let the form submit handle it
+      }
+    }
+  });
+
+  const handleResend = async () => {
+    setResending(true);
+    try {
+      await api.post('/auth/vendor/forgot-password', { email });
+      setResent(true);
+    } catch (err) {
+      setError('Something went wrong. Please try again.');
+    } finally {
+      setResending(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,15 +68,7 @@ const SetupPassword = () => {
       localStorage.setItem('token', response.data.token);
       navigate('/vendor/dashboard');
     } catch (err) {
-      const data = err.response?.data;
-      if (data?.error === 'expired') {
-        setError(data.message);
-      } else {
-        setError(data?.error || 'Failed to set up password.');
-      }
-      if (err.response?.status === 400) {
-        setExpired(true);
-      }
+      setError(err.response?.data?.error || 'Failed to set up password.');
     } finally {
       setLoading(false);
     }
@@ -97,40 +117,64 @@ const SetupPassword = () => {
           <div className="alert alert-error">{error}</div>
         )}
 
-        {!expired && <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={8}
-              placeholder="At least 8 characters"
-            />
+        {expired ? (
+          <div style={{ textAlign: 'center' }}>
+            {resent ? (
+              <p style={{ color: '#16a34a', fontWeight: 600 }}>
+                A new link has been sent to {email}. Check your inbox!
+              </p>
+            ) : (
+              <>
+                <p style={{ color: '#666', marginBottom: '20px' }}>
+                  This link has expired.
+                </p>
+                <button
+                  className="btn btn-primary"
+                  style={{ width: '100%', padding: '12px' }}
+                  onClick={handleResend}
+                  disabled={resending}
+                >
+                  {resending ? 'Sending...' : 'Send Me a New Link'}
+                </button>
+              </>
+            )}
           </div>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label htmlFor="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={8}
+                placeholder="At least 8 characters"
+              />
+            </div>
 
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-          </div>
+            <div className="form-group">
+              <label htmlFor="confirmPassword">Confirm Password</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
+            </div>
 
-          <button
-            type="submit"
-            className="btn btn-primary"
-            style={{ width: '100%', padding: '12px' }}
-            disabled={loading}
-          >
-            {loading ? <span className="spinner"></span> : 'Create Account'}
-          </button>
-        </form>}
+            <button
+              type="submit"
+              className="btn btn-primary"
+              style={{ width: '100%', padding: '12px' }}
+              disabled={loading}
+            >
+              {loading ? <span className="spinner"></span> : 'Create Account'}
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );

@@ -194,18 +194,11 @@ router.post('/vendor/setup-password', [
       }
     });
   } catch (err) {
-    if (err.name === 'TokenExpiredError' || err.name === 'JsonWebTokenError') {
-      // Auto-send a new reset email using the email from the request
-      try {
-        const vendor = (await db.query('SELECT id, email, contact_name, business_name FROM vendors WHERE email = $1', [email])).rows[0];
-        if (vendor) {
-          await require('../services/email').sendPasswordResetEmail(vendor);
-          return res.status(400).json({ error: 'expired', message: 'This link has expired. We just sent a new one to your email.' });
-        }
-      } catch (resendErr) {
-        console.error('Failed to auto-resend reset email:', resendErr);
-      }
-      return res.status(400).json({ error: 'This link is invalid. Please request a new one from the login page.' });
+    if (err.name === 'TokenExpiredError') {
+      return res.status(400).json({ error: 'This link has expired.' });
+    }
+    if (err.name === 'JsonWebTokenError') {
+      return res.status(400).json({ error: 'Invalid link.' });
     }
     console.error(err);
     res.status(500).json({ error: 'Server error' });
