@@ -194,6 +194,12 @@ router.post('/vendor/setup-password', [
       }
     });
   } catch (err) {
+    if (err.name === 'TokenExpiredError') {
+      return res.status(400).json({ error: 'This link has expired. Please request a new one from the login page.' });
+    }
+    if (err.name === 'JsonWebTokenError') {
+      return res.status(400).json({ error: 'Invalid or expired token' });
+    }
     console.error(err);
     res.status(500).json({ error: 'Server error' });
   }

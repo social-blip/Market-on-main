@@ -8,6 +8,7 @@ const SetupPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [expired, setExpired] = useState(false);
   const navigate = useNavigate();
 
   const token = searchParams.get('token');
@@ -39,7 +40,11 @@ const SetupPassword = () => {
       localStorage.setItem('token', response.data.token);
       navigate('/vendor/dashboard');
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to set up password. The link may have expired.');
+      const message = err.response?.data?.error || 'Failed to set up password. The link may have expired.';
+      setError(message);
+      if (err.response?.status === 400) {
+        setExpired(true);
+      }
     } finally {
       setLoading(false);
     }
@@ -88,7 +93,15 @@ const SetupPassword = () => {
           <div className="alert alert-error">{error}</div>
         )}
 
-        <form onSubmit={handleSubmit}>
+        {expired && (
+          <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+            <Link to="/vendor/login" className="btn btn-primary">
+              Request a New Link
+            </Link>
+          </div>
+        )}
+
+        {!expired && <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="password">Password</label>
             <input
@@ -121,7 +134,7 @@ const SetupPassword = () => {
           >
             {loading ? <span className="spinner"></span> : 'Create Account'}
           </button>
-        </form>
+        </form>}
       </div>
     </div>
   );
