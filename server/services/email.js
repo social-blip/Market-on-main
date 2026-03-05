@@ -36,11 +36,10 @@ const sendWelcomeEmail = async (vendor) => {
 
   const jwt = require('jsonwebtoken');
 
-  // Generate setup token
+  // Generate setup token (no expiration — vendors should always be able to set up)
   const setupToken = jwt.sign(
     { email: vendor.email, purpose: 'setup' },
-    process.env.JWT_SECRET,
-    { expiresIn: '7d' }
+    process.env.JWT_SECRET
   );
 
   const setupUrl = `${process.env.FRONTEND_URL}/setup-password?token=${setupToken}&email=${encodeURIComponent(vendor.email)}`;
@@ -86,7 +85,7 @@ const sendWelcomeEmail = async (vendor) => {
 
           <hr style="margin-top: 30px; border: none; border-top: 1px solid #eee;">
           <p style="color: #999; font-size: 12px;">
-            This link expires in 7 days. If you didn't apply to Market on Main, please ignore this email.
+            If you didn't apply to Market on Main, please ignore this email.
           </p>
         </div>
       `
@@ -458,8 +457,7 @@ const sendPasswordResetEmail = async (vendor) => {
 
   const resetToken = jwt.sign(
     { email: vendor.email, purpose: 'reset' },
-    process.env.JWT_SECRET,
-    { expiresIn: '1h' }
+    process.env.JWT_SECRET
   );
 
   const resetUrl = `${process.env.FRONTEND_URL}/setup-password?token=${resetToken}&email=${encodeURIComponent(vendor.email)}`;
@@ -485,7 +483,7 @@ const sendPasswordResetEmail = async (vendor) => {
             </a>
           </p>
 
-          <p>This link expires in 1 hour. If you didn't request a password reset, you can safely ignore this email.</p>
+          <p>If you didn't request a password reset, you can safely ignore this email.</p>
 
           <p><strong>MoM Crew</strong></p>
 
@@ -652,33 +650,39 @@ const addVendorToResendSegment = async (vendor) => {
   const lastName = nameParts.slice(1).join(' ') || '';
 
   try {
-    // Create or update contact
-    await fetch('https://api.resend.com/contacts', {
+    // Add contact to Vendors audience
+    const addResult = await fetch(`https://api.resend.com/audiences/${VENDORS_SEGMENT_ID}/contacts`, {
       method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + apiKey, 'Content-Type': 'application/json' },
+      headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: vendor.email, first_name: firstName, last_name: lastName })
     });
+    const addData = await addResult.json();
 
-    // Update name in case contact already existed
-    await fetch('https://api.resend.com/contacts/' + encodeURIComponent(vendor.email), {
-      method: 'PATCH',
-      headers: { 'Authorization': 'Bearer ' + apiKey, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ first_name: firstName, last_name: lastName })
-    });
+    if (addData.statusCode && addData.statusCode >= 400) {
+      console.error('Resend: Failed to add', vendor.email, 'to Vendors audience:', addData.message);
+      return;
+    }
 
-    // Add to Vendors segment
-    await fetch('https://api.resend.com/contacts/' + encodeURIComponent(vendor.email) + '/segments/' + VENDORS_SEGMENT_ID, {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + apiKey, 'Content-Type': 'application/json' }
-    });
+    // Remove from General audience (ignore errors if not in it)
+    try {
+      // Find contact in General audience first
+      const listResult = await fetch(`https://api.resend.com/audiences/${GENERAL_SEGMENT_ID}/contacts`, {
+        headers: { 'Authorization': `Bearer ${apiKey}` }
+      });
+      const listData = await listResult.json();
+      const contact = listData.data && listData.data.find(c => c.email === vendor.email);
+      if (contact) {
+        await fetch(`https://api.resend.com/audiences/${GENERAL_SEGMENT_ID}/contacts/${contact.id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${apiKey}` }
+        });
+        console.log('Resend: Removed', vendor.email, 'from General audience');
+      }
+    } catch (removeErr) {
+      // Not critical if removal from General fails
+    }
 
-    // Remove from General segment (ignore errors if not in it)
-    await fetch('https://api.resend.com/contacts/' + encodeURIComponent(vendor.email) + '/segments/' + GENERAL_SEGMENT_ID, {
-      method: 'DELETE',
-      headers: { 'Authorization': 'Bearer ' + apiKey }
-    });
-
-    console.log('Resend: Added', vendor.email, 'to Vendors segment');
+    console.log('Resend: Added', vendor.email, 'to Vendors audience');
   } catch (err) {
     console.error('Resend segment error for', vendor.email, ':', err.message);
   }

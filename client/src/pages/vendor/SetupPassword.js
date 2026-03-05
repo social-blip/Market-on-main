@@ -40,8 +40,12 @@ const SetupPassword = () => {
       localStorage.setItem('token', response.data.token);
       navigate('/vendor/dashboard');
     } catch (err) {
-      const message = err.response?.data?.error || 'Failed to set up password. The link may have expired.';
-      setError(message);
+      const data = err.response?.data;
+      if (data?.error === 'expired') {
+        setError(data.message);
+      } else {
+        setError(data?.error || 'Failed to set up password.');
+      }
       if (err.response?.status === 400) {
         setExpired(true);
       }
@@ -91,14 +95,6 @@ const SetupPassword = () => {
 
         {error && (
           <div className="alert alert-error">{error}</div>
-        )}
-
-        {expired && (
-          <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-            <Link to="/vendor/login" className="btn btn-primary">
-              Request a New Link
-            </Link>
-          </div>
         )}
 
         {!expired && <form onSubmit={handleSubmit}>
