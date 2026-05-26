@@ -5,7 +5,7 @@ const VendorDocuments = () => {
     {
       title: 'Market on Main Vendor Agreement',
       description: 'Official 2026 vendor agreement. Please review and keep for your records.',
-      url: '/uploads/documents/MOM-Vendor-Agreement.pdf',
+      url: '/uploads/documents/MOM-Vendor-Agreement.pdf?v=2',
       filename: 'MOM-Vendor-Agreement.pdf'
     }
   ];
