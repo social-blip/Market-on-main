@@ -13,9 +13,11 @@ client/build/
 server/uploads/vendors/*
 server/uploads/applications/*
 server/uploads/maps/*
+server/uploads/documents/*
 !server/uploads/vendors/.gitkeep
 !server/uploads/applications/.gitkeep
 !server/uploads/maps/.gitkeep
+!server/uploads/documents/.gitkeep
 
 # Logs
 *.log

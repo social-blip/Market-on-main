@@ -83,6 +83,12 @@ const VendorLayout = () => {
             >
               Profile
             </NavLink>
+            <NavLink
+              to="/vendor/documents"
+              className={({ isActive }) => `vendor-nav__link ${isActive ? 'vendor-nav__link--active' : ''}`}
+            >
+              Documents
+            </NavLink>
           </div>
 
           <div className="vendor-nav__user">
@@ -137,6 +143,13 @@ const VendorLayout = () => {
           onClick={() => setMenuOpen(false)}
         >
           Profile
+        </NavLink>
+        <NavLink
+          to="/vendor/documents"
+          className={({ isActive }) => `vendor-mobile-menu__link ${isActive ? 'vendor-mobile-menu__link--active' : ''}`}
+          onClick={() => setMenuOpen(false)}
+        >
+          Documents
         </NavLink>
         <button
           className="vendor-mobile-menu__logout"

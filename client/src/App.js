@@ -47,6 +47,7 @@ import VendorDashboard from './pages/vendor/Dashboard';
 import VendorSchedule from './pages/vendor/Schedule';
 import VendorPayments from './pages/vendor/Payments';
 import VendorProfile from './pages/vendor/Profile';
+import VendorDocuments from './pages/vendor/Documents';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/Dashboard';
@@ -141,6 +142,7 @@ function App() {
         <Route path="schedule" element={<VendorSchedule />} />
         <Route path="payments" element={<VendorPayments />} />
         <Route path="profile" element={<VendorProfile />} />
+        <Route path="documents" element={<VendorDocuments />} />
       </Route>
 
       {/* Admin Routes */}
