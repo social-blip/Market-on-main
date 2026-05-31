@@ -66,9 +66,17 @@ router.get('/builder/:date_id', verifyToken, isAdmin, async (req, res) => {
     // Get assigned vendors (have booth_location)
     const assignedResult = await db.query(
       `SELECT vb.id as booking_id, vb.booth_location, vb.status,
-              v.id as vendor_id, v.business_name, v.booth_size
+              v.id as vendor_id, v.business_name, v.booth_size,
+              COALESCE(p.outstanding, 0) AS outstanding_amount,
+              CASE WHEN COALESCE(p.outstanding, 0) = 0 THEN true ELSE false END AS is_paid
        FROM vendor_bookings vb
        JOIN vendors v ON vb.vendor_id = v.id
+       LEFT JOIN (
+         SELECT vendor_id, SUM(amount) AS outstanding
+         FROM payments
+         WHERE status != 'paid'
+         GROUP BY vendor_id
+       ) p ON p.vendor_id = v.id
        WHERE vb.market_date_id = $1
          AND vb.booth_location IS NOT NULL
          AND vb.booth_location != ''
@@ -80,14 +88,22 @@ router.get('/builder/:date_id', verifyToken, isAdmin, async (req, res) => {
     // Get unassigned vendors (confirmed booking, no booth_location)
     const unassignedResult = await db.query(
       `SELECT vb.id as booking_id, vb.status,
-              v.id as vendor_id, v.business_name, v.booth_size
+              v.id as vendor_id, v.business_name, v.booth_size,
+              COALESCE(p.outstanding, 0) AS outstanding_amount,
+              CASE WHEN COALESCE(p.outstanding, 0) = 0 THEN true ELSE false END AS is_paid
        FROM vendor_bookings vb
        JOIN vendors v ON vb.vendor_id = v.id
+       LEFT JOIN (
+         SELECT vendor_id, SUM(amount) AS outstanding
+         FROM payments
+         WHERE status != 'paid'
+         GROUP BY vendor_id
+       ) p ON p.vendor_id = v.id
        WHERE vb.market_date_id = $1
          AND vb.status = 'confirmed'
          AND (vb.booth_location IS NULL OR vb.booth_location = '')
          AND v.is_active = true
-       ORDER BY v.business_name`,
+       ORDER BY is_paid DESC, v.business_name`,
       [dateId]
     );
 

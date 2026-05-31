@@ -187,6 +187,16 @@ const MapBuilder = () => {
       return;
     }
 
+    // Warn before placing an unpaid vendor
+    if (!draggedVendor.is_paid) {
+      const owed = parseFloat(draggedVendor.outstanding_amount).toFixed(2);
+      const ok = window.confirm(`${draggedVendor.business_name} has $${owed} unpaid. Place anyway?`);
+      if (!ok) {
+        setDraggedVendor(null);
+        return;
+      }
+    }
+
     try {
       await api.put('/maps/assign', {
         booking_id: draggedVendor.booking_id,
@@ -262,24 +272,62 @@ const MapBuilder = () => {
             <h3>Unassigned Vendors ({unassignedVendors.length})</h3>
             {unassignedVendors.length === 0 ? (
               <p className="no-vendors">All vendors assigned!</p>
-            ) : (
-              <div className="vendor-list">
-                {unassignedVendors.map(vendor => (
-                  <div
-                    key={vendor.booking_id}
-                    className={`vendor-card ${vendor.booth_size}`}
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, vendor)}
-                    onDragEnd={handleDragEnd}
-                  >
-                    <div className="vendor-name">{vendor.business_name}</div>
-                    <div className="vendor-size">
-                      {vendor.booth_size === 'double' ? 'Double Booth' : 'Single Booth'}
-                    </div>
+            ) : (() => {
+              const paid = unassignedVendors.filter(v => v.is_paid);
+              const unpaid = unassignedVendors.filter(v => !v.is_paid);
+              return (
+                <>
+                  <div style={{ marginTop: '12px', marginBottom: '6px', fontSize: '12px', fontWeight: 700, color: '#16a34a', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Paid ({paid.length}) — can place
                   </div>
-                ))}
-              </div>
-            )}
+                  {paid.length === 0 ? (
+                    <p className="no-vendors" style={{ fontSize: '13px', color: '#999' }}>No paid vendors waiting.</p>
+                  ) : (
+                    <div className="vendor-list">
+                      {paid.map(vendor => (
+                        <div
+                          key={vendor.booking_id}
+                          className={`vendor-card ${vendor.booth_size}`}
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, vendor)}
+                          onDragEnd={handleDragEnd}
+                        >
+                          <div className="vendor-name">{vendor.business_name}</div>
+                          <div className="vendor-size">
+                            {vendor.booth_size === 'double' ? 'Double Booth' : 'Single Booth'}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <div style={{ marginTop: '20px', marginBottom: '6px', fontSize: '12px', fontWeight: 700, color: '#dc2626', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                    Unpaid ({unpaid.length}) — do not place
+                  </div>
+                  {unpaid.length === 0 ? (
+                    <p className="no-vendors" style={{ fontSize: '13px', color: '#999' }}>No unpaid vendors waiting.</p>
+                  ) : (
+                    <div className="vendor-list">
+                      {unpaid.map(vendor => (
+                        <div
+                          key={vendor.booking_id}
+                          className={`vendor-card ${vendor.booth_size}`}
+                          draggable
+                          onDragStart={(e) => handleDragStart(e, vendor)}
+                          onDragEnd={handleDragEnd}
+                          style={{ borderLeft: '4px solid #dc2626', opacity: 0.85 }}
+                        >
+                          <div className="vendor-name">{vendor.business_name}</div>
+                          <div className="vendor-size">
+                            {vendor.booth_size === 'double' ? 'Double Booth' : 'Single Booth'} · ${parseFloat(vendor.outstanding_amount).toFixed(2)} owed
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              );
+            })()}
           </div>
 
           {/* Map grid */}
