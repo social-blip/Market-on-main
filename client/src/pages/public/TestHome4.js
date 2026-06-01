@@ -334,6 +334,7 @@ const TestHome4 = () => {
     { name: 'Chick-fil-A', url: 'https://www.chick-fil-a.com/locations/id/twin-falls', image: '/images/sponsors/chick-fil-a.jpeg' },
     { name: 'Rudys', url: 'https://rudys.shop/', image: '/images/sponsors/rudys.png', dark: true },
     { name: 'Westwood', url: 'https://www.facebook.com/profile.php?id=61578873735050', image: '/images/sponsors/westwood.png', dark: true },
+    { name: 'AT&T', url: 'https://www.att.com/stores/idaho/twin-falls/186421', image: '/images/sponsors/att.png', dark: true },
   ];
 
   return (
@@ -717,12 +718,12 @@ const TestHome4 = () => {
                   <img src={sponsor.image} alt={sponsor.name} loading="lazy" />
                 </a>
               ))}
-              <a href="/sponsor" className="sponsors-section__cta">
-                <div className="sponsors-section__cta-title">Interested in Sponsoring?</div>
-                <div className="sponsors-section__cta-sub">Get in front of thousands.</div>
-                <div className="sponsors-section__cta-arrow">Click here →</div>
-              </a>
             </div>
+            <a href="/sponsor" className="sponsors-section__cta">
+              <div className="sponsors-section__cta-title">Interested in Sponsoring?</div>
+              <div className="sponsors-section__cta-sub">Get in front of thousands.</div>
+              <div className="sponsors-section__cta-arrow">Click here →</div>
+            </a>
           </div>
         </section>
 

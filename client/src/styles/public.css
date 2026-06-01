@@ -950,11 +950,12 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  background: #5c1e3d;
+  background: var(--dark-bg);
   color: #fff;
   border-radius: 12px;
-  padding: 20px 16px;
-  height: 140px;
+  padding: 28px 24px;
+  max-width: 900px;
+  margin: 24px auto 0;
   text-decoration: none;
   transition: transform 0.2s, box-shadow 0.2s;
 }
@@ -966,22 +967,22 @@
 
 .sponsors-section__cta-title {
   font-family: var(--font-display);
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 700;
   line-height: 1.2;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .sponsors-section__cta-sub {
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 16px;
   opacity: 0.9;
-  margin-bottom: 10px;
+  margin-bottom: 14px;
 }
 
 .sponsors-section__cta-arrow {
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
