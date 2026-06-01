@@ -329,15 +329,7 @@ const TestHome4 = () => {
   ];
 
   const sponsors = [
-    { name: 'Float Magic Valley', url: 'https://floatmagicvalley.com/', image: '/images/sponsors/float-magic-valley.webp', dark: true },
-    { name: 'Cricket Sterling Insurance', url: 'https://www.csassocinsurance.com/', image: '/images/sponsors/cricket-sterling.webp' },
-    { name: 'On The Ball Plumbing', url: 'https://ontheballplumbing.com/', image: '/images/sponsors/on-the-ball-plumbing.png' },
     { name: "O'Dunkens", url: 'https://www.facebook.com/odunkens/', image: '/images/sponsors/odunkens.png' },
-    { name: 'Wolfe Lighting', url: 'https://wolfelighting.net/', image: '/images/sponsors/wolfe-lighting.webp', dark: true },
-    { name: "Milner's Gate", url: 'https://milnersgate.com/', image: '/images/sponsors/milners-gate.svg' },
-    { name: 'IT 83 Fitness', url: 'https://it83fitness.com/', image: '/images/sponsors/it83-fitness.webp' },
-    { name: "Tommy's Express Car Wash", url: 'https://tommys-express.com/locations/id53/', image: '/images/sponsors/tommys-express.svg' },
-    { name: 'Majestic Aesthetics & Wellness', url: 'https://www.majesticaestheticswellness.com/', image: '/images/sponsors/majestic-aesthetics.png' },
     { name: 'PSI Environmental', url: 'https://www.psitwinfalls.com/', image: '/images/psi/psi-logo.png' },
   ];
 
