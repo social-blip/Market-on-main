@@ -333,8 +333,8 @@ const TestHome4 = () => {
     { name: 'PSI Environmental', url: 'https://www.psitwinfalls.com/', image: '/images/psi/psi-logo.png' },
     { name: 'Chick-fil-A', url: 'https://www.chick-fil-a.com/locations/id/twin-falls', image: '/images/sponsors/chick-fil-a.jpeg' },
     { name: 'Rudys', url: 'https://rudys.shop/', image: '/images/sponsors/rudys.png', dark: true },
+    { name: 'AT&T', url: 'https://www.att.com/stores/idaho/twin-falls/186421', image: '/images/sponsors/att.png' },
     { name: 'Westwood', url: 'https://www.facebook.com/profile.php?id=61578873735050', image: '/images/sponsors/westwood.png', dark: true },
-    { name: 'AT&T', url: 'https://www.att.com/stores/idaho/twin-falls/186421', image: '/images/sponsors/att.png', dark: true },
   ];
 
   return (
