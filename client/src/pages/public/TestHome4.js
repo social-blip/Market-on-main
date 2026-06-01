@@ -717,6 +717,11 @@ const TestHome4 = () => {
                   <img src={sponsor.image} alt={sponsor.name} loading="lazy" />
                 </a>
               ))}
+              <a href="/sponsor" className="sponsors-section__cta">
+                <div className="sponsors-section__cta-title">Interested in Sponsoring?</div>
+                <div className="sponsors-section__cta-sub">Get in front of thousands.</div>
+                <div className="sponsors-section__cta-arrow">Click here →</div>
+              </a>
             </div>
           </div>
         </section>

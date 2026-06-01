@@ -944,6 +944,49 @@
   object-fit: contain;
 }
 
+.sponsors-section__cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: #5c1e3d;
+  color: #fff;
+  border-radius: 12px;
+  padding: 20px 16px;
+  height: 140px;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.sponsors-section__cta:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.sponsors-section__cta-title {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+
+.sponsors-section__cta-sub {
+  font-family: var(--font-body);
+  font-size: 14px;
+  opacity: 0.9;
+  margin-bottom: 10px;
+}
+
+.sponsors-section__cta-arrow {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 /* ==========================================
    VENDOR SECTION - Paint It Easy Style
    ========================================== */
