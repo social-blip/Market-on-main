@@ -68,7 +68,8 @@ router.get('/builder/:date_id', verifyToken, isAdmin, async (req, res) => {
       `SELECT vb.id as booking_id, vb.booth_location, vb.status,
               v.id as vendor_id, v.business_name, v.booth_size,
               COALESCE(p.outstanding, 0) AS outstanding_amount,
-              CASE WHEN COALESCE(p.outstanding, 0) = 0 THEN true ELSE false END AS is_paid
+              COALESCE(v.payment_agreed, false) AS payment_agreed,
+              CASE WHEN COALESCE(p.outstanding, 0) = 0 OR COALESCE(v.payment_agreed, false) = true THEN true ELSE false END AS is_paid
        FROM vendor_bookings vb
        JOIN vendors v ON vb.vendor_id = v.id
        LEFT JOIN (
@@ -90,7 +91,8 @@ router.get('/builder/:date_id', verifyToken, isAdmin, async (req, res) => {
       `SELECT vb.id as booking_id, vb.status,
               v.id as vendor_id, v.business_name, v.booth_size,
               COALESCE(p.outstanding, 0) AS outstanding_amount,
-              CASE WHEN COALESCE(p.outstanding, 0) = 0 THEN true ELSE false END AS is_paid
+              COALESCE(v.payment_agreed, false) AS payment_agreed,
+              CASE WHEN COALESCE(p.outstanding, 0) = 0 OR COALESCE(v.payment_agreed, false) = true THEN true ELSE false END AS is_paid
        FROM vendor_bookings vb
        JOIN vendors v ON vb.vendor_id = v.id
        LEFT JOIN (

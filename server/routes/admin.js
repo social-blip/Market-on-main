@@ -93,7 +93,7 @@ router.put('/vendors/:id', verifyToken, isAdmin, async (req, res) => {
   const {
     email, business_name, contact_name, phone, website,
     social_handles, description, booth_size, needs_power, is_nonprofit, is_active, is_approved, category,
-    alternate_dates, markets_requested, requested_dates, base_amount, power_fee, total_amount
+    alternate_dates, markets_requested, requested_dates, base_amount, power_fee, total_amount, payment_agreed
   } = req.body;
 
   try {
@@ -118,10 +118,11 @@ router.put('/vendors/:id', verifyToken, isAdmin, async (req, res) => {
            base_amount = COALESCE($17, base_amount),
            power_fee = COALESCE($18, power_fee),
            total_amount = COALESCE($19, total_amount),
+           payment_agreed = COALESCE($20, payment_agreed),
            updated_at = CURRENT_TIMESTAMP
-       WHERE id = $20
+       WHERE id = $21
        RETURNING *`,
-      [email, business_name, contact_name, phone, website, social_handles, description, booth_size, needs_power, is_nonprofit, is_active, is_approved, category, alternate_dates, markets_requested, requested_dates, base_amount, power_fee, total_amount, req.params.id]
+      [email, business_name, contact_name, phone, website, social_handles, description, booth_size, needs_power, is_nonprofit, is_active, is_approved, category, alternate_dates, markets_requested, requested_dates, base_amount, power_fee, total_amount, payment_agreed, req.params.id]
     );
 
     if (result.rows.length === 0) {

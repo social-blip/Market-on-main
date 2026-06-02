@@ -496,6 +496,21 @@ const AdminVendorDetail = () => {
           >
             Login as Vendor
           </button>
+          <button
+            onClick={async () => {
+              try {
+                await api.put(`/admin/vendors/${id}`, { payment_agreed: !vendor.payment_agreed });
+                setMessage({ type: 'success', text: vendor.payment_agreed ? 'Unmarked as Agreed to Pay' : 'Marked as Agreed to Pay' });
+                fetchVendor();
+              } catch (err) {
+                setMessage({ type: 'error', text: 'Failed to update payment agreement' });
+              }
+            }}
+            className="btn"
+            style={{ background: vendor.payment_agreed ? '#16a34a' : '#fff', color: vendor.payment_agreed ? '#fff' : '#16a34a', border: '1px solid #16a34a' }}
+          >
+            {vendor.payment_agreed ? '✓ Agreed to Pay' : 'Mark as Agreed to Pay'}
+          </button>
           <button onClick={toggleActive} className={`btn ${vendor.is_active ? 'btn-danger' : 'btn-primary'}`}>
             {vendor.is_active ? 'Deactivate' : 'Approve'}
           </button>
