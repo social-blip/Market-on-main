@@ -44,6 +44,21 @@ const AdminPayments = () => {
     }
   };
 
+  const toggleAgreedToPay = async (vendorId, currentValue, businessName) => {
+    try {
+      await api.put(`/admin/vendors/${vendorId}`, { payment_agreed: !currentValue });
+      fetchPayments();
+      setMessage({
+        type: 'success',
+        text: currentValue
+          ? `${businessName} unmarked as Agreed to Pay`
+          : `${businessName} marked as Agreed to Pay`
+      });
+    } catch (err) {
+      setMessage({ type: 'error', text: 'Failed to update payment agreement.' });
+    }
+  };
+
   const filteredPayments = payments.filter(p => {
     if (filter === 'pending') return p.status === 'pending';
     if (filter === 'paid') return p.status === 'paid';
@@ -164,13 +179,30 @@ const AdminPayments = () => {
                   </td>
                   <td>
                     {payment.status === 'pending' && (
-                      <button
-                        onClick={() => openMarkPaid(payment.id)}
-                        className="btn btn-primary"
-                        style={{ fontSize: '12px', padding: '6px 12px' }}
-                      >
-                        Mark Paid
-                      </button>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', alignItems: 'flex-start' }}>
+                        <button
+                          onClick={() => openMarkPaid(payment.id)}
+                          className="btn btn-primary"
+                          style={{ fontSize: '12px', padding: '6px 12px' }}
+                        >
+                          Mark Paid
+                        </button>
+                        <button
+                          onClick={() => toggleAgreedToPay(payment.vendor_id, payment.payment_agreed, payment.business_name)}
+                          style={{
+                            fontSize: '11px',
+                            padding: '5px 10px',
+                            borderRadius: '4px',
+                            border: '1px solid #16a34a',
+                            background: payment.payment_agreed ? '#16a34a' : '#fff',
+                            color: payment.payment_agreed ? '#fff' : '#16a34a',
+                            cursor: 'pointer',
+                            whiteSpace: 'nowrap'
+                          }}
+                        >
+                          {payment.payment_agreed ? '✓ Agreed to Pay' : 'Mark as Agreed to Pay'}
+                        </button>
+                      </div>
                     )}
                   </td>
                 </tr>

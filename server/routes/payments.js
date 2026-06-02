@@ -9,7 +9,7 @@ const emailService = require('../services/email');
 router.get('/', verifyToken, isAdmin, async (req, res) => {
   try {
     const result = await db.query(
-      `SELECT p.*, v.business_name, v.contact_name, v.email
+      `SELECT p.*, v.business_name, v.contact_name, v.email, COALESCE(v.payment_agreed, false) AS payment_agreed
        FROM payments p
        JOIN vendors v ON p.vendor_id = v.id
        ORDER BY p.created_at DESC`
