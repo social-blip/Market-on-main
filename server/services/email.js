@@ -68,6 +68,10 @@ const sendWelcomeEmail = async (vendor) => {
             </a>
           </p>
 
+          <div style="background-color: #FFF3CD; padding: 20px; border-radius: 8px; margin: 24px 0;">
+            <p style="margin: 0;"><strong>Before your first market, review the Vendor Agreement</strong> in the <strong>Documents</strong> tab of your portal. It covers check-in times, setup, tear-down, electricity, cancellations, and everything else you'll need to know. Paying your booth fee means you're agreeing to it.</p>
+          </div>
+
           <p>Once logged in, you'll be able to:</p>
           <ul>
             <li>View your confirmed market dates</li>
