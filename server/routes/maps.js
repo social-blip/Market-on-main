@@ -109,8 +109,28 @@ router.get('/builder/:date_id', verifyToken, isAdmin, async (req, res) => {
       [dateId]
     );
 
+    const waitlistResult = await db.query(
+      `SELECT mw.id as waitlist_id, mw.notes, mw.created_at,
+              v.id as vendor_id, v.business_name, v.booth_size,
+              COALESCE(p.outstanding, 0) AS outstanding_amount,
+              COALESCE(v.payment_agreed, false) AS payment_agreed,
+              CASE WHEN COALESCE(p.outstanding, 0) = 0 OR COALESCE(v.payment_agreed, false) = true THEN true ELSE false END AS is_paid
+       FROM map_waitlist mw
+       JOIN vendors v ON mw.vendor_id = v.id
+       LEFT JOIN (
+         SELECT vendor_id, SUM(amount) AS outstanding
+         FROM payments
+         WHERE status != 'paid'
+         GROUP BY vendor_id
+       ) p ON p.vendor_id = v.id
+       WHERE mw.market_date_id = $1
+       ORDER BY mw.created_at ASC`,
+      [dateId]
+    );
+
     res.json({
       marketDate: dateResult.rows[0],
+      waitlist: waitlistResult.rows,
       assignedVendors: assignedResult.rows,
       unassignedVendors: unassignedResult.rows
     });
@@ -319,6 +339,71 @@ router.delete('/:id', verifyToken, isAdmin, async (req, res) => {
     }
 
     res.json({ message: 'Map deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// POST /maps/waitlist - Add a vendor to a date's waitlist
+router.post('/waitlist', verifyToken, isAdmin, async (req, res) => {
+  const { market_date_id, vendor_id, notes } = req.body;
+  if (!market_date_id || !vendor_id) {
+    return res.status(400).json({ error: 'market_date_id and vendor_id are required' });
+  }
+  try {
+    const result = await db.query(
+      `INSERT INTO map_waitlist (market_date_id, vendor_id, notes) VALUES ($1, $2, $3) RETURNING *`,
+      [market_date_id, vendor_id, notes || null]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    if (err.code === '23505') {
+      return res.status(409).json({ error: 'This vendor is already on the waitlist for this date' });
+    }
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// DELETE /maps/waitlist/:id - Remove a vendor from the waitlist
+router.delete('/waitlist/:id', verifyToken, isAdmin, async (req, res) => {
+  try {
+    const result = await db.query('DELETE FROM map_waitlist WHERE id = $1 RETURNING *', [req.params.id]);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Waitlist entry not found' });
+    res.json({ message: 'Removed from waitlist' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// POST /maps/waitlist/:id/promote - Promote waitlisted vendor to a confirmed booking (unplaced)
+router.post('/waitlist/:id/promote', verifyToken, isAdmin, async (req, res) => {
+  try {
+    const wlResult = await db.query('SELECT * FROM map_waitlist WHERE id = $1', [req.params.id]);
+    if (wlResult.rows.length === 0) return res.status(404).json({ error: 'Waitlist entry not found' });
+    const wl = wlResult.rows[0];
+
+    const existing = await db.query(
+      `SELECT * FROM vendor_bookings WHERE vendor_id = $1 AND market_date_id = $2`,
+      [wl.vendor_id, wl.market_date_id]
+    );
+
+    if (existing.rows.length === 0) {
+      await db.query(
+        `INSERT INTO vendor_bookings (vendor_id, market_date_id, status) VALUES ($1, $2, 'confirmed')`,
+        [wl.vendor_id, wl.market_date_id]
+      );
+    } else if (existing.rows[0].status !== 'confirmed') {
+      await db.query(
+        `UPDATE vendor_bookings SET status = 'confirmed' WHERE id = $1`,
+        [existing.rows[0].id]
+      );
+    }
+
+    await db.query('DELETE FROM map_waitlist WHERE id = $1', [req.params.id]);
+    res.json({ message: 'Vendor promoted to confirmed booking. Drag them onto a spot from the unassigned list.' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });

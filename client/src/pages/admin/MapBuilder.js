@@ -9,6 +9,10 @@ const MapBuilder = () => {
   const [marketDate, setMarketDate] = useState(null);
   const [assignedVendors, setAssignedVendors] = useState([]);
   const [unassignedVendors, setUnassignedVendors] = useState([]);
+  const [waitlist, setWaitlist] = useState([]);
+  const [allActiveVendors, setAllActiveVendors] = useState([]);
+  const [waitlistAddVendorId, setWaitlistAddVendorId] = useState('');
+  const [waitlistAddNotes, setWaitlistAddNotes] = useState('');
   const [loading, setLoading] = useState(true);
   const [loadingData, setLoadingData] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
@@ -54,10 +58,15 @@ const MapBuilder = () => {
 
     setLoadingData(true);
     try {
-      const response = await api.get(`/maps/builder/${selectedDateId}`);
-      setMarketDate(response.data.marketDate);
-      setAssignedVendors(response.data.assignedVendors);
-      setUnassignedVendors(response.data.unassignedVendors);
+      const [builderRes, vendorsRes] = await Promise.all([
+        api.get(`/maps/builder/${selectedDateId}`),
+        api.get('/admin/vendors')
+      ]);
+      setMarketDate(builderRes.data.marketDate);
+      setAssignedVendors(builderRes.data.assignedVendors);
+      setUnassignedVendors(builderRes.data.unassignedVendors);
+      setWaitlist(builderRes.data.waitlist || []);
+      setAllActiveVendors((vendorsRes.data || []).filter(v => v.is_active));
       setMessage({ type: '', text: '' });
     } catch (err) {
       setMessage({ type: 'error', text: 'Failed to load map data' });
@@ -65,6 +74,42 @@ const MapBuilder = () => {
       setLoadingData(false);
     }
   }, [selectedDateId]);
+
+  const addToWaitlist = async () => {
+    if (!waitlistAddVendorId) return;
+    try {
+      await api.post('/maps/waitlist', {
+        market_date_id: parseInt(selectedDateId),
+        vendor_id: parseInt(waitlistAddVendorId),
+        notes: waitlistAddNotes || null
+      });
+      setWaitlistAddVendorId('');
+      setWaitlistAddNotes('');
+      fetchBuilderData();
+      setMessage({ type: 'success', text: 'Added to waitlist.' });
+    } catch (err) {
+      setMessage({ type: 'error', text: err.response?.data?.error || 'Failed to add to waitlist' });
+    }
+  };
+
+  const removeFromWaitlist = async (waitlistId) => {
+    try {
+      await api.delete(`/maps/waitlist/${waitlistId}`);
+      fetchBuilderData();
+    } catch (err) {
+      setMessage({ type: 'error', text: 'Failed to remove from waitlist' });
+    }
+  };
+
+  const promoteFromWaitlist = async (waitlistId, vendorName) => {
+    try {
+      await api.post(`/maps/waitlist/${waitlistId}/promote`);
+      fetchBuilderData();
+      setMessage({ type: 'success', text: `${vendorName} is now in the unassigned list. Drag them onto a spot.` });
+    } catch (err) {
+      setMessage({ type: 'error', text: err.response?.data?.error || 'Failed to promote' });
+    }
+  };
 
   useEffect(() => {
     if (selectedDateId) {
@@ -328,6 +373,101 @@ const MapBuilder = () => {
                 </>
               );
             })()}
+
+            {/* Waitlist panel */}
+            <div style={{ marginTop: '24px', borderTop: '1px solid #e5e7eb', paddingTop: '16px' }}>
+              <div style={{ marginBottom: '6px', fontSize: '12px', fontWeight: 700, color: '#2563eb', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Waitlist ({waitlist.length})
+              </div>
+              <p style={{ fontSize: '11px', color: '#6b7280', margin: '0 0 10px 0' }}>
+                FIFO. Top of list is first in line.
+              </p>
+
+              {waitlist.length === 0 ? (
+                <p style={{ fontSize: '12px', color: '#999', margin: '0 0 12px 0' }}>No one on the waitlist for this date.</p>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '12px' }}>
+                  {waitlist.map((entry, idx) => (
+                    <div
+                      key={entry.waitlist_id}
+                      style={{
+                        background: '#f9fafb',
+                        border: '1px solid #e5e7eb',
+                        borderLeft: idx === 0 ? '4px solid #2563eb' : '1px solid #e5e7eb',
+                        borderRadius: '4px',
+                        padding: '8px 10px',
+                        fontSize: '13px'
+                      }}
+                    >
+                      <div style={{ fontWeight: 600 }}>
+                        {idx + 1}. {entry.business_name}
+                      </div>
+                      <div style={{ fontSize: '11px', color: '#666', marginTop: '2px' }}>
+                        {entry.booth_size === 'double' ? 'Double' : 'Single'}
+                        {entry.is_paid ? ' · Paid' : ` · $${parseFloat(entry.outstanding_amount).toFixed(2)} owed`}
+                      </div>
+                      {entry.notes && (
+                        <div style={{ fontSize: '11px', color: '#888', fontStyle: 'italic', marginTop: '2px' }}>
+                          {entry.notes}
+                        </div>
+                      )}
+                      <div style={{ display: 'flex', gap: '6px', marginTop: '6px' }}>
+                        <button
+                          onClick={() => promoteFromWaitlist(entry.waitlist_id, entry.business_name)}
+                          style={{ fontSize: '11px', padding: '4px 8px', border: '1px solid #16a34a', background: '#16a34a', color: '#fff', borderRadius: '4px', cursor: 'pointer' }}
+                        >
+                          Promote
+                        </button>
+                        <button
+                          onClick={() => removeFromWaitlist(entry.waitlist_id)}
+                          style={{ fontSize: '11px', padding: '4px 8px', border: '1px solid #dc2626', background: '#fff', color: '#dc2626', borderRadius: '4px', cursor: 'pointer' }}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Add to waitlist */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <select
+                  value={waitlistAddVendorId}
+                  onChange={(e) => setWaitlistAddVendorId(e.target.value)}
+                  style={{ padding: '6px 8px', fontSize: '12px', borderRadius: '4px', border: '1px solid #d1d5db' }}
+                >
+                  <option value="">Add vendor to waitlist…</option>
+                  {allActiveVendors
+                    .filter(v => !waitlist.some(w => w.vendor_id === v.id))
+                    .map(v => (
+                      <option key={v.id} value={v.id}>{v.business_name}</option>
+                    ))}
+                </select>
+                <input
+                  type="text"
+                  placeholder="Notes (optional)"
+                  value={waitlistAddNotes}
+                  onChange={(e) => setWaitlistAddNotes(e.target.value)}
+                  style={{ padding: '6px 8px', fontSize: '12px', borderRadius: '4px', border: '1px solid #d1d5db' }}
+                />
+                <button
+                  onClick={addToWaitlist}
+                  disabled={!waitlistAddVendorId}
+                  style={{
+                    padding: '6px 10px',
+                    fontSize: '12px',
+                    borderRadius: '4px',
+                    border: '1px solid #2563eb',
+                    background: waitlistAddVendorId ? '#2563eb' : '#e5e7eb',
+                    color: waitlistAddVendorId ? '#fff' : '#999',
+                    cursor: waitlistAddVendorId ? 'pointer' : 'not-allowed'
+                  }}
+                >
+                  Add to Waitlist
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* Map grid */}
