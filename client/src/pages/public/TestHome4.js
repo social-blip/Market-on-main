@@ -335,6 +335,8 @@ const TestHome4 = () => {
     { name: 'Rudys', url: 'https://rudys.shop/', image: '/images/sponsors/rudys.png', dark: true },
     { name: 'AT&T', url: 'https://www.att.com/stores/idaho/twin-falls/186421', image: '/images/sponsors/att.png' },
     { name: 'Westwood', url: 'https://www.facebook.com/profile.php?id=61578873735050', image: '/images/sponsors/westwood.png', dark: true },
+    { name: 'Twin Falls Sandwich Company', url: 'https://twinfallssandwich.com/', image: '/images/sponsors/twin-falls-sandwich.png' },
+    { name: 'Koto', url: 'https://koto.beer/', image: '/images/sponsors/koto.png', dark: true },
   ];
 
   return (
