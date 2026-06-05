@@ -63,10 +63,11 @@ router.get('/builder/:date_id', verifyToken, isAdmin, async (req, res) => {
       return res.status(404).json({ error: 'Market date not found' });
     }
 
-    // Get assigned vendors (have booth_location)
+    // Get assigned vendors (have booth_location). Per-booking booth_size override (vb.booth_size) wins.
     const assignedResult = await db.query(
       `SELECT vb.id as booking_id, vb.booth_location, vb.status,
-              v.id as vendor_id, v.business_name, v.booth_size,
+              v.id as vendor_id, v.business_name,
+              COALESCE(vb.booth_size, v.booth_size) AS booth_size,
               COALESCE(p.outstanding, 0) AS outstanding_amount,
               COALESCE(v.payment_agreed, false) AS payment_agreed,
               CASE WHEN COALESCE(p.outstanding, 0) = 0 OR COALESCE(v.payment_agreed, false) = true THEN true ELSE false END AS is_paid
@@ -89,7 +90,8 @@ router.get('/builder/:date_id', verifyToken, isAdmin, async (req, res) => {
     // Get unassigned vendors (confirmed booking, no booth_location)
     const unassignedResult = await db.query(
       `SELECT vb.id as booking_id, vb.status,
-              v.id as vendor_id, v.business_name, v.booth_size,
+              v.id as vendor_id, v.business_name,
+              COALESCE(vb.booth_size, v.booth_size) AS booth_size,
               COALESCE(p.outstanding, 0) AS outstanding_amount,
               COALESCE(v.payment_agreed, false) AS payment_agreed,
               CASE WHEN COALESCE(p.outstanding, 0) = 0 OR COALESCE(v.payment_agreed, false) = true THEN true ELSE false END AS is_paid
