@@ -71,6 +71,7 @@ router.get('/public', async (req, res) => {
            FROM vendor_bookings vb
            JOIN market_dates md ON vb.market_date_id = md.id
            WHERE vb.vendor_id = $1 AND vb.status = 'confirmed'
+             AND TO_DATE(md.date || ' ' || EXTRACT(YEAR FROM CURRENT_DATE)::int, 'FMMonth FMDD YYYY') >= CURRENT_DATE
            ORDER BY md.id ASC
            LIMIT 1`,
           [vendor.id]
@@ -110,6 +111,7 @@ router.get('/public/:id', async (req, res) => {
        FROM vendor_bookings vb
        JOIN market_dates md ON vb.market_date_id = md.id
        WHERE vb.vendor_id = $1 AND vb.status = 'confirmed'
+         AND TO_DATE(md.date || ' ' || EXTRACT(YEAR FROM CURRENT_DATE)::int, 'FMMonth FMDD YYYY') >= CURRENT_DATE
        ORDER BY md.id ASC`,
       [req.params.id]
     );
